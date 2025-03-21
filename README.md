@@ -1,3 +1,5 @@
+![Hydra](images/main-hydra-concept-art.png)
+
 # 🧠 HydrAIDE 2.0 – Adaptive Intelligent Data Engine
 
 ![Go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go)
