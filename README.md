@@ -31,6 +31,18 @@ Stay tuned and ⭐ the repo to follow along!
 
 ---
 
+## 📖 Documentation & Resources
+
+🚧 **Documentation is currently being uploaded and expanded.**  
+Stay tuned for updates! 🚀
+
+🔹 **[API Reference](docs/api_reference.md)** – Full API documentation (proto-based) 
+🔹 **[Usage Guide](docs/usage.md)** – How to set up and use Hydra  
+🔹 **[Examples](docs/examples/basic_usage.md)** – Real-world integration examples  
+🔹 **[Roadmap](docs/roadmap.md)** – Upcoming features & plans
+
+---
+
 ## 🔥 Why Hydra?
 
 - ⚡ **Blazing fast access**, regardless of data size.
@@ -167,7 +179,7 @@ Interested in trying Hydra for your project?
 Want to build an SDK or use it in research?
 
 📩 Contact: **Peter Gebri** – [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)  
-Or join the waitlist at [hydrAIDE.com](https://hydrAIDE.com)
+Or join the waitlist at [hydrAIDE.com](https://hydraide.com)
 
 ## 🐞 Found something? Need help?
 
