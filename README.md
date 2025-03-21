@@ -160,6 +160,9 @@ Want to build an SDK or use it in research?
 📩 Contact: **Peter Gebri** – [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)  
 Or join the waitlist at [hydrAIDE.com](https://hydrAIDE.com)
 
+## 🐞 Found something? Need help?
+
+Feel free to open an [issue](https://github.com/hydraide/hydraide/issues)!
 
 ---
 
