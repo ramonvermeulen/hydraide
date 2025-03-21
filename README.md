@@ -20,6 +20,15 @@ built to be as **intelligent** as the data it stores.
 > - 🧵 Real-world examples
 
 Stay tuned and ⭐ the repo to follow along!
+
+---
+
+> ⚠️ This repository does not contain the source code of the Hydra engine itself.  
+> Hydra is a closed-source, production-grade system.  
+> This repo contains the public API (`.proto`), usage documentation, and SDK integrations.
+
+**Enterprise licensing available** – contact us: [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)
+
 ---
 
 ## 🔥 Why Hydra?
