@@ -62,6 +62,7 @@ Using a deterministic hashing strategy, each Swamp is automatically mapped to th
 
 | Feature | Description |
 |--------|-------------|
+| 🧠 On-demand indexing | Indexes are built in memory only when queried, with zero storage overhead |
 | 🔒 Locking | Swamp/key-level locking with TTL & context awareness |
 | 📥 Set/Get | Insert, update, get data – type-safe & atomic |
 | ↺ Subscribe | Get notified on changes instantly (like pub/sub) |
@@ -71,7 +72,6 @@ Using a deterministic hashing strategy, each Swamp is automatically mapped to th
 | 📚 Slices | Special handling for Uint32 slices |
 | 🚦 Exists check | Key & swamp existence support |
 | 🧭 Distributed architecture | Data is spread across servers using a hash-based strategy, no orchestrator required |
-
 ---
 
 ## 🎯 Who is Hydra for?
