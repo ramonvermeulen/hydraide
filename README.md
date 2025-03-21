@@ -63,6 +63,7 @@ Using a deterministic hashing strategy, each Swamp is automatically mapped to th
 | Feature | Description |
 |--------|-------------|
 | 🧠 On-demand indexing | Indexes are built in memory only when queried, with zero storage overhead |
+| 🎛️ Swamp-level control | Dynamically configure each swamp’s behavior (memory, flush, TTL) directly from code – no DB access required |
 | 🔒 Locking | Swamp/key-level locking with TTL & context awareness |
 | 📥 Set/Get | Insert, update, get data – type-safe & atomic |
 | 🧹 Built-in Garbage Collector | When the last treasure in a swamp is deleted, Hydra automatically deletes the swamp and its entire file structure to reclaim space |
