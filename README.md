@@ -13,6 +13,13 @@ Hydra is not just another database.
 It’s a lightning-fast, memory-conscious, real-time data engine –  
 built to be as **intelligent** as the data it stores.
 
+> 🛠️ Hydra is actively evolving.  
+> We're currently adding:
+> - 🧪 Full proto documentation
+> - 💻 Go SDK (`hydrun-go`)
+> - 🧵 Real-world examples
+
+Stay tuned and ⭐ the repo to follow along!
 ---
 
 ## 🔥 Why Hydra?
