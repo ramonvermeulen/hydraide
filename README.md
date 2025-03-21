@@ -1,5 +1,11 @@
 # 🧠 HydrAIDE 2.0 – Adaptive Intelligent Data Engine
 
+![Go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go)
+![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-2.0-informational?style=for-the-badge)
+![Performance](https://img.shields.io/badge/speed-O(1)%20Access-ff69b4?style=for-the-badge)
+
 > **Production-ready. Enterprise-grade. Battle-tested.**
 > Built and refined over **3+ years** of real-world use, Hydra 2.0 delivers unmatched performance, control, and flexibility.
 
