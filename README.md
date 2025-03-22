@@ -92,18 +92,18 @@ Using a deterministic hashing strategy, each Swamp is automatically mapped to th
 
 | Feature | Description |
 |--------|-------------|
+| 🧭 Distributed architecture | Data is spread across servers using a hash-based strategy, no orchestrator required |
 | 🧠 On-demand indexing | Indexes are built in memory only when queried, with zero storage overhead |
 | 🎛️ Swamp-level control | Dynamically configure each swamp’s behavior (memory, flush, TTL) directly from code – no DB access required |
-| 🔒 Locking | Swamp/key-level locking with TTL & context awareness |
-| 📥 Set/Get | Insert, update, get data – type-safe & atomic |
-| 🧹 Built-in Garbage Collector | When the last treasure in a swamp is deleted, Hydra automatically deletes the swamp and its entire file structure to reclaim space |
 | ↺ Subscribe | Get notified on changes instantly (like pub/sub) |
 | ⏳ Expire & Shift | Time-based expiry and cleanup |
-| 📊 Count & Index | Indexed reads by creation, expiration, etc. |
+| 🔒 Locking | Swamp/key-level locking with TTL & context awareness |
+| 🧹 Built-in Garbage Collector | When the last treasure in a swamp is deleted, Hydra automatically deletes the swamp and its entire file structure to reclaim space |
+| 📥 Set/Get | Insert, update, get data – type-safe & atomic |
+| 📚 Slices | Blazing-fast reverse indexing. Collision-free. Memory-safe. |
 | ➕ Conditional Increment | Atomic incs with rules (if x > 10, then…) |
-| 📚 Slices | Special handling for Uint32 slices |
+| 📊 Count & Index | Indexed reads by creation, expiration, etc. |
 | 🚦 Exists check | Key & swamp existence support |
-| 🧭 Distributed architecture | Data is spread across servers using a hash-based strategy, no orchestrator required |
 ---
 
 ## 🎯 Who is Hydra for?
@@ -160,14 +160,35 @@ You're free to generate your own client SDKs using:
 protoc --go_out=. --go-grpc_out=. hydra-service.proto
 ```
 
-Official SDKs (under development):
-- 📅 Go SDK (`hydrun`) – actively used in Trendizz
-- ⏳ Python SDK
-- ⏳ Node.js SDK
-- ⏳ Rust SDK
-- ⏳ Java SDK
+Official SDKs:
+
+| 💻 Language | 🔗 Repo (Code Name) | 🛠️ Status | 📝 Notes |
+|-------------|---------------------|------------|---------|
+| 🟢 Go | `hydrungo`          | ✅ Actively developed | Core SDK, led by main developer – contributors welcome! |
+| 🟡 Node.js | `hydrunjs`          | 🧪 In planning | Open for first contributors |
+| 🐍 Python | `hydrunpy`          | 🧠 In design | Ideal for scripting/ML use cases |
+| 🦀 Rust | `hydrunrs`          | 🧠 In design | Focus on performance-critical use |
+| ☕ Java | `hydrunjv`           | 🧠 In design | For enterprise/backend systems |
+| 🎯 C# / .NET | `hydruncs`          | 🧠 In design | Great for Windows, Unity, and backend apps |
+| 🧠 C++ | `hydruncpp`         | 🧠 In design | Low-level power, needs first committers |
+| 🌀 Kotlin | `hydrunkt`           | 🧠 In design | Ideal for Android and backend devs |
+| 🍎 Swift | `hydrunsw`       | 🧠 In design | iOS & macOS focused, native-feel SDK |
 
 All based on the same robust gRPC interface.
+
+---
+
+## 🤝 Contribute to Hydra
+
+Hydra is not just a database – it's a new paradigm.
+
+If you'd like to help build the official SDKs and developer tools around the Hydra core engine, check out our contributor program:
+
+👉 [View the full Contributor Guide →](./CONTRIBUTOR.md)
+
+You'll find everything from perks, expectations, SDK plans, and how to get started.
+
+> Join Hydra. Be legendary.
 
 ---
 
