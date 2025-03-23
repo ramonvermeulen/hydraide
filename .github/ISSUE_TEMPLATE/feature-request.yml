@@ -1,0 +1,53 @@
+name: Feature Request
+description: Propose a new idea, improvement or SDK feature
+title: "Feature: <what would you love to see?>"
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        💡 **Have an idea? We’re listening.**
+
+        Hydra evolves through community input — no idea is too small.
+
+  - type: input
+    id: scope
+    attributes:
+      label: What part of Hydra does this relate to?
+      placeholder: e.g. Core Engine, Python SDK, Indexing docs
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      placeholder: Describe the pain point or limitation you're hitting.
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What’s your proposed solution or feature?
+      placeholder: Tell us your vision — the more concrete, the better.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alt
+    attributes:
+      label: Any alternatives you’ve considered?
+      placeholder: Optional – it's ok if there aren’t any.
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: How important is this for your use case?
+      options:
+        - Critical – I can't proceed without it
+        - High – It would unlock something important
+        - Medium – It would be a great improvement
+        - Low – Just an idea / nice to have
+    validations:
+      required: true

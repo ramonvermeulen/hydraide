@@ -14,7 +14,7 @@
 //
 // 📜 License: Apache 2.0 for this interface definition only
 // 💡 Learn more: https://github.com/hydraide/hydraide
-// ✉ Contact: peter.gebri@hydraide.com
+// ✉ Contact: peter.gebri@trendizz.com
 //
 // =============================================================================
 

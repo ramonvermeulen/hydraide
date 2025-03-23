@@ -5,7 +5,7 @@ Thanks for your interest in the **Hydra JavaScript / Node.js SDK**!
 This SDK is not yet available, but we’re actively working on it.  
 If you’d like to use Hydra in your JavaScript / Node.js-based project, let us know!
 
-📩 Contact: [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)  
+📩 Contact: [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com) - Founder of Hydra & Trendizz       
 📬 Or open an [issue](https://github.com/hydraide/hydraide/issues) to show your interest.
 
 We appreciate your patience and enthusiasm! 🙏
