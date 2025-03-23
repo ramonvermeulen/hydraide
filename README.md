@@ -1,4 +1,4 @@
-![Hydra](images/main-hydra-concept-art.png)
+![Hydra](images/hydra-banner-stacked-text.png)
 
 # 🧠 HydrAIDE 2.0 – The Adaptive, Intelligent Data Engine
 
