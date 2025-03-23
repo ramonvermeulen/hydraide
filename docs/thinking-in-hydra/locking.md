@@ -217,5 +217,5 @@ Our upcoming SDKs will let you:
 
 ## 🧭 Navigation
 
-← [Back to Subscriptions](./subscriptions.md) | [Next: Clean System →](./clean-system.md)
+← [Back to 🔄 Subscriptions](./subscriptions.md) | [Next: 🧹 Clean System](./clean-system.md) 
 

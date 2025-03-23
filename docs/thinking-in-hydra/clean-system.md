@@ -153,5 +153,5 @@ Mic drop. 🎤
 
 ## 🧭 Navigation
 
-← [Back to Locking](./locking.md) | [Next: Distributed Architecture →](./distributed-architecture.md)
+← [Back to 🔐 Locking](./locking.md) | [Next 🌐 Distributed Architecture](./distributed-architecture.md)
 

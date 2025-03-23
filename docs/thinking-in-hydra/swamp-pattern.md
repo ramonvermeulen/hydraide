@@ -159,5 +159,5 @@ All SDKs will reflect the same core logic you just learned here – so once you 
 
 ## 🧭 Navigation
 
-← [Back to Naming Convention](./naming-convention.md) | [Next: Keys and Values](./keys-and-values.md)
+← [Back to Naming Convention](./naming-convention.md) | [Next: 💎 Treasures](./treasures.md)  
 

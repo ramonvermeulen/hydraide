@@ -257,5 +257,5 @@ Each Hydra SDK will support value-based indexing with lazy evaluation and adapti
 
 ## 🧭 Navigation
 
-← [Back to Treasures](./treasures.md) | [Next: Subscriptions →](./subscriptions.md)
+← [Back to 💎 Treasures](./treasures.md)   | [Next: 🔄 Subscriptions](./subscriptions.md) 
 

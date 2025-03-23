@@ -271,6 +271,6 @@ You’ll be able to:
 
 ## 🧭 Navigation
 
-← [Back to Indexing](./indexing.md) | [Next: Locking →](./locking.md)
+← [Back to 🧽 Indexing](./indexing.md)  | [Next: 🔐 Locking](./locking.md)
 
 

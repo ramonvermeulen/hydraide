@@ -305,5 +305,5 @@ Every Hydra SDK will let you:
 
 ## 🧭 Navigation
 
-← [Back to Swamp Pattern](./swamp-pattern.md) | [Next: Indexing →](./indexing.md)
+← [Back to 🌿 Swamp Pattern](./swamp-pattern.md)  | [Next: 🧽 Indexing](./indexing.md)  
 

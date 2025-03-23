@@ -350,5 +350,5 @@ The SDKs will make it effortless to:
 
 ## 🗭 Navigation
 
-← [Back to Clean System](./clean-system.md) | [Next: Install & Update Hydra →](./how-to-install-update-hydra.md)
+← [Back to: 🧹 Clean System](./clean-system.md) | [Next 🚀 Install & Update](./how-to-install-update-hydra.md)
 

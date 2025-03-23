@@ -301,7 +301,7 @@ Stay tuned – once these SDKs are released, building with Hydra will be as eleg
 
 ## 🧭 Navigation
 
-← [Back to Distributed Architecture](./distributed-architecture.md)
+← [Back to 🌐 Distributed Architecture](./distributed-architecture.md)
 
 
 

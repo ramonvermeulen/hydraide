@@ -198,6 +198,6 @@ Let’s keep going. 🚀
 
 ## 🧭 Navigation
 
-← [Back to Thinking in Hydra](./thinking-in-hydra.md) | [Next: How to Store and Read Data →](./how-to-store-and-read-data.md)
+← [Back to Thinking in Hydra](./thinking-in-hydra.md) | [Next: 🌿 Swamp Pattern](./swamp-pattern.md)
 
 
