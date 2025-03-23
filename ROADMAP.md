@@ -52,7 +52,7 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 
 ## 🌐 Website *(Q2 2025)*
 
-- hydraide.com marketing site 🔄
+- hydraide.io  marketing site 🔄
 - Introduction, features, quickstart guide
 - Link to GitHub, docs, and community tools
 - SEO & branding improvements

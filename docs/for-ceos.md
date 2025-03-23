@@ -170,7 +170,7 @@ If you’re a technical founder, architect, or CTO, we recommend the full 9-step
 Hydra is open for enterprise pilots and early adopters.
 
 📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)  
-🌐 **https://hydraide.com**
+🌐 **https://hydraide.io **
 
 > Whether you're serving 1,000 users or 100 million — Hydra will be your silent, scaling ally.  
 > Let's bring your vision to life. Together.

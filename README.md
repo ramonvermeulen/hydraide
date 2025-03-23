@@ -152,7 +152,7 @@ Hydra is used in production at [Trendizz.com](https://trendizz.com). Interested 
 
 📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)
 (Founder of Hydra & Trendizz)
-🌐 **Website** – [https://hydraide.com](https://hydraide.com) Currently in progress and directly linked to GitHub.
+🌐 **Website** – [https://hydraide.io ](https://hydraide.io ) Currently in progress and directly linked to GitHub.
 
 ---
 
