@@ -169,7 +169,7 @@ If you’re a technical founder, architect, or CTO, we recommend the full 9-step
 ## 📩 Let’s Build Your Future
 Hydra is open for enterprise pilots and early adopters.
 
-📧 **Peter Gebri** – [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)  
+📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)  
 🌐 **https://hydraide.com**
 
 > Whether you're serving 1,000 users or 100 million — Hydra will be your silent, scaling ally.  
