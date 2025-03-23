@@ -1,0 +1,55 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in Hydra or its SDKs
+title: "Bug: <short description>"
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🐞 **Something broke? Let’s fix it together.**
+
+        Please give us as much detail as you can — we *love* precise reports.
+
+  - type: input
+    id: sdk
+    attributes:
+      label: Which part is affected?
+      placeholder: e.g. Go SDK, Node SDK, Core Engine
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+      placeholder: Tell us what you were hoping to see or get.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What actually happened?
+      placeholder: Copy any error messages, logs, or screenshots if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Call `client.GetTreasure("key")`
+        2. Observe crash or empty result
+        3. Check logs...
+
+  - type: dropdown
+    id: blocker
+    attributes:
+      label: Is this blocking your work?
+      options:
+        - Yes
+        - No
+        - Not sure
+    validations:
+      required: true

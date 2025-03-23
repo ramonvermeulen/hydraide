@@ -166,6 +166,36 @@ Let’s go deeper.
 
 ---
 
+## 🔗 SDK Integration Resources (Coming Soon)
+
+Now that you've explored the **naming convention**, you're ready to glimpse what's coming next: **Hydra SDKs**.
+
+But here’s our advice:
+Explore these SDKs **only after** you’ve fully embraced how Swamps are structured and named. When you name with intention, code becomes an extension of thought – not just syntax.
+
+Each SDK will support the naming patterns you’ve just learned, making it easy to apply your new Hydra mindset directly into your favorite language.
+
+| 💻 SDK | 🧪 Code Name | 🛠️ Status | 📘 Swamp Pattern Docs |
+|--------|-------------|------------|-----------------------|
+| 🟢 Go | `hydrungo` | ✅ Actively developed | Coming soon – Core SDK, battle-tested |
+| 🟡 Node.js | `hydrunjs` | 🧪 In planning | Coming soon – Great for backend APIs |
+| 🐍 Python | `hydrunpy` | 🧠 In design | Coming soon – Ideal for scripting/ML |
+| 🦀 Rust | `hydrunrs` | 🧠 In design | Coming soon – Performance critical apps |
+| ☕ Java | `hydrunjv` | 🧠 In design | Coming soon – Enterprise integration |
+| 🎯 C# / .NET | `hydruncs` | 🧠 In design | Coming soon – Unity, backend services |
+| 🧠 C++ | `hydruncpp` | 🧠 In design | Coming soon – Low-level, native control |
+| 🌀 Kotlin | `hydrunkt` | 🧠 In design | Coming soon – Android/backend devs |
+| 🍎 Swift | `hydrunsw` | 🧠 In design | Coming soon – iOS/macOS native apps |
+
+All SDKs will follow the same core logic – so once you understand Swamp naming, applying it in Go, Python, JavaScript, or any other language will feel completely natural.
+
+> 💬 **Still unsure about how naming patterns work in your context?**  
+> Don’t worry. In the next chapters, we’ll guide you step by step through how to store and read data, how to model your Swamps, and how it all connects in code.
+
+Let’s keep going. 🚀
+
+---
+
 ## 🧭 Navigation
 
 ← [Back to Thinking in Hydra](./thinking-in-hydra.md) | [Next: How to Store and Read Data →](./how-to-store-and-read-data.md)

@@ -1,215 +1,167 @@
 ![Hydra](images/main-hydra-concept-art.png)
 
-# 🧠 HydrAIDE 2.0 – Adaptive Intelligent Data Engine
+# 🧠 HydrAIDE 2.0 – The Adaptive, Intelligent Data Engine
 
 ![Go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go)
 ![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-2.0-informational?style=for-the-badge)
-![Performance](https://img.shields.io/badge/speed-O(1)%20Access-ff69b4?style=for-the-badge)
+![Speed](https://img.shields.io/badge/Access-O(1)%20Always-ff69b4?style=for-the-badge)
 
-> **Production-ready. Enterprise-grade. Battle-tested.**
-> Built and refined over **3+ years** of real-world use, Hydra 2.0 delivers unmatched performance, control, and flexibility.
+> **Hydra isn’t just a database. It’s a philosophy.**
+> Built to serve real-time, reactive systems where every operation is intentional — and everything else vanishes.
 
-Hydra is not just another database.  
-It’s a lightning-fast, memory-conscious, real-time data engine –  
-built to be as **intelligent** as the data it stores.
+Welcome to the engine behind platforms like [Trendizz.com](https://trendizz.com), where billions of records are searched, updated, and streamed in **real-time**. Hydra 2.0 is the result of 3+ years of battle-tested evolution, powering search engines, dashboards, crawlers, and more.
 
-> 🛠️ Hydra is actively evolving.  
-> We're currently adding:
-> - 🧪 Full proto documentation
-> - 💻 Go SDK (`hydrun-go`)
-> - 🧵 Real-world examples
+Hydra brings:
+- ⚡ **O(1) access to billions of objects**
+- 🔄 **Real-time reactivity with built-in subscriptions**
+- 🧠 **In-memory indexes built only when needed**
+- 🧹 **Zero garbage, no cron jobs, no leftovers**
+- 🌐 **Distributed scaling without orchestrators**
 
-Stay tuned and ⭐ the repo to follow along!
-
----
-
-> ⚠️ This repository does not contain the source code of the Hydra engine itself.  
-> Hydra is a closed-source, production-grade system.  
-> This repo contains the public API (`.proto`), usage documentation, and SDK integrations.
-
-**Enterprise licensing available** – contact us: [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)
+> **"Hydra doesn’t search your data. It knows where it is."**
 
 ---
 
-## 📖 Documentation & Resources
+## 📚 Start Here: The Hydra Documentation
 
-🚧 **Documentation is currently being uploaded and expanded.**  
-Stay tuned for updates! 🚀
+To truly understand Hydra, start with its **core philosophy and architecture**:
 
-🔹 **[API Reference](docs/api_reference.md)** – Full API documentation (proto-based) 
-🔹 **[Usage Guide](docs/usage.md)** – How to set up and use Hydra  
-🔹 **[Examples](docs/examples/basic_usage.md)** – Real-world integration examples  
-🔹 **[Roadmap](docs/roadmap.md)** – Upcoming features & plans
+👉 [**Thinking in Hydra – The Philosophy of Reactive Data**](docs/thinking-in-hydra/thinking-in-hydra.md)  
+*Learn how Hydra redefines structure, access, and system design from the ground up.*
 
----
+### Then continue the 9-step journey:
+| Step | Section | Description |
+|------|---------|-------------|
+| 1️⃣ | [📍 Naming Convention](docs/thinking-in-hydra/naming-convention.md) | Learn how data structure begins with naming – not schemas. |
+| 2️⃣ | [🌿 Swamp Pattern](docs/thinking-in-hydra/swamp-pattern.md) | Configure persistence, memory, and lifespan directly from code. |
+| 3️⃣ | [💎 Treasures](docs/thinking-in-hydra/treasures.md) | Understand the smallest, most powerful unit of data. |
+| 4️⃣ | [🧩 Indexing](docs/thinking-in-hydra/indexing.md) | Discover ephemeral, in-memory indexing that feels like magic. |
+| 5️⃣ | [🔄 Subscriptions](docs/thinking-in-hydra/subscriptions.md) | Build reactive systems natively with Hydra’s event engine. |
+| 6️⃣ | [🔐 Locking](docs/thinking-in-hydra/locking.md) | Achieve true concurrency without fear. |
+| 7️⃣ | [🧹 Clean System](docs/thinking-in-hydra/clean-system.md) | Never think about cleanup again – because Hydra already did. |
+| 8️⃣ | [🌐 Distributed Architecture](docs/thinking-in-hydra/distributed-architecture.md) | Scale horizontally without orchestration pain. |
+| 9️⃣ | [🚀 Install & Update](docs/thinking-in-hydra/how-to-install-update-hydra.md) | Deploy Hydra in minutes, not days. |
 
-## 🔥 Why Hydra?
-
-- ⚡ **Blazing fast access**, regardless of data size.
-- 📎 **90% storage saving** with binary and compressed data.
-- ↻ **Real-time subscriptions** and adaptive cache control.
-- 🔐 **Built-in locking mechanism** – safe multi-process coordination.
-- 🧠 **Customizable per collection**: memory lifetime, file limits, write intervals.
-- 🌐 **Distributed-ready**: no orchestrator needed to scale across multiple servers.
-- 🚀 **Simple gRPC interface** – easy to integrate from any language.
-
----
-
-## 🧬 How does Hydra work?
-
-Hydra organizes data into units called **Swamps**.  
-Each Swamp is a self-contained, independently optimized mini-storage:
-
-- Stored directly as a file (or memory-only).
-- Accessed via a predictable path → **O(1) access speed**.
-- Automatically chunked, compressed, binary-stored with [Snappy](https://github.com/google/snappy) and [GOB](https://golang.org/pkg/encoding/gob/).
-
-> No SQL. No schema headache. No unnecessary parsing.  
-> Just your data – **in, out, real-time**.
 
 ---
 
-## 🐉 The Hydra Analogy
+### 💼 For CEOs – Why Your Company Needs Hydra
 
-In mythology, the Hydra was a powerful multi-headed guardian creature.  
-In our system, **Hydra watches over your data**.
+> **You’re building fast. Scaling faster. But your data engine is slowing you down.**
 
-- Each **Swamp** is a separate domain where data is stored.
-- Inside each Swamp live the **Treasures** – the actual pieces of data.
-- The Hydra can access and manipulate any Swamp instantly, across namespaces.
+Hydra was built for founders and leaders who believe their teams deserve better.  
+No background daemons. No stale indexes. No technical debt.
 
-Namespaces follow this structure:
-`Sanctuary → Realm → Swamp → Treasure`
+Just **instant data flow**, **zero waste**, and **developer-native architecture** that lets your team move at light speed.
 
-Hydra intelligently routes and accesses data **without the need for any central orchestrator**.  
-Using a deterministic hashing strategy, each Swamp is automatically mapped to the correct server – whether you're working with 1 or 100.
+🌟 **See how Hydra can transform your product velocity and reduce infra costs.**
+
+👉 [Read the CEO Guide →](docs/for-ceos.md)
 
 ---
 
-## 📦 Features at a glance
+## 🔥 Why Developers Choose Hydra
 
-| Feature | Description |
-|--------|-------------|
-| 🧭 Distributed architecture | Data is spread across servers using a hash-based strategy, no orchestrator required |
-| 🧠 On-demand indexing | Indexes are built in memory only when queried, with zero storage overhead |
-| 🎛️ Swamp-level control | Dynamically configure each swamp’s behavior (memory, flush, TTL) directly from code – no DB access required |
-| ↺ Subscribe | Get notified on changes instantly (like pub/sub) |
-| ⏳ Expire & Shift | Time-based expiry and cleanup |
-| 🔒 Locking | Swamp/key-level locking with TTL & context awareness |
-| 🧹 Built-in Garbage Collector | When the last treasure in a swamp is deleted, Hydra automatically deletes the swamp and its entire file structure to reclaim space |
-| 📥 Set/Get | Insert, update, get data – type-safe & atomic |
-| 📚 Slices | Blazing-fast reverse indexing. Collision-free. Memory-safe. |
-| ➕ Conditional Increment | Atomic incs with rules (if x > 10, then…) |
-| 📊 Count & Index | Indexed reads by creation, expiration, etc. |
-| 🚦 Exists check | Key & swamp existence support |
+| Feature | What It Means |
+|--------|---------------|
+| ⚡ Instant Swamp access | O(1) folder-mapped resolution, no indexing required |
+| 🧠 On-the-fly indexing | Built in RAM only when needed – disappears after use |
+| 🔄 Subscriptions | Real-time streams of change, built into every write/update/delete |
+| 🔐 Zero-deadlock locking | Per-Treasure locks and TTL-protected business locks |
+| 🧹 Auto-cleanup | Swamps and memory vanish when no longer needed |
+| 🌐 Horizontal scaling | Stateless by default, no orchestrator required |
+| 💾 SSD-friendly design | Chunked binary storage with delta writes |
+| 🧬 Fully typed | Store structs, slices, maps – native to your language |
+
+> You never define schemas. You never worry about cleanup. You just build.
+
 ---
 
-## 🎯 Who is Hydra for?
-
-Hydra was built for developers, data-driven teams, and platform architects who want:
-
-- Full control over where data is stored – in RAM, on SSD, or on disk.
-- Real-time performance, even with country-scale datasets.
-- To eliminate the need for multiple services by combining caching, storage, real-time updates, and analytics into one engine.
-- To scale with zero orchestrator overhead, and 100% predictability.
+## 🌀 Who Hydra is For
 
 Hydra is ideal for:
-- 🚀 **Startups** needing powerful data tools without infrastructure overhead
-- 🧪 **Research labs & academic institutions** working with large-scale data
-- 🌐 **Web crawlers & content indexing platforms** like Trendizz
-- 📊 **Realtime dashboards & analytics systems**
-- 📱 **IoT and edge computing systems** with limited memory
-- 🛠️ **Engineers who demand precision and full control** over their data infrastructure
+- 🚀 Startups that need a modern database without infrastructure burden
+- 🌐 High-volume web crawlers and analytics platforms (like Trendizz)
+- 📊 Live dashboards, reactive pipelines, and streaming interfaces
+- 🧪 Research and ML pipelines with ephemeral data flows
+- 📱 IoT and edge devices with minimal memory
+
+And especially for developers who:
+- Want to **own their data logic in code**
+- Need **real-time data flow without middleware**
+- Hate daemons, cron jobs, and config bloat
+
+> Hydra is **developer-native**. You don’t configure it. You *declare intent* — and it responds.
 
 ---
 
-## 🧪 Who is using it?
+## 🚀 Install & Run in Minutes
 
-Hydra is already powering high-volume platforms like **Trendizz.com**,
-a cutting-edge search platform that indexes and analyzes the public web content of countries across Europe — including Hungary, Romania, Slovakia, and parts of the Czech Republic — to make them searchable based on every word they contain.
+Hydra is container-first. Just use Docker Compose:
 
-Trendizz needed a database engine that could handle **massive-scale, word-level indexing and search**, in real time, across millions of websites.
-
-There was no database fast and efficient enough for this challenge — so we built Hydra.
-
-Thanks to Hydra:
-- Complex, precise word-based searches across all web content take **just 1–2 seconds**.
-- The system continuously crawls and re-indexes websites, so performance and resource efficiency are **absolutely critical**.
-- **Hydra enables this** with near-zero memory overhead, distributed file-level storage, and blazing-fast access.
-
-> 2TB of unoptimized data → compressed and optimized to just 200GB.
-
-Hydra achieves this using:
-- ✔ Real-time adaptive in-memory cache control
-- ✔ Per-swamp chunking and SSD-safe writes
-- ✔ Snappy compression + GOB encoding (zero conversion overhead)
-- ✔ Intelligent memory & expiration logic per swamp
-- ✔ File-system mapped swamp paths for **O(1)** direct access
-- ✔ Distributed data access using swamp-based hashing – no orchestrator needed
-
----
-
-## 🏱 Ready for SDKs & Integrations
-
-This repository contains the core `.proto` files of Hydra.  
-You're free to generate your own client SDKs using:
-
-```bash
-protoc --go_out=. --go-grpc_out=. hydra-service.proto
+```yaml
+services:
+  hydra-server:
+    image: ghcr.io/hydraide/hydraserver:VERSION
+    ports:
+      - "4900:4444"
+    volumes:
+      - /path/to/data:/hydra/data
+      - /path/to/settings:/hydra/settings
+      - /path/to/certs:/hydra/certificate
+    environment:
+      - GRPC_SERVER_ERROR_LOGGING=true
+    stop_grace_period: 10m
 ```
 
-Official SDKs:
-
-| 💻 Language | 🔗 Repo (Code Name) | 🛠️ Status | 📝 Notes |
-|-------------|---------------------|------------|---------|
-| 🟢 Go | `hydrungo`          | ✅ Actively developed | Core SDK, led by main developer – contributors welcome! |
-| 🟡 Node.js | `hydrunjs`          | 🧪 In planning | Open for first contributors |
-| 🐍 Python | `hydrunpy`          | 🧠 In design | Ideal for scripting/ML use cases |
-| 🦀 Rust | `hydrunrs`          | 🧠 In design | Focus on performance-critical use |
-| ☕ Java | `hydrunjv`           | 🧠 In design | For enterprise/backend systems |
-| 🎯 C# / .NET | `hydruncs`          | 🧠 In design | Great for Windows, Unity, and backend apps |
-| 🧠 C++ | `hydruncpp`         | 🧠 In design | Low-level power, needs first committers |
-| 🌀 Kotlin | `hydrunkt`           | 🧠 In design | Ideal for Android and backend devs |
-| 🍎 Swift | `hydrunsw`       | 🧠 In design | iOS & macOS focused, native-feel SDK |
-
-All based on the same robust gRPC interface.
+➡ Full install guide: [Install & Update Hydra →](docs/how-to-install-update-hydra.md)
 
 ---
 
-## 🤝 Contribute to Hydra
+## 💻 SDKs – Native Integration in Your Language
 
-Hydra is not just a database – it's a new paradigm.
+Hydra speaks **gRPC**, and every SDK is powered by the same `.proto` definition:
 
-If you'd like to help build the official SDKs and developer tools around the Hydra core engine, check out our contributor program:
+| Language | Status | Repo |
+|----------|--------|------|
+| Go       | ✅ Active | `hydrungo` |
+| Node.js  | 🧪 Planning | `hydrunjs` |
+| Python   | 🧠 In design | `hydrunpy` |
+| Rust     | 🧠 In design | `hydrunrs` |
+| Java     | 🧠 In design | `hydrunjv` |
+| C# / .NET| 🧠 In design | `hydruncs` |
 
-👉 [View the full Contributor Guide →](./CONTRIBUTOR.md)
-
-You'll find everything from perks, expectations, SDK plans, and how to get started.
-
-> Join Hydra. Be legendary.
-
----
-
-## 💬 Get in touch
-
-> Hydra is proudly developed in **Go**, engineered for high performance and low memory usage.
-> Originally built by **Peter Gebri** to power Trendizz, it is now open to the world as an enterprise-ready solution.
-
-
-Interested in trying Hydra for your project?  
-Want to build an SDK or use it in research?
-
-📩 Contact: **Peter Gebri** – [peter.gebri@hydraide.com](mailto:peter.gebri@hydraide.com)  
-Or join the waitlist at [hydrAIDE.com](https://hydraide.com)
-
-## 🐞 Found something? Need help?
-
-Feel free to open an [issue](https://github.com/hydraide/hydraide/issues)!
+More SDKs: C++, Kotlin, Swift – all on the roadmap.
 
 ---
 
-> 🔍 *Hydra doesn’t search your data.*  
-> *It knows exactly where it is.*
+## 🙌 Want to Contribute?
+
+Start by reading the [Contributor Introduction](./CONTRIBUTORS.md) – it explains why Hydra exists, what kind of people we’re looking for, and how you can join.
+Then check out our [Contribution Guide](./CONTRIBUTING.md) – it walks you through the practical steps.
+
+Once you're ready, open your first issue or pull request — we’ll be waiting! 🚀
+
+---
+
+## 📩 Contact & Enterprise
+
+Hydra is used in production at [Trendizz.com](https://trendizz.com). Interested in enterprise licensing, SDK development, or embedding Hydra in your own platform?
+
+📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)
+(Founder of Hydra & Trendizz)
+🌐 **Website** – [https://hydraide.com](https://hydraide.com) Currently in progress and directly linked to GitHub.
+
+---
+
+📍 See the full [Hydra Roadmap](./ROADMAP.md) → What we’re building and dreaming next
+
+---
+
+> 🧠 Hydra isn’t a tool you use.
+> It’s a system you think with.
+
+Join the movement. Build different.
 
