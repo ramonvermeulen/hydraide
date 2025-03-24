@@ -95,6 +95,29 @@ And especially for developers who:
 
 > Hydra is **developer-native**. You don’t configure it. You *declare intent* — and it responds.
 
+## 📊 Comparisons – Hydra vs Other Systems
+
+Want to see how Hydra compares to the most popular databases and engines?  
+We’re building a full series of deep comparisons — mindset-first, not config-first.
+
+| 🔍 Comparison                | 📄 Status           | Link                                                                       |
+|-----------------------------|---------------------|----------------------------------------------------------------------------|
+| Hydra vs MongoDB            | ✅ Complete         | [Read Hydra vs MongoDB Comparison](./docs/comparisons/hydra-vs-mongodb.md) |
+| Hydra vs Redis              | ✅ Complete         | [Read Hydra vs Redis Comparison](./docs/comparisons/hydra-vs-redis.md)     |
+| Hydra vs PostgreSQL         | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs MySQL              | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs SQLite             | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs Elasticsearch      | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs Firebase / Firestore | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs DynamoDB           | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs Cassandra          | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs InfluxDB           | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs ClickHouse         | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs Neo4j              | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs TimescaleDB        | 🔜 In progress      | *coming soon*                                                              |
+| Hydra vs Apache Kafka       | 🔜 In progress      | *coming soon* (stream vs native pub-sub)                                   |
+
+
 ---
 
 ## 🚀 Install & Run in Minutes
