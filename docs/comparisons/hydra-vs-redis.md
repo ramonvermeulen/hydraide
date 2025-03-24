@@ -850,18 +850,18 @@ A 9-step journey to fully rewire how you model data, think about structure, and 
 
 | Step | Section                                                                        | What You'll Learn                              |
 | ---- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| 1️⃣  | [📛 Naming Convention](./thinking-in-hydra/naming-convention.md)               | How structure begins with naming – not schemas |
-| 2️⃣  | [🌿 Swamp Pattern](./thinking-in-hydra/swamp-pattern.md)                       | Configure memory, TTL, and persistence in code |
-| 3️⃣  | [💎 Treasures](./thinking-in-hydra/treasures.md)                               | Hydra’s data units: fast, typed, and reactive  |
-| 4️⃣  | [🧩 Indexing](./thinking-in-hydra/indexing.md)                                 | Instant in-memory indexing, no B-trees         |
-| 5️⃣  | [🔄 Subscriptions](./thinking-in-hydra/subscriptions.md)                       | Native real-time events, no brokers            |
-| 6️⃣  | [🔐 Locking](./thinking-in-hydra/locking.md)                                   | Per-record locks, business-safe operations     |
-| 7️⃣  | [🧹 Clean System](./thinking-in-hydra/clean-system.md)                         | Zero-waste design, no background jobs          |
-| 8️⃣  | [🌐 Distributed Architecture](./thinking-in-hydra/distributed-architecture.md) | Stateless scaling without orchestration        |
-| 9️⃣  | [🚀 Install & Update](./thinking-in-hydra/how-to-install-update-hydra.md)      | From Docker to production in minutes           |
+| 1️⃣  | [📛 Naming Convention](/docs/thinking-in-hydra/naming-convention.md)               | How structure begins with naming – not schemas |
+| 2️⃣  | [🌿 Swamp Pattern](/docs/thinking-in-hydra/swamp-pattern.md)                       | Configure memory, TTL, and persistence in code |
+| 3️⃣  | [💎 Treasures](/docs/thinking-in-hydra/treasures.md)                               | Hydra’s data units: fast, typed, and reactive  |
+| 4️⃣  | [🧩 Indexing](/docs/thinking-in-hydra/indexing.md)                                 | Instant in-memory indexing, no B-trees         |
+| 5️⃣  | [🔄 Subscriptions](/docs/thinking-in-hydra/subscriptions.md)                       | Native real-time events, no brokers            |
+| 6️⃣  | [🔐 Locking](/docs/thinking-in-hydra/locking.md)                                   | Per-record locks, business-safe operations     |
+| 7️⃣  | [🧹 Clean System](/docs/thinking-in-hydra/clean-system.md)                         | Zero-waste design, no background jobs          |
+| 8️⃣  | [🌐 Distributed Architecture](/docs/thinking-in-hydra/distributed-architecture.md) | Stateless scaling without orchestration        |
+| 9️⃣  | [🚀 Install & Update](/docs/thinking-in-hydra/how-to-install-update-hydra.md)      | From Docker to production in minutes           |
 
 
-> Want to see the Hydra mindset in action? Dive into [`thinking-in-hydra.md`](./thinking-in-hydra/thinking-in-hydra.md)
+> Want to see the Hydra mindset in action? Dive into [`thinking-in-hydra.md`](/docs/thinking-in-hydra/thinking-in-hydra.md)
 
 ---
 
