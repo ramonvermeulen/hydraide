@@ -860,9 +860,6 @@ A 9-step journey to fully rewire how you model data, think about structure, and 
 | 8️⃣  | [🌐 Distributed Architecture](/docs/thinking-in-hydra/distributed-architecture.md) | Stateless scaling without orchestration        |
 | 9️⃣  | [🚀 Install & Update](/docs/thinking-in-hydra/how-to-install-update-hydra.md)      | From Docker to production in minutes           |
 
-
-> Want to see the Hydra mindset in action? Dive into [`thinking-in-hydra.md`](/docs/thinking-in-hydra/thinking-in-hydra.md)
-
 ---
 
 ## 👷 SDKs & Contributors Welcome
