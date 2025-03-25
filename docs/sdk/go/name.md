@@ -104,13 +104,15 @@ name.New().Sanctuary("system").Realm("events").Swamp("node-42")
 
 > 💡 Tip: Reuse consistent Sanctuary/Realm schemes across modules to keep your data model predictable and scalable.
 
-- Names should use short, compact, readable words that clearly represent logical units.
+### ✅ Naming Guidelines
+- Use short, compact, readable words that clearly represent logical units.
 - Avoid ambiguous or overly technical terms. Prioritize clarity and consistency.
-- For a deeper understanding of naming strategies, conventions, and real-world patterns, see the extended guide: [Naming Convention](https://github.com/hydraide/hydraide/blob/main/docs/thinking-in-hydraide/naming-convention.md)
+- Always group Swamps under a logical Sanctuary/Realm structure.
+- Avoid using raw strings like "flat/swampX" — use semantic nesting instead.
 
-- Always group Swamps under a logical Sanctuary/Realm structure
-- Avoid using raw strings like "flat/swampX" — use semantic nesting instead
-- Never call `Get()` or `GetServerNumber()` directly from application code — let the SDK route based on Name
+### 📚 Learn More
+- For deeper strategies and real-world patterns, see: [Naming Convention](https://github.com/hydraide/hydraide/blob/main/docs/thinking-in-hydraide/naming-convention.md)
+- Never call `Get()` or `GetServerNumber()` directly from application code — let the SDK route based on Name.
 
 ---
 
