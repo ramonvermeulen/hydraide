@@ -60,8 +60,8 @@
 # - Ensures Go dependencies are updated
 build: proto
 	@echo "✅ Go dependencies updated"
-	go mod tidy
-	go get -u all
+	# go mod tidy
+	# go get -u all
 
 # -----------------------------------------------------------------------------
 # 🛠️ proto – Compile .proto files to Go (no go get)

@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"github.com/hydraide/hydraide/generated/go/hydraidepb"
+	"github.com/hydraide/hydraide/generated/hydraidepb"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
