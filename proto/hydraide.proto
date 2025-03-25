@@ -33,8 +33,8 @@ syntax="proto3";
 
 import "google/protobuf/timestamp.proto";
 
-package hydraidepb;
-option go_package = "github.com/hydraide/hydraide/generated/go/hydraidepb;hydraidepb";
+package hydraidepbgo;
+option go_package = "github.com/hydraide/hydraide/generated/hydraidepbgo;hydraidepbgo";
 
 service HydraideService {
 

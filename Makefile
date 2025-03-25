@@ -69,10 +69,10 @@ build: proto
 # - Generates .pb.go and .pb.grpc.go files to ./generated/go
 # - Uses source-relative paths for imports
 proto:
-	@echo "🛠️  Generating Go gRPC files to ./generated/go"
+	@echo "🛠️  Generating Go gRPC files to ./generated/hydraidepbgo"
 	protoc --proto_path=proto \
-		--go_out=./generated/go --go_opt=paths=source_relative \
-		--go-grpc_out=./generated/go --go-grpc_opt=paths=source_relative \
+		--go_out=./generated/hydraidepbgo --go_opt=paths=source_relative \
+		--go-grpc_out=./generated/hydraidepbgo --go-grpc_opt=paths=source_relative \
 		proto/hydraide.proto || echo "⚠️  Go proto generation failed. Check protoc-gen-go & protoc-gen-go-grpc"
 
 # -----------------------------------------------------------------------------
@@ -81,7 +81,7 @@ proto:
 # - Deletes all contents in the ./generated folders
 clean:
 	@echo "🧹 Cleaning generated files..."
-	rm -rf generated/go/* generated/python/* generated/node/* generated/rust/* generated/java/* generated/csharp/*
+	rm -rf generated/hydraidepbgo* generated/hydraidepbpy/* generated/hydraidepbjs/* generated/hydraidepbrs/* generated/hydraidepbjv/* generated/hydraidepbcs/*
 
 # -----------------------------------------------------------------------------
 # 🔹 proto-python – Generate Python client bindings (if grpc_tools available)
@@ -91,9 +91,9 @@ proto-python:
 	@echo "🐍 Generating Python gRPC files..."
 	@command -v python3 >/dev/null 2>&1 || { echo "⚠️  Python not installed – skipping"; exit 0; }
 	@protoc --proto_path=proto \
-		--python_out=./generated/python \
-		--pyi_out=./generated/python \
-		--grpc_python_out=./generated/python \
+		--python_out=./generated/hydraidepbpy \
+		--pyi_out=./generated/hydraidepbpy \
+		--grpc_python_out=./generated/hydraidepbpy \
 		proto/hydraide.proto || echo "⚠️  Python proto generation failed."
 
 # -----------------------------------------------------------------------------
@@ -104,8 +104,8 @@ proto-node:
 	@echo "🟨 Generating Node.js gRPC files..."
 	@command -v protoc-gen-grpc >/dev/null 2>&1 || { echo "⚠️  Node.js gRPC plugin not found – skipping"; exit 0; }
 	@protoc --proto_path=proto \
-		--js_out=import_style=commonjs,binary:generated/node \
-		--grpc_out=generated/node \
+		--js_out=import_style=commonjs,binary:generated/hydraidepbjs \
+		--grpc_out=generated/hydraidepbjs \
 		proto/hydraide.proto || echo "⚠️  Node.js proto generation failed."
 
 # -----------------------------------------------------------------------------
@@ -116,7 +116,7 @@ proto-rust:
 	@echo "🦀 Generating Rust proto files..."
 	@command -v protoc-gen-prost >/dev/null 2>&1 || { echo "⚠️  protoc-gen-prost not installed – skipping"; exit 0; }
 	@protoc --proto_path=proto \
-		--prost_out=./generated/rust \
+		--prost_out=./generated/hydraidepbrs \
 		proto/hydraide.proto || echo "⚠️  Rust proto generation failed."
 
 # -----------------------------------------------------------------------------
@@ -126,8 +126,8 @@ proto-rust:
 proto-java:
 	@echo "☕ Generating Java proto files..."
 	@protoc --proto_path=proto \
-		--java_out=./generated/java \
-		--grpc-java_out=./generated/java \
+		--java_out=./generated/hydraidepbjv \
+		--grpc-java_out=./generated/hydraidepbjv \
 		proto/hydraide.proto || echo "⚠️  Java proto generation failed."
 
 # -----------------------------------------------------------------------------
@@ -137,8 +137,8 @@ proto-java:
 proto-csharp:
 	@echo "🎯 Generating C# proto files..."
 	@protoc --proto_path=proto \
-		--csharp_out=./generated/csharp \
-		--grpc_out=./generated/csharp \
+		--csharp_out=./generated/hydraidepbcs \
+		--grpc_out=./generated/hydraidepbcs \
 		proto/hydraide.proto || echo "⚠️  C# proto generation failed."
 
 # -----------------------------------------------------------------------------
