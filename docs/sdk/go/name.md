@@ -1,8 +1,10 @@
 # `name` Package – Deterministic Naming in HydrAIDE
 
 ---
+
 📘 This is part of the HydrAIDE Go SDK documentation.
 Full SDK documentation: https://github.com/hydraide/hydraide/blob/main/docs/sdk/go/README.md
+
 ---
 
 The `name` package defines how Swamps are **logically grouped and uniquely identified** using a three-level hierarchy:
