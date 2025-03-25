@@ -105,6 +105,7 @@ type Name interface {
 	Swamp(swampName string) Name
 	Get() string
 	GetFolderNumber(allFolders uint16) uint16
+	IsWildcardPattern() bool
 }
 
 type name struct {
@@ -192,6 +193,11 @@ func (n *name) GetFolderNumber(allFolders uint16) uint16 {
 
 	return n.FolderNumber
 
+}
+
+// IsWildcardPattern returns true if any part of the Name is set to "*".
+func (n *name) IsWildcardPattern() bool {
+	return n.SanctuaryID == "*" || n.RealmName == "*" || n.SwampName == "*"
 }
 
 // Load reconstructs a Name from a given path string in the format:

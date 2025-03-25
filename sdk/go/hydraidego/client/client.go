@@ -98,11 +98,16 @@ type Client interface {
 	// This method allows stateless, O(1) routing of any Swamp request
 	// to the correct HydrAIDE server — no registry or lookup needed.
 	GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServiceClient
+
+	// GetUniqueServiceClients returns all unique HydrAIDE service clients
+	// only for internal use.
+	GetUniqueServiceClients() []hydraidepbgo.HydraideServiceClient
 }
 
 type client struct {
 	allFolders     uint16
 	serviceClients map[uint16]hydraidepbgo.HydraideServiceClient
+	uniqueServices []hydraidepbgo.HydraideServiceClient
 	connections    []*grpc.ClientConn
 	maxMessageSize int
 	servers        []*Server
@@ -383,6 +388,17 @@ func (c *client) GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServ
 	}).Error("error while getting service client by swamp name")
 
 	return nil
+
+}
+
+// GetUniqueServiceClients returns all unique HydrAIDE service clients
+// only for internal use.
+func (c *client) GetUniqueServiceClients() []hydraidepbgo.HydraideServiceClient {
+
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	return c.uniqueServices
 
 }
 
