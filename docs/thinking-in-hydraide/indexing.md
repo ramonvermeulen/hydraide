@@ -240,7 +240,7 @@ Each HydrAIDE SDK will support value-based indexing with lazy evaluation and ada
 
 | 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Indexing Docs                       |
 | ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Realtime, blazing fast   |
+| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Realtime, blazing fast   |
 | 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Event-friendly queries   |
 | 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – ML-ready sorting         |
 | 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Zero-cost abstractions   |

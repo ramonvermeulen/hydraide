@@ -869,7 +869,7 @@ We’re looking for contributors and early adopters to help shape these tools.
 
 | 💻 Language | SDK Code Name | Status         | Contribution Welcome? |
 | ----------- | ------------- | -------------- | --------------------- |
-| Go          | `hydraidego`    | ✅ Active       | ✅ Yes                 |
+| Go          | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)    | ✅ Active       | ✅ Yes                 |
 | Node.js     | `hydraidejs`    | 🧪 In planning | ✅ Yes                 |
 | Python      | `hydraidepy`    | 🧠 In design   | ✅ Yes                 |
 | Rust        | `hydraiders`    | 🧠 In design   | ✅ Yes                 |

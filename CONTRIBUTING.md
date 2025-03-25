@@ -36,7 +36,7 @@ If you’re contributing to an SDK:
 - Use a single `.md` file per SDK, but **clearly tagged and structured**
 
 If you’re contributing:
-- To core logic → edit `hydraidego`
+- To core logic → edit [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)
 - To docs → edit `.md` files in `/docs`
 - To examples → add to `/examples/<your-language>`
 

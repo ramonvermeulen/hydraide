@@ -36,7 +36,7 @@ You don’t need to be a rockstar. You need to be **curious**, **intentional**, 
 We’re developing official HydrAIDE SDKs across multiple languages.
 Each SDK is:
 - Idiomatic and clean.
-- Inspired by our Go reference SDK (`hydraidego`).
+- Inspired by our Go reference SDK ([`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)).
 - A bridge between HydrAIDE’s core and your favorite stack.
 
 You’re not wrapping endpoints.
@@ -44,7 +44,7 @@ You’re translating a **new kind of intelligence** into your language.
 
 | 💻 Language | 🔗 Repo | 🛠️ Status | 📝 Notes |
 |------------|--------|------------|---------|
-| Go         | `hydraidego`   | ✅ Production-ready | Your blueprint. Dive in. |
+| Go         | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Production-ready | Your blueprint. Dive in. |
 | Node.js    | `hydraidejs`   | 🧪 Planning          | First-contributor ready |
 | Python     | `hydraidepy`   | 🧠 In design         | Ideal for scripting, ML |
 | Rust       | `hydraiders`   | 🧠 In design         | Zero-cost performance  |

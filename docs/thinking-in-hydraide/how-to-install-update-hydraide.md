@@ -285,7 +285,7 @@ Below is a preview of the HydrAIDE SDKs that will soon be available, enabling fa
 
 | 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 SDK Docs               |
 | ------------ | ------------ | -------------------- | ------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon               |
+| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon               |
 | 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon               |
 | 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon               |
 | 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon               |

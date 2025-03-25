@@ -288,7 +288,7 @@ Every HydrAIDE SDK will let you:
 
 | 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Treasures Docs                       |
 | ------------ | ------------ | -------------------- | --------------------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Core SDK, type-rich       |
+| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Core SDK, type-rich       |
 | 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Async/stream ready        |
 | 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Great for ML pipelines    |
 | 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Systems-level precision   |

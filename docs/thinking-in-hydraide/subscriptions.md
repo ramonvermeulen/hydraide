@@ -254,7 +254,7 @@ You’ll be able to:
 
 | 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Subscription Docs                   |
 | ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Full gRPC stream model   |
+| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Full gRPC stream model   |
 | 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Reactive web bindings    |
 | 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Async + event loops      |
 | 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Low-latency listeners    |

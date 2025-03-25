@@ -200,7 +200,7 @@ Our upcoming SDKs will let you:
 
 | 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Locking Docs                        |
 | ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Built-in lock support    |
+| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Built-in lock support    |
 | 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Async-safe execution     |
 | 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Context-aware locks      |
 | 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – No-cost thread safety    |

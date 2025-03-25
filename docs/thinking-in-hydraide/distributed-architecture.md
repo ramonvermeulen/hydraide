@@ -333,7 +333,7 @@ The SDKs will make it effortless to:
 
 | 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Distributed Docs                   |
 | ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Multi-client auto-routing|
+| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Multi-client auto-routing|
 | 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Server-split awareness   |
 | 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Smart shard discovery    |
 | 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Zero-overhead scaling    |

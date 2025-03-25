@@ -140,7 +140,7 @@ Below is an overview of planned SDKs. Each will include dedicated documentation 
 
 | 💻 SDK | 🧪 Code Name | 🛠️ Status | 📘 Swamp Pattern Docs |
 |--------|-------------|------------|-----------------------|
-| 🟢 Go | `hydraidego` | ✅ Actively developed | Coming soon – Core SDK, battle-tested |
+| 🟢 Go | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md) | ✅ Actively developed | Coming soon – Core SDK, battle-tested |
 | 🟡 Node.js | `hydraidejs` | 🧪 In planning | Coming soon – Great for backend APIs |
 | 🐍 Python | `hydraidepy` | 🧠 In design | Coming soon – Ideal for scripting/ML |
 | 🦀 Rust | `hydraiders` | 🧠 In design | Coming soon – Performance critical apps |
