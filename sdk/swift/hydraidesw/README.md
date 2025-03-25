@@ -1,9 +1,9 @@
-# 🚀 HydrAIDE SDK – C# version coming soon
+# 🚀 HydrAIDE SDK – Swift version coming soon
 
-Thanks for your interest in the **HydrAIDE C# SDK**!
+Thanks for your interest in the **HydrAIDE Swift SDK**!
 
 This SDK is not yet available, but we’re actively working on it.  
-If you’d like to use HydrAIDE in your C#-based project, let us know!
+If you’d like to use HydrAIDE in your Swift-based project, let us know!
 
 📩 Contact: [hello@trendizz.com](mailto:hello@trendizz.com) - Founder of HydrAIDE & Trendizz      
 📬 Or open an [issue](https://github.com/hydraide/hydraide/issues) to show your interest.

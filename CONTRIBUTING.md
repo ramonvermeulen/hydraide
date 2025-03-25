@@ -1,10 +1,10 @@
-# 🤝 Contributing to Hydra
+# 🤝 Contributing to HydrAIDE
 
 Welcome, builder! 🧠
 
 Whether you’re here to squash a bug, suggest a feature, or shape a new SDK — you’re in the right place.
 
-Hydra is not just code. It’s a mindset.  
+HydrAIDE is not just code. It’s a mindset.  
 And we’re thrilled you’re thinking with us.
 
 Your voice matters here. Whether it's your first PR or your 100th — you're helping shape the future of data systems.
@@ -36,7 +36,7 @@ If you’re contributing to an SDK:
 - Use a single `.md` file per SDK, but **clearly tagged and structured**
 
 If you’re contributing:
-- To core logic → edit `hydrungo`
+- To core logic → edit `hydraidego`
 - To docs → edit `.md` files in `/docs`
 - To examples → add to `/examples/<your-language>`
 
@@ -77,7 +77,7 @@ Docs-only PRs don’t require tests.
 
 ## 🤲 Community Values
 
-Hydra is:
+HydrAIDE is:
 - 🧠 Inclusive — everyone starts somewhere.
 - 🧼 Clean — clarity over cleverness.
 - 🔄 Reactive — always listening, always improving.
@@ -105,5 +105,5 @@ Together we build something legendary.
 ---
 
 With gratitude,  
-**– The Hydra Team**
+**– The HydrAIDE Team**
 

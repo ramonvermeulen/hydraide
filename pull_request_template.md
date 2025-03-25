@@ -1,6 +1,6 @@
-# 🚀 Pull Request – Hydra Style
+# 🚀 Pull Request – HydrAIDE Style
 
-Thanks for contributing to Hydra!  
+Thanks for contributing to HydrAIDE!  
 Please fill in the details below so we can review and merge your PR efficiently.
 
 ---
@@ -11,7 +11,7 @@ _Describe the main change or fix – keep it clear and concise._
 
 > Example:  
 > Adds `IncrementFloat64()` to the Node.js SDK  
-> Fixes panic on empty metadata in `hydrungo`
+> Fixes panic on empty metadata in `hydraidego`
 
 ---
 
@@ -40,5 +40,5 @@ _Anything you'd like the reviewers to know? Edge cases, known limitations, etc._
 
 ---
 
-🧠 _Hydra is a reactive system – and now, so are you._  
+🧠 HydrAIDE is a reactive system – and now, so are you._  
 Thanks again for helping shape its future! 💜

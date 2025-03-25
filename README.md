@@ -1,68 +1,68 @@
-![Hydra](images/hydra-banner-stacked-text.png)
+![HydrAIDE](images/hydraide-banner.jpg)
 
 # 🧠 HydrAIDE 2.0 – The Adaptive, Intelligent Data Engine
 
 ![Go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go)
-![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=for-the-badge)
 ![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-2.0-informational?style=for-the-badge)
 ![Speed](https://img.shields.io/badge/Access-O(1)%20Always-ff69b4?style=for-the-badge)
+[![License](https://img.shields.io/badge/license-Custom--Restricted-red?style=for-the-badge)](./LICENSE.md)
 
-> **Hydra isn’t just a database. It’s a philosophy.**
+> **HydrAIDE isn’t just a database. It’s a philosophy.**
 > Built to serve real-time, reactive systems where every operation is intentional — and everything else vanishes.
 
-Welcome to the engine behind platforms like [Trendizz.com](https://trendizz.com), where billions of records are searched, updated, and streamed in **real-time**. Hydra 2.0 is the result of 3+ years of battle-tested evolution, powering search engines, dashboards, crawlers, and more.
+Welcome to the engine behind platforms like [Trendizz.com](https://trendizz.com), where billions of records are searched, updated, and streamed in **real-time**. HydrAIDE 2.0 is the result of 3+ years of battle-tested evolution, powering search engines, dashboards, crawlers, and more.
 
-Hydra brings:
+HydrAIDE brings:
 - ⚡ **O(1) access to billions of objects**
 - 🔄 **Real-time reactivity with built-in subscriptions**
 - 🧠 **In-memory indexes built only when needed**
 - 🧹 **Zero garbage, no cron jobs, no leftovers**
 - 🌐 **Distributed scaling without orchestrators**
 
-> **"Hydra doesn’t search your data. It knows where it is."**
+> **"HydrAIDE doesn’t search your data. It knows where it is."**
 
 ---
 
-## 📚 Start Here: The Hydra Documentation
+## 📚 Start Here: The HydrAIDE Documentation
 
-To truly understand Hydra, start with its **core philosophy and architecture**:
+To truly understand HydrAIDE, start with its **core philosophy and architecture**:
 
-👉 [**Thinking in Hydra – The Philosophy of Reactive Data**](docs/thinking-in-hydra/thinking-in-hydra.md)  
-*Learn how Hydra redefines structure, access, and system design from the ground up.*
+👉 [**Thinking in HydrAIDE – The Philosophy of Reactive Data**](docs/thinking-in-hydraide/thinking-in-hydraide)  
+*Learn how HydrAIDE redefines structure, access, and system design from the ground up.*
 
 ### Then continue the 9-step journey:
 | Step | Section | Description |
 |------|---------|-------------|
-| 1️⃣ | [📍 Naming Convention](docs/thinking-in-hydra/naming-convention.md) | Learn how data structure begins with naming – not schemas. |
-| 2️⃣ | [🌿 Swamp Pattern](docs/thinking-in-hydra/swamp-pattern.md) | Configure persistence, memory, and lifespan directly from code. |
-| 3️⃣ | [💎 Treasures](docs/thinking-in-hydra/treasures.md) | Understand the smallest, most powerful unit of data. |
-| 4️⃣ | [🧩 Indexing](docs/thinking-in-hydra/indexing.md) | Discover ephemeral, in-memory indexing that feels like magic. |
-| 5️⃣ | [🔄 Subscriptions](docs/thinking-in-hydra/subscriptions.md) | Build reactive systems natively with Hydra’s event engine. |
-| 6️⃣ | [🔐 Locking](docs/thinking-in-hydra/locking.md) | Achieve true concurrency without fear. |
-| 7️⃣ | [🧹 Clean System](docs/thinking-in-hydra/clean-system.md) | Never think about cleanup again – because Hydra already did. |
-| 8️⃣ | [🌐 Distributed Architecture](docs/thinking-in-hydra/distributed-architecture.md) | Scale horizontally without orchestration pain. |
-| 9️⃣ | [🚀 Install & Update](docs/thinking-in-hydra/how-to-install-update-hydra.md) | Deploy Hydra in minutes, not days. |
+| 1️⃣ | [📍 Naming Convention](docs/thinking-in-hydraide/naming-convention.md) | Learn how data structure begins with naming – not schemas. |
+| 2️⃣ | [🌿 Swamp Pattern](docs/thinking-in-hydraide/swamp-pattern.md) | Configure persistence, memory, and lifespan directly from code. |
+| 3️⃣ | [💎 Treasures](docs/thinking-in-hydraide/treasures.md) | Understand the smallest, most powerful unit of data. |
+| 4️⃣ | [🧩 Indexing](docs/thinking-in-hydraide/indexing.md) | Discover ephemeral, in-memory indexing that feels like magic. |
+| 5️⃣ | [🔄 Subscriptions](docs/thinking-in-hydraide/subscriptions.md) | Build reactive systems natively with HydrAIDE’s event engine. |
+| 6️⃣ | [🔐 Locking](docs/thinking-in-hydraide/locking.md) | Achieve true concurrency without fear. |
+| 7️⃣ | [🧹 Clean System](docs/thinking-in-hydraide/clean-system.md) | Never think about cleanup again – because HydrAIDE already did. |
+| 8️⃣ | [🌐 Distributed Architecture](docs/thinking-in-hydraide/distributed-architecture.md) | Scale horizontally without orchestration pain. |
+| 9️⃣ | [🚀 Install & Update](docs/thinking-in-hydraide/how-to-install-update-hydraide.md) | Deploy HydrAIDE in minutes, not days. |
 
 
 ---
 
-### 💼 For CEOs – Why Your Company Needs Hydra
+### 💼 For CEOs – Why Your Company Needs HydrAIDE
 
 > **You’re building fast. Scaling faster. But your data engine is slowing you down.**
 
-Hydra was built for founders and leaders who believe their teams deserve better.  
+HydrAIDE was built for founders and leaders who believe their teams deserve better.  
 No background daemons. No stale indexes. No technical debt.
 
 Just **instant data flow**, **zero waste**, and **developer-native architecture** that lets your team move at light speed.
 
-🌟 **See how Hydra can transform your product velocity and reduce infra costs.**
+🌟 **See how HydrAIDE can transform your product velocity and reduce infra costs.**
 
 👉 [Read the CEO Guide →](docs/for-ceos.md)
 
 ---
 
-## 🔥 Why Developers Choose Hydra
+## 🔥 Why Developers Choose HydrAIDE
 
 | Feature | What It Means |
 |--------|---------------|
@@ -79,9 +79,9 @@ Just **instant data flow**, **zero waste**, and **developer-native architecture*
 
 ---
 
-## 🌀 Who Hydra is For
+## 🌀 Who HydrAIDE is For
 
-Hydra is ideal for:
+HydrAIDE is ideal for:
 - 🚀 Startups that need a modern database without infrastructure burden
 - 🌐 High-volume web crawlers and analytics platforms (like Trendizz)
 - 📊 Live dashboards, reactive pipelines, and streaming interfaces
@@ -93,77 +93,78 @@ And especially for developers who:
 - Need **real-time data flow without middleware**
 - Hate daemons, cron jobs, and config bloat
 
-> Hydra is **developer-native**. You don’t configure it. You *declare intent* — and it responds.
+> HydrAIDE is **developer-native**. You don’t configure it. You *declare intent* — and it responds.
 
-## 📊 Comparisons – Hydra vs Other Systems
+## 📊 Comparisons – HydrAIDE vs Other Systems
 
-Want to see how Hydra compares to the most popular databases and engines?  
+Want to see how HydrAIDE compares to the most popular databases and engines?  
 We’re building a full series of deep comparisons — mindset-first, not config-first.
 
-| 🔍 Comparison                | 📄 Status           | Link                                                                       |
-|-----------------------------|---------------------|----------------------------------------------------------------------------|
-| Hydra vs MongoDB            | ✅ Complete         | [Read Hydra vs MongoDB Comparison](./docs/comparisons/hydra-vs-mongodb.md) |
-| Hydra vs Redis              | ✅ Complete         | [Read Hydra vs Redis Comparison](./docs/comparisons/hydra-vs-redis.md)     |
-| Hydra vs PostgreSQL         | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs MySQL              | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs SQLite             | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs Elasticsearch      | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs Firebase / Firestore | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs DynamoDB           | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs Cassandra          | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs InfluxDB           | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs ClickHouse         | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs Neo4j              | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs TimescaleDB        | 🔜 In progress      | *coming soon*                                                              |
-| Hydra vs Apache Kafka       | 🔜 In progress      | *coming soon* (stream vs native pub-sub)                                   |
+| 🔍 Comparison                | 📄 Status           | Link                                                                             |
+|-----------------------------|---------------------|----------------------------------------------------------------------------------|
+| HydrAIDE vs MongoDB            | ✅ Complete         | [Read HydrAIDE vs MongoDB Comparison](/docs/comparisons/hydraide-vs-mongodb.md) |
+| HydrAIDE vs Redis              | ✅ Complete         | [Read HydrAIDE vs Redis Comparison](/docs/comparisons/hydraide-vs-redis.md)     |
+| HydrAIDE vs PostgreSQL         | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs MySQL              | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs SQLite             | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs Elasticsearch      | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs Firebase / Firestore | 🔜 In progress      | *coming soon*                                                                  |
+| HydrAIDE vs DynamoDB           | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs Cassandra          | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs InfluxDB           | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs ClickHouse         | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs Neo4j              | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs TimescaleDB        | 🔜 In progress      | *coming soon*                                                                    |
+| HydrAIDE vs Apache Kafka       | 🔜 In progress      | *coming soon* (stream vs native pub-sub)                                         |
 
 
 ---
 
 ## 🚀 Install & Run in Minutes
 
-Hydra is container-first. Just use Docker Compose:
+HydrAIDE is container-first. Just use Docker Compose:
 
 ```yaml
 services:
-  hydra-server:
+  hydraide-server:
     image: ghcr.io/hydraide/hydraserver:VERSION
     ports:
       - "4900:4444"
     volumes:
-      - /path/to/data:/hydra/data
-      - /path/to/settings:/hydra/settings
-      - /path/to/certs:/hydra/certificate
+      - /path/to/data:/hydraide/data
+      - /path/to/settings:/hydraide/settings
+      - /path/to/certs:/hydraide/certificate
     environment:
       - GRPC_SERVER_ERROR_LOGGING=true
     stop_grace_period: 10m
 ```
 
-➡ Full install guide: [Install & Update Hydra →](docs/how-to-install-update-hydra.md)
+➡ Full install guide: [Install & Update HydrAIDE →](/docs/thinking-in-hydraide/how-to-install-update-hydraide.md)
 
 ---
 
 ## 💻 SDKs – Native Integration in Your Language
 
-Hydra speaks **gRPC**, and every SDK is powered by the same `.proto` definition:
+HydrAIDE speaks **gRPC**, and every SDK is powered by the same `.proto` definition:
 
-| Language | Status | Repo |
-|----------|--------|------|
-| Go       | ✅ Active | `hydrungo` |
-| Node.js  | 🧪 Planning | `hydrunjs` |
-| Python   | 🧠 In design | `hydrunpy` |
-| Rust     | 🧠 In design | `hydrunrs` |
-| Java     | 🧠 In design | `hydrunjv` |
-| C# / .NET| 🧠 In design | `hydruncs` |
-
-More SDKs: C++, Kotlin, Swift – all on the roadmap.
+| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Indexing Docs                       |
+| ------------ | ------------ | -------------------- | -------------------------------------- |
+| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Realtime, blazing fast   |
+| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Event-friendly queries   |
+| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – ML-ready sorting         |
+| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Zero-cost abstractions   |
+| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Scalable enterprise use  |
+| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – Streamlined for services |
+| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – High-performance indexing|
+| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Elegant & Android-ready  |
+| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – Index-aware mobile apps  |
 
 ---
 
 ## 🙌 Want to Contribute?
 
-Start by reading the [Contributor Introduction](./CONTRIBUTORS.md) – it explains why Hydra exists, what kind of people we’re looking for, and how you can join.
-Then check out our [Contribution Guide](./CONTRIBUTING.md) – it walks you through the practical steps.
+Start by reading the [Contributor Introduction](/CONTRIBUTORS.md) – it explains why HydrAIDE exists, what kind of people we’re looking for, and how you can join.
+Then check out our [Contribution Guide](/CONTRIBUTING.md) – it walks you through the practical steps.
 
 Once you're ready, open your first issue or pull request — we’ll be waiting! 🚀
 
@@ -171,19 +172,26 @@ Once you're ready, open your first issue or pull request — we’ll be waiting!
 
 ## 📩 Contact & Enterprise
 
-Hydra is used in production at [Trendizz.com](https://trendizz.com). Interested in enterprise licensing, SDK development, or embedding Hydra in your own platform?
+HydrAIDE is used in production at [Trendizz.com](https://trendizz.com). Interested in enterprise licensing, SDK development, or embedding HydrAIDE in your own platform?
 
-📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)
-(Founder of Hydra & Trendizz)
-🌐 **Website** – [https://hydraide.io ](https://hydraide.io ) Currently in progress and directly linked to GitHub.
-
----
-
-📍 See the full [Hydra Roadmap](./ROADMAP.md) → What we’re building and dreaming next
+📧 **Peter Gebri** – [hello@trendizz.com](mailto:hello@trendizz.com)
+(Founder of HydrAIDE & Trendizz)
+🌐 **Website** – [https://HydrAIDE.io ](https://hydraide.io ) Currently in progress and directly linked to GitHub.
 
 ---
 
-> 🧠 Hydra isn’t a tool you use.
+📍 See the full [HydrAIDE Roadmap](./ROADMAP.md) → What we’re building and dreaming next
+
+--- 
+
+## License
+
+This repository is released under a custom restrictive license that applies to all its content, including SDKs, documentation, code samples, and knowledge materials.
+See [LICENSE.md](/LICENSE.md) for full legal terms.
+
+---
+
+> 🧠 HydrAIDE isn’t a tool you use.
 > It’s a system you think with.
 
 Join the movement. Build different.
