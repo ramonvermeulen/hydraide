@@ -44,7 +44,7 @@ import (
 
 const (
 	testDataCount = 100000
-	allServers    = 100
+	allFolders    = 100
 )
 
 func randomString(length int) string {
@@ -57,8 +57,8 @@ func randomString(length int) string {
 	return string(result)
 }
 
-func TestGetServerNumberDistribution(t *testing.T) {
-	serverCounts := make(map[uint16]int)
+func TestGetFolderNumberDistribution(t *testing.T) {
+	folderCounts := make(map[uint16]int)
 
 	for i := 0; i < testDataCount; i++ {
 		// Generate random Sanctuary, Realm, and Swamp names
@@ -69,23 +69,23 @@ func TestGetServerNumberDistribution(t *testing.T) {
 		// Construct a new Name
 		n := New().Sanctuary(sanctuary).Realm(realm).Swamp(swamp)
 
-		// Determine the server number
-		server := n.GetServerNumber(allServers)
+		// Determine the folder number
+		folder := n.GetFolderNumber(allFolders)
 
 		// Increment the counter for the corresponding server
-		serverCounts[server]++
+		folderCounts[folder]++
 	}
 
-	// Log the number of entries per server
-	for server, count := range serverCounts {
-		t.Logf("Server %d: %d entries", server, count)
+	// Log the number of entries per folder
+	for folder, count := range folderCounts {
+		t.Logf("Server %d: %d entries", folder, count)
 	}
 
 	// Check if the distribution is reasonably even
-	expectedPerServer := testDataCount / allServers
+	expectedPerServer := testDataCount / allFolders
 	threshold := expectedPerServer / 10 // Allow 10% deviation
 
-	for server, count := range serverCounts {
+	for server, count := range folderCounts {
 		if count < expectedPerServer-threshold || count > expectedPerServer+threshold {
 			t.Errorf("Server %d received too few or too many entries: %d", server, count)
 		}
@@ -156,29 +156,29 @@ func BenchmarkName_Add(b *testing.B) {
 	}
 }
 
-// BenchmarkGetServerNumber measures the performance of computing the
-// server assignment for a given Name using the GetServerNumber() method.
+// BenchmarkGetFolderNumber measures the performance of computing the
+// folder assignment for a given Name using the GetFolderNumber() method.
 //
-// This method uses xxhash to deterministically assign a Name to one of N servers,
+// This method uses xxhash to deterministically assign a Name to one of N folders,
 // enabling stateless, distributed routing logic inside the SDK.
 //
-// The result is a 1-based server number (e.g. 1–1000), based on the full path:
+// The result is a 1-based folder number (e.g. 1–1000), based on the full path:
 // "BenchmarkSanctuary/BenchmarkRealm/BenchmarkSwamp".
 //
 // goos: linux
 // goarch: amd64
 // pkg: github.com/hydraide/hydraide/sdk/go/hydraidego/name
 // cpu: AMD Ryzen Threadripper 2950X 16-Core Processor
-// BenchmarkGetServerNumber
-// BenchmarkGetServerNumber-32    	76946376	        15.19 ns/op
+// BenchmarkGetFolderNumber
+// BenchmarkGetFolderNumber-32    	76946376	        15.19 ns/op
 // PASS
-func BenchmarkGetServerNumber(b *testing.B) {
+func BenchmarkGetFolderNumber(b *testing.B) {
 	sanctuary := "BenchmarkSanctuary"
 	realm := "BenchmarkRealm"
 	swamp := "BenchmarkSwamp"
 	n := New().Sanctuary(sanctuary).Realm(realm).Swamp(swamp)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = n.GetServerNumber(allServers)
+		_ = n.GetFolderNumber(allFolders)
 	}
 }

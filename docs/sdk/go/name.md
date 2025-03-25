@@ -16,7 +16,7 @@ Sanctuary / Realm / Swamp
 This naming convention is foundational in HydrAIDE. It is used to:
 - Organize data into **meaningful, navigable structures**
 - Enable **stateless, hash-based routing** in distributed environments
-- Ensure consistent, reproducible folder or server assignments
+- Ensure consistent, reproducible folder assignments
 
 By enforcing a consistent structure for all Swamps, HydrAIDE eliminates the need for central registries or coordinators. This makes it possible to locate, access, and route data **with zero external metadata**.
 
@@ -31,7 +31,7 @@ n := name.New().
     Swamp("alice123")
 
 fmt.Println(n.Get())                // "users/profiles/alice123"
-fmt.Println(n.GetServerNumber(100)) // → e.g. 42
+fmt.Println(n.GetFolderNumber(100)) // → e.g. 42
 ```
 
 ---
@@ -65,9 +65,9 @@ Returns the full canonical path ("sanctuary/realm/swamp").
 🔒 Internal use only.
 
 ```go
-GetServerNumber(allServers int) uint16
+GetFolderNumber(allFolders uint16) uint16
 ```
-Returns the 1-based server number where this Name belongs.
+Returns the 1-based folder number where this Name belongs.
 🔒 Internal use only.
 
 ```go
@@ -112,7 +112,7 @@ name.New().Sanctuary("system").Realm("events").Swamp("node-42")
 
 ### 📚 Learn More
 - For deeper strategies and real-world patterns, see: [Naming Convention](https://github.com/hydraide/hydraide/blob/main/docs/thinking-in-hydraide/naming-convention.md)
-- Never call `Get()` or `GetServerNumber()` directly from application code — let the SDK route based on Name.
+- Never call `Get()` or `GetFolderNumber()` directly from application code — let the SDK route based on Name.
 
 ---
 

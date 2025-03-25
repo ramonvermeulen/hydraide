@@ -45,14 +45,14 @@
 //
 // Each Name is constructed step-by-step (Sanctuary → Realm → Swamp),
 // and the full path can be retrieved using Get(). Additionally,
-// GetServerNumber(allServers) maps the current name to a consistent
+// GetFolderNumber(allFolders) maps the current name to a consistent
 // server index (1-based), using a fast and collision-resistant hash.
 //
 // Example usage:
 //
 //	name := New().Sanctuary("users").Realm("profiles").Swamp("alice123")
 //	fmt.Println(name.Get()) // "users/profiles/alice123"
-//	fmt.Println(name.GetServerNumber(1000)) // e.g. 774
+//	fmt.Println(name.GetFolderNumber(1000)) // e.g. 774
 //
 // Use Load(path) to reconstruct a Name from an existing path string.
 //
@@ -83,7 +83,7 @@ import (
 // This structure is essential for:
 // - Organizing Swamps into logical domains
 // - Generating predictable folder paths
-// - Assigning each Swamp to a specific server without coordination
+// - Assigning each Swamp to a specific folder without coordination
 //
 // The interface supports fluent chaining:
 //
@@ -93,9 +93,9 @@ import (
 //	    Swamp("alice123")
 //
 //	name.Get()                 // "users/profiles/alice123"
-//	name.GetServerNumber(100) // e.g. 42
+//	name.GetFolderNumber(100) // e.g. 42
 //
-// Usage of GetServerNumber ensures even distribution of data across N servers,
+// Usage of GetFolderNumber ensures even distribution of data across N folders,
 // enabling stateless multi-node architectures without external orchestrators.
 //
 // See also: Load(path string) to reconstruct a Name from a path.
@@ -104,7 +104,7 @@ type Name interface {
 	Realm(realmName string) Name
 	Swamp(swampName string) Name
 	Get() string
-	GetServerNumber(allServers int) uint16
+	GetFolderNumber(allFolders uint16) uint16
 }
 
 type name struct {
@@ -112,7 +112,7 @@ type name struct {
 	SanctuaryID    string
 	RealmName      string
 	SwampName      string
-	ServerNumber   uint16
+	FolderNumber   uint16
 	hashPathMu     sync.Mutex
 	folderNumberMu sync.Mutex
 }
@@ -166,9 +166,9 @@ func (n *name) Get() string {
 	return n.Path
 }
 
-// GetServerNumber returns the 1-based index of the server responsible for this Name.
+// GetFolderNumber returns the 1-based index of the server responsible for this Name.
 // It uses a fast, consistent xxhash hash over the combined Sanctuary, Realm, and Swamp
-// to deterministically assign the Name to one of `allServers` available slots.
+// to deterministically assign the Name to one of `allFolders` available slots.
 //
 // 🔒 Internal use only: This function is used by the SDK to route
 // the Name to the correct Hydra client instance in a distributed setup.
@@ -176,21 +176,21 @@ func (n *name) Get() string {
 //
 // Example (inside SDK logic):
 //
-//	client := router.Route(name.GetServerNumber(1000))
-func (n *name) GetServerNumber(allServers int) uint16 {
+//	client := router.Route(name.GetFolderNumber(1000))
+func (n *name) GetFolderNumber(allFolders uint16) uint16 {
 
 	n.folderNumberMu.Lock()
 	defer n.folderNumberMu.Unlock()
 
-	if n.ServerNumber != 0 {
-		return n.ServerNumber
+	if n.FolderNumber != 0 {
+		return n.FolderNumber
 	}
 
 	hash := xxhash.Sum64([]byte(n.SanctuaryID + n.RealmName + n.SwampName))
 
-	n.ServerNumber = uint16(hash%uint64(allServers)) + 1
+	n.FolderNumber = uint16(hash%uint64(allFolders)) + 1
 
-	return n.ServerNumber
+	return n.FolderNumber
 
 }
 
