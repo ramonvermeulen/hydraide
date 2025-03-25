@@ -3,6 +3,7 @@ module github.com/hydraide/hydraide
 go 1.24.1
 
 require (
+	github.com/cespare/xxhash/v2 v2.3.0
 	google.golang.org/grpc v1.71.0
 	google.golang.org/protobuf v1.36.6
 )

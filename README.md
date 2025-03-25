@@ -147,17 +147,17 @@ services:
 
 HydrAIDE speaks **gRPC**, and every SDK is powered by the same `.proto` definition:
 
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Indexing Docs                       |
-| ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | `hydraidego`   | ✅ Actively developed | Coming soon – Realtime, blazing fast   |
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Event-friendly queries   |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – ML-ready sorting         |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Zero-cost abstractions   |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Scalable enterprise use  |
-| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – Streamlined for services |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – High-performance indexing|
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Elegant & Android-ready  |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – Index-aware mobile apps  |
+| 💻 SDK       | 🧪 Code Name                                                                         | 🛠️ Status           | 📘 Indexing Docs                       |
+| ------------ |--------------------------------------------------------------------------------------| -------------------- | -------------------------------------- |
+| 🟢 Go | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md) | 🔄 Actively in development | Coming soon – Realtime, blazing fast |
+| 🟡 Node.js   | `hydraidejs`                                                                         | 🧪 In planning       | Coming soon – Event-friendly queries   |
+| 🐍 Python    | `hydraidepy`                                                                         | 🧠 In design         | Coming soon – ML-ready sorting         |
+| 🦀 Rust      | `hydraiders`                                                                         | 🧠 In design         | Coming soon – Zero-cost abstractions   |
+| ☕ Java       | `hydraidejv`                                                                         | 🧠 In design         | Coming soon – Scalable enterprise use  |
+| 🎯 C# / .NET | `hydraidecs`                                                                         | 🧠 In design         | Coming soon – Streamlined for services |
+| 🧠 C++       | `hydraidecpp`                                                                        | 🧠 In design         | Coming soon – High-performance indexing|
+| 🌀 Kotlin    | `hydraidekt`                                                                         | 🧠 In design         | Coming soon – Elegant & Android-ready  |
+| 🍎 Swift     | `hydraidesw`                                                                         | 🧠 In design         | Coming soon – Index-aware mobile apps  |
 
 ---
 

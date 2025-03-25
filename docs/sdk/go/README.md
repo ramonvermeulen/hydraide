@@ -1,16 +1,34 @@
-# 🚀 HydrAIDE SDK – Go version coming soon
+# 🐹 HydrAIDE SDK – Go Edition
 
-Thanks for your interest in the **HydrAIDE Go SDK**!
+Welcome to the official **HydrAIDE SDK for Go**, your gateway to building intelligent, distributed, real-time systems using the HydrAIDE engine.
 
-This SDK is not yet available, but we’re actively working on it.  
-If you’d like to use HydrAIDE in your Go -based project, let us know!
+This SDK provides programmatic access to HydrAIDE's powerful features such as swamp-based data structures, lock-free operations, real-time subscriptions, and stateless routing — all tailored to Go developers.
 
-📩 Contact: [hello@trendizz.com](mailto:hello@trendizz.com) - Founder of HydrAIDE & Trendizz      
-📬 Or open an [issue](https://github.com/hydraide/hydraide/issues) to show your interest.
+> **⚠️ Status:** Currently under active development. Early components (like `name`, `client`, `Hydrun` interface) are available and evolving rapidly.
 
-We appreciate your patience and enthusiasm! 🙏
+---
 
-Stay tuned – something awesome is coming!
+## 📦 At a Glance
+
+| Feature                                     | Status         | Docs                                 |
+| ------------------------------------------- | -------------- |--------------------------------------|
+| `name.New().Sanctuary().Realm().Swamp()`    | ✅ Available    | [name.md](name.md)                   |
+| gRPC connection & routing                   | 🔄 In Progress | [client.md](client.md)               |
+| `RegisterSwamp()`                           | 🔄 In Progress | [registerswamp.md](registerswamp.md) |
+| `Create()`, `Save()`                        | 🔄 In Progress | [create-save.md](create-save.md)     |
+| `CreateMany()`, `SaveMany()`                | 🔄 In Progress | [create-save.md](create-save.md)     |
+| `Read()`, `ReadMany()`                      | 🔄 In Progress | [read.md](read.md)                   |
+| `Update()`, `UpdateMany()`                  | 🔄 In Progress | [update.md](update.md)               |
+| `Delete()`, `DeleteMany()`                  | 🔄 In Progress | [delete.md](delete.md)               |
+| `Destroy()`                                 | 🔄 In Progress | [delete.md](destroy.md)              |
+| `Subscribe()`                               | 🔄 In Progress | [subscriptions.md](subscriptions.md) |
+| `Lock()`, `Unlock()`                        | 🔄 In Progress | [locking.md](locking.md)             |
+| `Count()`, `IsSwampExist()`, `IsKeyExist()` | 🔄 In Progress | [existence.md](existence.md)         |
+| `IncrementInt()`, `DecrementFloat()`...     | 🔄 In Progress | [increment.md](increment.md)         |
+
+> ✅ = Implemented • 🔄 = Work in progress • 🕓 = Planned
+
+You can help shape the SDK — see [Contribute](#-contribute-to-hydraide)
 
 ---
 
@@ -22,14 +40,15 @@ If you'd like to help build the official SDKs and developer tools around the Hyd
 
 👉 [View the full Contributor Guide →](/CONTRIBUTORS.md)
 
-You'll find everything from perks, expectations, SDK plans, and how to get started.
-
 > Join HydrAIDE. Be legendary.
 
 ---
 
-## 📄 **License Notice**
+## 📄 License Notice
 
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
+This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.\
+You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.\
+See full terms: [LICENSE.md](/LICENSE.md)
+
+---
+
