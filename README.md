@@ -28,7 +28,7 @@ HydrAIDE brings:
 
 To truly understand HydrAIDE, start with its **core philosophy and architecture**:
 
-👉 [**Thinking in HydrAIDE – The Philosophy of Reactive Data**](docs/thinking-in-hydraide/thinking-in-hydraide)  
+👉 [**Thinking in HydrAIDE – The Philosophy of Reactive Data**](docs/thinking-in-hydraide/thinking-in-hydraide.md)  
 *Learn how HydrAIDE redefines structure, access, and system design from the ground up.*
 
 ### Then continue the 9-step journey:
@@ -58,7 +58,7 @@ Just **instant data flow**, **zero waste**, and **developer-native architecture*
 
 🌟 **See how HydrAIDE can transform your product velocity and reduce infra costs.**
 
-👉 [Read the CEO Guide →](docs/for-ceos.md)
+👉 [Read the CEO Guide →](/docs/for-ceos.md)
 
 ---
 
@@ -176,11 +176,11 @@ HydrAIDE is used in production at [Trendizz.com](https://trendizz.com). Interest
 
 📧 **Peter Gebri** – [hello@trendizz.com](mailto:hello@trendizz.com)
 (Founder of HydrAIDE & Trendizz)
-🌐 **Website** – [https://HydrAIDE.io ](https://hydraide.io ) Currently in progress and directly linked to GitHub.
+🌐 **Website** – [https://HydrAIDE.io ](https://hydraide.io) Currently in progress and directly linked to GitHub.
 
 ---
 
-📍 See the full [HydrAIDE Roadmap](./ROADMAP.md) → What we’re building and dreaming next
+📍 See the full [HydrAIDE Roadmap](/ROADMAP.md) → What we’re building and dreaming next
 
 --- 
 
