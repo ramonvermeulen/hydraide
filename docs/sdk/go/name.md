@@ -36,39 +36,39 @@ fmt.Println(n.GetServerNumber(100)) // → e.g. 42
 
 ## 📚 Functions
 
-```text
+```go
 New() Name
 ```
 Creates an empty Name instance to begin building the hierarchy.
 
-```text
+```go
 Sanctuary(id string) Name
 ```
 Sets the top-level logical grouping (e.g. "users", "domains", "products").
 
-```text
+```go
 Realm(name string) Name
 ```
 Sets a mid-level scope to organize within a Sanctuary.
 
-```text
+```go
 Swamp(name string) Name
 ```
 Defines the final segment — the unique Swamp identifier.
 
-```text
+```go
 Get() string
 ```
 Returns the full canonical path ("sanctuary/realm/swamp").
 🔒 Internal use only.
 
-```text
+```go
 GetServerNumber(allServers int) uint16
 ```
 Returns the 1-based server number where this Name belongs.
 🔒 Internal use only.
 
-```text
+```go
 Load(path string) Name
 ```
 Reconstructs a Name from a path string.
@@ -82,7 +82,7 @@ Reconstructs a Name from a path string.
 
 Here are some practical examples of how to structure Names in real-world use cases:
 
-```text
+```go
 // User-related data
 name.New().Sanctuary("users").Realm("profiles").Swamp("u123")
 name.New().Sanctuary("users").Realm("sessions").Swamp("u123-active")
