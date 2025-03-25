@@ -1,5 +1,5 @@
 name: Contributor Application
-description: Apply to become an official Hydra contributor
+description: Apply to become an official HydrAIDE contributor
 title: "Contributor Application: <your-name>"
 labels: [contributor, onboarding]
 body:
@@ -8,7 +8,7 @@ body:
       value: |
         👋 **Welcome, future contributor!**
 
-        Hydra isn’t just a project — it’s a movement.
+        HydrAIDE isn’t just a project — it’s a movement.
         Whether you want to help build SDKs, improve docs, or share feedback, we’re excited to hear from you!
 
         Please fill out the short form below. You don’t need to be an expert — curiosity and intention matter most.
@@ -32,7 +32,7 @@ body:
   - type: textarea
     id: excitement
     attributes:
-      label: What excites you about Hydra?
+      label: What excites you about HydrAIDE?
       placeholder: A sentence or two about what made you curious
     validations:
       required: true

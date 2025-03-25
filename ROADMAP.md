@@ -1,10 +1,10 @@
-# 🗺️ Hydra Roadmap
+# 🗺️ HydrAIDE Roadmap
 
-Hydra is not just growing. It’s evolving.
+HydrAIDE is not just growing. It’s evolving.
 
 It redefines how data is stored, queried, and synchronized — combining the precision of databases with the flexibility of real-time processing.
 
-Built on a modular hierarchy of Sanctuaries, Realms, Swamps, and Indexes, Hydra empowers developers to model dynamic data, perform powerful set operations, and subscribe to instant changes — all with a simple, elegant API.
+Built on a modular hierarchy of Sanctuaries, Realms, Swamps, and Indexes, HydrAIDE empowers developers to model dynamic data, perform powerful set operations, and subscribe to instant changes — all with a simple, elegant API.
 
 This roadmap outlines what we’re building, improving, and dreaming about — together with the community.
 
@@ -12,18 +12,18 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 
 ## 🔥 Initial Public Release (Developer Edition)
 
-> The first downloadable, installable version of Hydra, focused on developer onboarding and experimentation.
+> The first downloadable, installable version of HydrAIDE, focused on developer onboarding and experimentation.
 
 ### ✅ Planned for Public:
 
 - Hydrungo SDK embedded and preconfigured
-- Initial documentation: Thinking in Hydra, Indexing, Locking, Subscriptions
+- Initial documentation: Thinking in HydrAIDE, Indexing, Locking, Subscriptions
 
 ### 🔐 Internal / Work-in-Progress:
 
 - Authentication and access system (token-based)
 - Version limitation / developer tier licensing mechanism
-- Hydra license generator system for controlled access
+- HydrAIDE license generator system for controlled access
 
 > 🔒 Some components are internal, but the public release will provide a full sandbox experience for early adopters.
 
@@ -52,7 +52,7 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 
 ## 🌐 Website *(Q2 2025)*
 
-- hydraide.io  marketing site 🔄
+- HydrAIDE.io  marketing site 🔄
 - Introduction, features, quickstart guide
 - Link to GitHub, docs, and community tools
 - SEO & branding improvements
@@ -66,7 +66,7 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 - Maintainer label guide ✅ *(done)*
 - First contributor onboarding wave *(Q2 2025)*
 - Discussion group for early builders *(Q3 2025)*
-- Launch “Hydra Hero” badge system
+- Launch “HydrAIDE Hero” badge system
 
 ---
 
@@ -74,8 +74,8 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 
 > Not guaranteed — but we’re thinking in this direction.
 
-- Visual Hydra playground (interactive web IDE)
-- Hydra schema builder for TypeScript
+- Visual HydrAIDE playground (interactive web IDE)
+- HydrAIDE schema builder for TypeScript
 - Native mobile SDKs (Kotlin/Swift)
 - Realm sync bridge for distributed networks
 - AI model fine-tuning with indexed data slices
@@ -91,5 +91,5 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 *This roadmap is living. Help us shape it.*
 Join, contribute, suggest — and together we’ll redefine how real-time data flows.
 
-— Hydra Core Team
+— HydrAIDE Core Team
 

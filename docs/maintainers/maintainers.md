@@ -1,6 +1,6 @@
-# 🏷️ Label Guide – Hydra Contributors & Maintainers
+# 🏷️ Label Guide – HydrAIDE Contributors & Maintainers
 
-This guide explains the official label system used across Hydra repositories.  
+This guide explains the official label system used across HydrAIDE repositories.  
 It helps contributors understand where they are in the process, and helps maintainers keep things organized.
 
 ---
@@ -63,3 +63,12 @@ It makes the whole contributor experience more magical ✨
 
 🧠 Let the labels guide the flow.  
 Every color tells a story.
+
+
+---
+
+## 📄 **License Notice**
+
+This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
+You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
+See the full legal terms here: [LICENSE.md](/LICENSE.md)

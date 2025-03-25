@@ -1,4 +1,4 @@
-# 🧠 Hydra for CEOs – Hydra is Not a Database. It's the Engine of Your Vision.
+# 🧠 HydrAIDE for CEOs – HydrAIDE is Not a Database. It's the Engine of Your Vision.
 
 > *Because your dream deserves better infrastructure.*
 
@@ -8,20 +8,20 @@ We know this journey. We’ve walked it ourselves.
 After 25 years of working with every kind of database, every orchestration layer, every real-time stack — we hit a wall.
 
 Nothing worked the way modern products needed.  
-So we built **Hydra**.
+So we built **HydrAIDE**.
 
-> 🧠 "Minden startup egy jó vízióval kezdődik. Hydra segít, hogy ne bukj el a technikai rémálmok miatt."
+> 🧠 "Minden startup egy jó vízióval kezdődik. HydrAIDE segít, hogy ne bukj el a technikai rémálmok miatt."
 
 ---
 
 ## 🧭 Built by Founders. For Founders.
-Hydra was born in the trenches — powering platforms like [Trendizz.com](https://trendizz.com), where we indexed the entire European web, processed billions of records, and delivered real-time UX with a tiny team and zero DevOps.
+HydrAIDE was born in the trenches — powering platforms like [Trendizz.com](https://trendizz.com), where we indexed the entire European web, processed billions of records, and delivered real-time UX with a tiny team and zero DevOps.
 
-One Hydra node indexes over **100,000 pages/hour**, processing **700 million word-level entries** on a single 32-core server under a 10.0 load — *without cron jobs, daemons or admins*.
+One HydrAIDE node indexes over **100,000 pages/hour**, processing **700 million word-level entries** on a single 32-core server under a 10.0 load — *without cron jobs, daemons or admins*.
 
 > 🔬 For comparison: Elasticsearch or Kafka-based pipelines would require 6–10 nodes and constant tuning to match this performance — and still fall short on latency, cost, and complexity.
 
-Hydra isn’t just tech. It’s the **foundation of your vision**:
+HydrAIDE isn’t just tech. It’s the **foundation of your vision**:
 - 🚀 Enables your team to ship faster with fewer people
 - 💸 Cuts infrastructure costs by 70% on average
 - 🔐 Keeps your data *yours* – no cloud lock-in, no data egress fees
@@ -30,10 +30,10 @@ Hydra isn’t just tech. It’s the **foundation of your vision**:
 
 ---
 
-## 💬 Why Founders and CEOs Choose Hydra
+## 💬 Why Founders and CEOs Choose HydrAIDE
 
 ### 1. **Up to 70% Infrastructure Cost Savings**
-Hydra stores data in compact, binary form – not JSON or text blobs. Add built-in compression and delta writes, and you get:
+HydrAIDE stores data in compact, binary form – not JSON or text blobs. Add built-in compression and delta writes, and you get:
 - Lower CPU
 - Less RAM usage
 - Fewer servers
@@ -44,12 +44,12 @@ Hydra stores data in compact, binary form – not JSON or text blobs. Add built-
 ---
 
 ### 2. **Developers Master It on Day One**
-Forget weeks of onboarding or fragile DSLs. With Hydra:
+Forget weeks of onboarding or fragile DSLs. With HydrAIDE:
 - Devs write logic in Go, Node, Python or Rust
 - No config files, no custom schemas
 - SDKs are clean, typed, and **AI-assisted**
 
-> Hydra is so intuitive, most devs go from zero to production in 1 day.
+> HydrAIDE is so intuitive, most devs go from zero to production in 1 day.
 
 ---
 
@@ -66,7 +66,7 @@ And with zero lock-in, your team stays in control — no SaaS gates, no forced u
 ---
 
 ### 4. **Reactive By Default. Kafka-Free.**
-Hydra has real-time built-in. No Kafka. No Redis Streams. No brokers.
+HydrAIDE has real-time built-in. No Kafka. No Redis Streams. No brokers.
 Every insert, update or delete triggers **live events**. Every service can **subscribe**.
 
 This replaces:
@@ -74,12 +74,12 @@ This replaces:
 - ⛔ Queues
 - ⛔ Custom glue code
 
-With Hydra, your product is **instantly reactive**, **without extra infrastructure**.
+With HydrAIDE, your product is **instantly reactive**, **without extra infrastructure**.
 
 ---
 
 ### 5. **Fewer Engineers. More Velocity.**
-Hydra removes entire layers from your stack:
+HydrAIDE removes entire layers from your stack:
 - ✅ No separate pub/sub
 - ✅ No message broker
 - ✅ No Redis cache
@@ -92,7 +92,7 @@ With fewer moving parts, smaller teams build more.
 ---
 
 ### 6. **No Cloud Lock-In. No Egress Fees.**
-Hydra is **self-hosted**, lightweight, and Docker-native.
+HydrAIDE is **self-hosted**, lightweight, and Docker-native.
 
 You can:
 - Run it on-prem, on edge, or in your favorite cloud
@@ -100,7 +100,7 @@ You can:
 - Keep **full ownership** over your architecture and your data
 
 **Compare:**
-| Feature                | Traditional DBs | Hydra          |
+| Feature                | Traditional DBs | HydrAIDE          |
 |------------------------|-----------------|----------------|
 | Data ownership         | Shared w/ vendor| Fully yours    |
 | Real-time out of box   | ❌               | ✅              |
@@ -113,7 +113,7 @@ You can:
 ---
 
 ### 7. **Zero Maintenance. Seriously.**
-Hydra cleans itself:
+HydrAIDE cleans itself:
 - Delete a record? It vanishes — no tombstones.
 - Close a dataset? RAM is instantly freed.
 - No cron jobs, no compacting, no cleanup scripts.
@@ -125,16 +125,16 @@ The system stays fast and lean **forever**.
 ---
 
 ### 8. **Proven in Production. Battle-Tested.**
-Hydra isn’t theory.
+HydrAIDE isn’t theory.
 It powers real-time dashboards, full-text search, and high-volume crawling in live products **right now**.
 
-If your product is data-heavy, time-sensitive, or team-limited – Hydra is your edge.
+If your product is data-heavy, time-sensitive, or team-limited – HydrAIDE is your edge.
 
-> 🧠 "Hydra is the part of your stack that never becomes the bottleneck. It scales with your ambition – silently."
+> 🧠 "HydrAIDE is the part of your stack that never becomes the bottleneck. It scales with your ambition – silently."
 
 ---
 
-## 💡 Why Your Vision Deserves Hydra
+## 💡 Why Your Vision Deserves HydrAIDE
 Your job isn’t managing infra — it’s changing the world.
 
 You need tools that:
@@ -142,7 +142,7 @@ You need tools that:
 - Multiply your team’s impact
 - Scale without surprises
 
-> Hydra is the quiet engine that powers your boldest vision.
+> HydrAIDE is the quiet engine that powers your boldest vision.
 
 We don’t sell databases.  
 We deliver speed. Simplicity. And peace of mind.
@@ -150,28 +150,35 @@ We deliver speed. Simplicity. And peace of mind.
 ---
 
 ## 🧭 Curious to Dive Deeper?
-If you’re a technical founder, architect, or CTO, we recommend the full 9-step Hydra Journey:
+If you’re a technical founder, architect, or CTO, we recommend the full 9-step HydrAIDE Journey:
 
 | Step | Section                                                          | Description |
 |------|------------------------------------------------------------------|-------------|
-| 1️⃣ | [📍 Naming Convention](./thinking-in-hydra/naming-convention.md) | How structure begins with naming, not schemas |
-| 2️⃣ | [🌿 Swamp Pattern](./thinking-in-hydra/swamp-pattern.md)                           | Configure memory, TTL, and persistence in-code |
-| 3️⃣ | [💎 Treasures](./thinking-in-hydra/treasures.md)                                   | Hydra’s data units: fast, typed, and reactive |
-| 4️⃣ | [🧩 Indexing](./thinking-in-hydra/indexing.md)                                     | Instant in-memory indexing, no B-trees |
-| 5️⃣ | [🔄 Subscriptions](./thinking-in-hydra/subscriptions.md)                           | Native real-time events, no brokers |
-| 6️⃣ | [🔐 Locking](./thinking-in-hydra/locking.md)                                       | Per-record locks, business-safe operations |
-| 7️⃣ | [🧹 Clean System](./thinking-in-hydra/clean-system.md)                             | Zero-waste design, no background jobs |
-| 8️⃣ | [🌐 Distributed Architecture](./thinking-in-hydra/distributed-architecture.md)     | Stateless scaling without orchestration |
-| 9️⃣ | [🚀 Install & Update](./thinking-in-hydra/how-to-install-update-hydra.md)          | From Docker to production in minutes |
+| 1️⃣ | [📍 Naming Convention](./thinking-in-hydraide/naming-convention.md) | How structure begins with naming, not schemas |
+| 2️⃣ | [🌿 Swamp Pattern](./thinking-in-hydraide/swamp-pattern.md)                           | Configure memory, TTL, and persistence in-code |
+| 3️⃣ | [💎 Treasures](./thinking-in-hydraide/treasures.md)                                   | HydrAIDE’s data units: fast, typed, and reactive |
+| 4️⃣ | [🧩 Indexing](./thinking-in-hydraide/indexing.md)                                     | Instant in-memory indexing, no B-trees |
+| 5️⃣ | [🔄 Subscriptions](./thinking-in-hydraide/subscriptions.md)                           | Native real-time events, no brokers |
+| 6️⃣ | [🔐 Locking](./thinking-in-hydraide/locking.md)                                       | Per-record locks, business-safe operations |
+| 7️⃣ | [🧹 Clean System](./thinking-in-hydraide/clean-system.md)                             | Zero-waste design, no background jobs |
+| 8️⃣ | [🌐 Distributed Architecture](./thinking-in-hydraide/distributed-architecture.md)     | Stateless scaling without orchestration |
+| 9️⃣ | [🚀 Install & Update](./thinking-in-hydraide/how-to-install-update-hydraide.md)          | From Docker to production in minutes |
 
 ---
 
 ## 📩 Let’s Build Your Future
-Hydra is open for enterprise pilots and early adopters.
+HydrAIDE is open for enterprise pilots and early adopters.
 
-📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)  
-🌐 **https://hydraide.io **
+📧 **Peter Gebri** – [hello@trendizz.com](mailto:hello@trendizz.com)  
+🌐 **https://HydrAIDE.io **
 
-> Whether you're serving 1,000 users or 100 million — Hydra will be your silent, scaling ally.  
+> Whether you're serving 1,000 users or 100 million — HydrAIDE will be your silent, scaling ally.  
 > Let's bring your vision to life. Together.
 
+---
+
+## 📄 **License Notice**
+
+This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
+You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
+See the full legal terms here: [LICENSE.md](/LICENSE.md)

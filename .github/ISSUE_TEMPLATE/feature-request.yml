@@ -8,12 +8,12 @@ body:
       value: |
         💡 **Have an idea? We’re listening.**
 
-        Hydra evolves through community input — no idea is too small.
+        HydrAIDE evolves through community input — no idea is too small.
 
   - type: input
     id: scope
     attributes:
-      label: What part of Hydra does this relate to?
+      label: What part of HydrAIDE does this relate to?
       placeholder: e.g. Core Engine, Python SDK, Indexing docs
     validations:
       required: true
