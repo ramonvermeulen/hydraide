@@ -58,55 +58,22 @@ const (
 	errorConnection   = "error while connecting to the server"
 )
 
-// Client defines the core behavior of a HydrAIDE client responsible for connecting
-// to one or more HydrAIDE servers based on folder routing logic.
-//
-// Each Swamp name in HydrAIDE deterministically maps to a folder number,
-// which is used to resolve the correct gRPC client connection.
-// This interface abstracts the logic for:
-//
-// - Establishing and closing connections
-// - Mapping Swamp names to clients
-// - Performing connection diagnostics if needed
-//
-// Use this interface when building any component that needs to interact
-// with a distributed HydrAIDE setup across multiple servers.
 type Client interface {
-
-	// Connect establishes gRPC connections to all configured HydrAIDE servers.
-	// If `connectionAnalysis` is true, it also pings each server and logs connectivity status.
-	//
-	// This method handles:
-	// - TLS credential loading
-	// - gRPC retry policy setup
-	// - Heartbeat validation per server
-	// - Mapping folder ranges to service clients
-	//
-	// Returns an error if any server fails to connect or respond.
 	Connect(connectionAnalysis bool) error
-
-	// CloseConnection gracefully shuts down all gRPC connections previously opened
-	// via Connect(). Ensures all connections are properly released from memory.
 	CloseConnection()
-
-	// GetServiceClient returns the appropriate HydrAIDEServiceClient
-	// for the given Swamp name, based on its computed folder number.
-	//
-	// If the folder mapping is missing or connection is unavailable, returns nil
-	// and logs an error for diagnostics.
-	//
-	// This method allows stateless, O(1) routing of any Swamp request
-	// to the correct HydrAIDE server — no registry or lookup needed.
 	GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServiceClient
-
-	// GetUniqueServiceClients returns all unique HydrAIDE service clients
-	// only for internal use.
+	GetServiceClientAndHost(swampName name.Name) *ServiceClient
 	GetUniqueServiceClients() []hydraidepbgo.HydraideServiceClient
+}
+
+type ServiceClient struct {
+	GrpcClient hydraidepbgo.HydraideServiceClient
+	Host       string
 }
 
 type client struct {
 	allFolders     uint16
-	serviceClients map[uint16]hydraidepbgo.HydraideServiceClient
+	serviceClients map[uint16]*ServiceClient
 	uniqueServices []hydraidepbgo.HydraideServiceClient
 	connections    []*grpc.ClientConn
 	maxMessageSize int
@@ -122,40 +89,46 @@ type Server struct {
 	CertFilePath string
 }
 
-// New creates a new HydrAIDE client instance that connects to one or more servers
+// New creates a new HydrAIDE client instance that connects to one or more servers,
 // and distributes requests based on folder-based hashing logic.
 //
-// This constructor is designed for distributed setups where each HydrAIDE server
-// is responsible for a specific range of folders (i.e. partitioned Swamps).
+// This constructor is designed for distributed setups, where each HydrAIDE server
+// is responsible for a specific range of folders (i.e. Swamp partitions).
 //
 // Parameters:
-//   - servers: list of configured HydrAIDE servers with their folder ranges
-//   - allFolders: total number of folders across the system (e.g. 1000)
-//   - maxMessageSize: maximum allowed message size for gRPC communication (in bytes)
+//   - servers: list of HydrAIDE servers to connect to (each with a folder range and TLS certificate)
+//   - allFolders: total number of folders across the entire system (e.g. 1000)
+//   - maxMessageSize: maximum allowed message size for gRPC requests/responses (in bytes)
 //
 // The returned Client instance handles:
-//   - Stateless Swamp-to-server resolution based on folder numbers
-//   - gRPC connection pooling and reuse
-//   - Thread-safe access to internal client mappings
+//   - Stateless resolution of Swamp names to folders and corresponding servers
+//   - Thread-safe access to internal gRPC connections (via RWMutex)
+//   - Internal mapping from folder → *ServiceClient (which includes the gRPC client and Host info)
+//
+// Note:
+// - Each gRPC connection is created lazily upon calling `Connect()`
+// - The folder-based routing is consistent across all services, derived from Swamp name hash
 //
 // Example:
 //
 //	client := client.New([]*client.Server{
 //	    {Host: "hydra01:4444", FromFolder: 1, ToFolder: 500, CertFilePath: "certs/01.pem"},
 //	    {Host: "hydra02:4444", FromFolder: 501, ToFolder: 1000, CertFilePath: "certs/02.pem"},
-//	}, 1000, 1024*1024*1024)
+//	}, 1000, 1024*1024*1024) // 1 GB max message size
 //
 //	err := client.Connect(true)
 //	if err != nil {
 //	    log.Fatal("connection failed:", err)
 //	}
 //
-//	// Fetch the right client based on swamp name
 //	swamp := name.New().Sanctuary("users").Realm("profiles").Swamp("alex123")
-//	hydra := client.GetServiceClient(swamp)
+//	service := client.GetServiceClient(swamp)
+//	if service != nil {
+//	    res, err := service.Read(...) // raw gRPC call
+//	}
 func New(servers []*Server, allFolders uint16, maxMessageSize int) Client {
 	return &client{
-		serviceClients: make(map[uint16]hydraidepbgo.HydraideServiceClient),
+		serviceClients: make(map[uint16]*ServiceClient),
 		servers:        servers,
 		allFolders:     allFolders,
 		maxMessageSize: maxMessageSize,
@@ -172,7 +145,7 @@ func New(servers []*Server, allFolders uint16, maxMessageSize int) Client {
 // - Every folder in the system has an associated gRPC client for routing
 //
 // Parameters:
-//   - connectionAnalysis: if true, performs diagnostic ping for each host
+//   - connectionAnalysis: if true, performs diagnostic ping for each Host
 //     and logs detailed output (useful for dev/debug)
 //
 // Behavior:
@@ -296,7 +269,10 @@ func (c *client) Connect(connectionLog bool) error {
 			}).Info("connected to the hydra server successfully")
 
 			for folder := server.FromFolder; folder <= server.ToFolder; folder++ {
-				c.serviceClients[folder] = serviceClient
+				c.serviceClients[folder] = &ServiceClient{
+					GrpcClient: serviceClient,
+					Host:       server.Host,
+				}
 			}
 
 			c.connections = append(c.connections, conn)
@@ -344,19 +320,18 @@ func (c *client) CloseConnection() {
 
 }
 
-// GetServiceClient returns the appropriate HydrAIDE gRPC service client
-// based on the folder number calculated from the given Swamp name.
+// GetServiceClient returns the raw gRPC HydrAIDE service client for the given Swamp name.
 //
 // Internally:
-// - Computes the folder number via swampName.GetFolderNumber()
-// - Looks up the corresponding HydrAIDEServiceClient from serviceClients map
+// - Computes the folder number using the hash of the swamp name
+// - Looks up the matching gRPC client from the internal serviceClients map
 //
 // Parameters:
 //   - swampName: a fully-qualified HydrAIDE Name (Sanctuary → Realm → Swamp)
 //
 // Returns:
-//   - hydraidepbgo.HydraideServiceClient if a client is registered for that folder
-//   - nil if no connection exists for the given folder (logs error)
+//   - hydraidepbgo.HydraideServiceClient (bound to the correct server)
+//   - nil if no client is registered for the calculated folder
 //
 // Example:
 //
@@ -366,10 +341,61 @@ func (c *client) CloseConnection() {
 //	    res, _ := client.Read(...)
 //	}
 //
-// Note:
-//   - The folderNumber is 1-based and must fall within a known server range
-//   - This lookup is thread-safe and uses a read lock
+// Notes:
+//   - The folder number is calculated from the swamp name hash, then routed to the correct server
+//   - The lookup is thread-safe (uses a read lock)
+//   - This method provides the low-level client only; use GetServiceClientWithMeta() if you need Host info or full routing metadata
 func (c *client) GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServiceClient {
+
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
+	// lekérdezzük a folder számát
+	folderNumber := swampName.GetFolderNumber(c.allFolders)
+
+	// a folder száma alapján visszaadjuk a klienst
+	if serviceClient, ok := c.serviceClients[folderNumber]; ok {
+		return serviceClient.GrpcClient
+	}
+
+	log.WithFields(log.Fields{
+		"error":     errorNoConnection,
+		"swampName": swampName.Get(),
+	}).Error("error while getting service client by swamp name")
+
+	return nil
+
+}
+
+// GetServiceClientAndHost returns the full HydrAIDE service client wrapper for a given Swamp name.
+//
+// Unlike GetServiceClient(), which only returns the raw gRPC client,
+// this method provides additional metadata, such as the Host identifier for the target server.
+//
+// Internally:
+// - Computes the folder number by hashing the Swamp name
+// - Resolves the target server from the folder-to-client map
+//
+// Returns:
+// - *ServiceClient struct, which contains:
+//   - `GrpcClient` → the actual gRPC HydrAIDEServiceClient
+//   - `Host`       → the Host string of the resolved server (e.g. IP:port or logical name)
+//
+// - nil if no matching server is registered for the calculated folder
+//
+// Example:
+//
+//	swamp := name.New().Sanctuary("users").Realm("logs").Swamp("user123") \n client := hydraClient.GetServiceClientAndHost(swamp) \n if client != nil {\n    res, _ := client.GrpcClient.Read(...)\n    fmt.Println(\"Resolved Host:\", client.Host)\n}
+//
+// This is especially useful when:
+// - Grouping Swamps by target server
+// - Logging or debugging routing behavior
+// - Performing multi-swamp operations where server affinity matters
+//
+// Note:
+// - Thread-safe via internal read lock
+// - The folder number is derived from the full Swamp name and `allFolders` total
+func (c *client) GetServiceClientAndHost(swampName name.Name) *ServiceClient {
 
 	c.mu.RLock()
 	defer c.mu.RUnlock()
@@ -424,9 +450,9 @@ func ping(ip string) bool {
 		return false
 	}
 	log.WithFields(log.Fields{
-		"host": ip,
+		"Host": ip,
 		"out":  string(out),
-	}).Info("pinging the host")
+	}).Info("pinging the Host")
 	return true
 }
 
@@ -440,19 +466,19 @@ func pingHost(hostnameOrIP string) {
 		// If input is an IP address, just ping it
 		if ping(hostnameOrIP) {
 			log.WithFields(log.Fields{
-				"host": hostnameOrIP,
-			}).Info("the host ping without error")
+				"Host": hostnameOrIP,
+			}).Info("the Host ping without error")
 		} else {
 			log.WithFields(log.Fields{
-				"host": hostnameOrIP,
-			}).Warning("the host does not ping")
+				"Host": hostnameOrIP,
+			}).Warning("the Host does not ping")
 		}
 
 	} else {
 		ip, err := resolveHostname(hostnameOrIP)
 		if err != nil {
 			log.WithFields(log.Fields{
-				"host": hostnameOrIP,
+				"Host": hostnameOrIP,
 				"err":  err,
 			}).Error("could not resolve hostname")
 		}
@@ -460,12 +486,12 @@ func pingHost(hostnameOrIP string) {
 		// If input is an IP address, just ping it
 		if ping(ip) {
 			log.WithFields(log.Fields{
-				"host": ip,
-			}).Info("the host ping without error")
+				"Host": ip,
+			}).Info("the Host ping without error")
 		} else {
 			log.WithFields(log.Fields{
-				"host": ip,
-			}).Warning("the host does not ping")
+				"Host": ip,
+			}).Warning("the Host does not ping")
 		}
 	}
 }
