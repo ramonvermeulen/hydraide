@@ -47,6 +47,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
+	"io"
 	"reflect"
 	"sync"
 	"time"
@@ -63,6 +64,7 @@ const (
 	errorMessageSwampNotFound       = "swamp not found"
 	errorMessageInternalError       = "internal error"
 	errorMessageKeyAlreadyExists    = "key already exists"
+	errorMessageKeyNotFound         = "key not found"
 )
 
 const (
@@ -89,7 +91,67 @@ type Hydraidego interface {
 	CatalogCreateMany(ctx context.Context, swampName name.Name, models []any, iterator CreateManyIteratorFunc) error
 	CatalogCreateManyToMany(ctx context.Context, request []*CatalogManyToManyRequest, iterator CatalogCreateManyToManyIteratorFunc) error
 	CatalogRead(ctx context.Context, swampName name.Name, key string, model any) error
+	CatalogReadMany(ctx context.Context, swampName name.Name, index *Index, model any, iterator CatalogReadManyIteratorFunc) error
+	CatalogUpdate(ctx context.Context, swampName name.Name, model any) error
+	CatalogUpdateMany(ctx context.Context, swampName name.Name, models []any, iterator CatalogUpdateManyIteratorFunc) error
+	CatalogDelete(ctx context.Context, swampName name.Name, key string) error
+	CatalogDeleteMany(ctx context.Context, swampName name.Name, keys []string, iterator CatalogDeleteIteratorFunc) error
+	CatalogDeleteManyFromMany(ctx context.Context, request []*CatalogDeleteManyFromManyRequest, iterator CatalogDeleteIteratorFunc) error
+	CatalogSave(ctx context.Context, swampName name.Name, model any) (eventStatus EventStatus, err error)
+	CatalogSaveMany(ctx context.Context, swampName name.Name, models []any, iterator CatalogSaveManyIteratorFunc) error
+	CatalogSaveManyToMany(ctx context.Context, request []*CatalogManyToManyRequest, iterator CatalogSaveManyToManyIteratorFunc) error
+	ProfileSave(ctx context.Context, swampName name.Name, model any) (err error)
+	ProfileRead(ctx context.Context, swampName name.Name, model any) (err error)
+	Count(ctx context.Context, swampName name.Name) (int32, error)
+	Destroy(ctx context.Context, swampName name.Name) error
+	Subscribe(ctx context.Context, swampName name.Name, getExistingData bool, model any, iterator SubscribeIteratorFunc) error
 }
+
+type Index struct {
+	IndexType
+	IndexOrder
+	From  int32 // ha 0 az from, akkor az összes elemet visszaadja
+	Limit int32 // ha 0 a limit, akkor az összes elemet visszaadja
+}
+
+type IndexType int
+
+const (
+	IndexKey IndexType = iota + 1
+	IndexValueString
+	IndexValueUint8
+	IndexValueUint16
+	IndexValueUint32
+	IndexValueUint64
+	IndexValueInt8
+	IndexValueInt16
+	IndexValueInt32
+	IndexValueInt64
+	IndexValueFloat32
+	IndexValueFloat64
+	IndexExpirationTime
+	IndexCreationTime
+	IndexUpdateTime
+)
+
+type IndexOrder int
+
+const (
+	IndexOrderAsc IndexOrder = iota + 1
+	IndexOrderDesc
+)
+
+type EventStatus int
+
+const (
+	StatusUnknown EventStatus = iota
+	StatusSwampNotFound
+	StatusTreasureNotFound
+	StatusNew
+	StatusModified
+	StatusNothingChanged
+	StatusDeleted
+)
 
 type RegisterSwampRequest struct {
 	// SwampPattern defines the pattern to register in HydrAIDE.
@@ -734,7 +796,7 @@ func (h *hydraidego) IsKeyExists(ctx context.Context, swampName name.Name, key s
 // Each record is identified by UserUUID and optionally enriched with metadata.
 func (h *hydraidego) CatalogCreate(ctx context.Context, swampName name.Name, model any) error {
 
-	kvPair, err := convertModelToKeyValuePair(model)
+	kvPair, err := convertCatalogModelToKeyValuePair(model)
 	if err != nil {
 		return NewError(ErrCodeInvalidModel, err.Error())
 	}
@@ -797,7 +859,7 @@ type CreateManyIteratorFunc func(key string, err error) error
 //
 // ✅ Behavior:
 // - Creates the Swamp if it does not exist yet
-// - Converts each input model into a KeyValuePair using `convertModelToKeyValuePair()`
+// - Converts each input model into a KeyValuePair using `convertCatalogModelToKeyValuePair()`
 // - Inserts all items in a single SetRequest
 // - Fails **only** if the gRPC call fails or if a model is invalid
 //
@@ -848,7 +910,7 @@ func (h *hydraidego) CatalogCreateMany(ctx context.Context, swampName name.Name,
 	kvPairs := make([]*hydraidepbgo.KeyValuePair, 0, len(models))
 
 	for _, model := range models {
-		kvPair, err := convertModelToKeyValuePair(model)
+		kvPair, err := convertCatalogModelToKeyValuePair(model)
 		if err != nil {
 			return NewError(ErrCodeInvalidModel, err.Error())
 		}
@@ -924,7 +986,7 @@ type CatalogManyToManyRequest struct {
 // ✅ Behavior:
 // - Groups all SwampRequests by their destination server (based on Swamp name hashing)
 // - Sends **one SetRequest per server**, bundling all Swamps and KeyValuePairs
-// - Converts each model using `convertModelToKeyValuePair()`
+// - Converts each model using `convertCatalogModelToKeyValuePair()`
 // - Automatically creates Swamps if they don't exist
 // - Does **not overwrite existing keys**
 //
@@ -996,7 +1058,7 @@ func (h *hydraidego) CatalogCreateManyToMany(ctx context.Context, request []*Cat
 		kvPairs := make([]*hydraidepbgo.KeyValuePair, 0, len(req.Models))
 
 		for _, model := range req.Models {
-			kvPair, err := convertModelToKeyValuePair(model)
+			kvPair, err := convertCatalogModelToKeyValuePair(model)
 			if err != nil {
 				return NewError(ErrCodeInvalidModel, err.Error())
 			}
@@ -1097,7 +1159,6 @@ func (h *hydraidego) CatalogCreateManyToMany(ctx context.Context, request []*Cat
 // - Timeout / context / network issues → appropriate SDK error codes
 func (h *hydraidego) CatalogRead(ctx context.Context, swampName name.Name, key string, model any) error {
 
-	// a swampot és a kulcsot beállítjuk
 	swamps := []*hydraidepbgo.GetSwamp{
 		{
 			SwampName: swampName.Get(),
@@ -1105,12 +1166,971 @@ func (h *hydraidego) CatalogRead(ctx context.Context, swampName name.Name, key s
 		},
 	}
 
-	// lekérdezzüók az egyetlen kulcsot a hydrából
 	response, err := h.client.GetServiceClient(swampName).Get(ctx, &hydraidepbgo.GetRequest{
 		Swamps: swamps,
 	})
 
 	if err != nil {
+		return errorHandler(err)
+	}
+
+	for _, swamp := range response.GetSwamps() {
+		for _, treasure := range swamp.GetTreasures() {
+			if treasure.IsExist == false {
+				return NewError(ErrCodeNotFound, "key not found")
+			}
+			if convErr := convertProtoTreasureToCatalogModel(treasure, model); convErr != nil {
+				return NewError(ErrCodeInvalidModel, convErr.Error())
+			}
+			return nil
+		}
+	}
+
+	return NewError(ErrCodeNotFound, "key not found")
+
+}
+
+type CatalogReadManyIteratorFunc func(model any) error
+
+// CatalogReadMany reads a set of Treasures from a Swamp using the provided Index, and applies a callback to each.
+//
+// This function enables high-performance, filtered reads from a Swamp based on a preconstructed Index,
+// and feeds each unmarshaled result into a user-defined iterator function.
+//
+// ✅ Use when you want to:
+//   - Stream filtered results from a Swamp using index-based logic
+//   - Unmarshal Treasures into a typed model
+//   - Apply business logic or collect results via a custom iterator
+//
+// ⚙️ Parameters:
+//   - ctx: Context for cancellation and timeout.
+//   - swampName: The logical name of the Swamp to query.
+//   - index: A non-nil Index instance describing how to filter, order, and limit the read.
+//   - model: A non-pointer struct type. Used as the template for unmarshaling Treasures.
+//   - iterator: A non-nil function that is called once per result. Returning an error stops the loop.
+//
+// ⚠️ Requirements:
+//   - `index` must not be nil — otherwise the call fails.
+//   - `iterator` must not be nil — otherwise the call fails.
+//   - `model` must be a **non-pointer** struct. Pointer types will cause an error response.
+//
+// 📦 Behavior:
+//   - Internally calls Hydra’s `GetByIndex` gRPC method to fetch raw Treasures.
+//   - Skips non-existing (`IsExist == false`) entries silently.
+//   - For each result, creates a new instance of the model type, fills it from the Treasure,
+//     and passes it to `iterator`.
+//   - If `iterator` returns an error, iteration halts and the same error is returned.
+//
+// 🧠 Philosophy:
+//   - Zero shared state: every call is isolated and memory-safe.
+//   - The function is sync and respects the calling thread/context.
+//   - Ideal for streaming reads, pipelines, transformations.
+func (h *hydraidego) CatalogReadMany(ctx context.Context, swampName name.Name, index *Index, model any, iterator CatalogReadManyIteratorFunc) error {
+
+	// Validate required parameters
+	if index == nil {
+		return NewError(ErrCodeInvalidArgument, "index can not be nil")
+	}
+	if iterator == nil {
+		return NewError(ErrCodeInvalidArgument, "iterator can not be nil")
+	}
+
+	// Ensure that the model is not a pointer type (we create new instances internally)
+	if reflect.TypeOf(model).Kind() == reflect.Ptr {
+		return NewError(ErrCodeInvalidArgument, "model cannot be a pointer")
+	}
+
+	// Convert index type and order into the proto format expected by the backend
+	indexTypeProtoFormat := convertIndexTypeToProtoIndexType(index.IndexType)
+	orderTypeProtoFormat := convertOrderTypeToProtoOrderType(index.IndexOrder)
+
+	// Fetch all matching Treasures from the Hydra engine based on the Index parameters
+	response, err := h.client.GetServiceClient(swampName).GetByIndex(ctx, &hydraidepbgo.GetByIndexRequest{
+		SwampName: swampName.Get(),
+		IndexType: indexTypeProtoFormat,
+		OrderType: orderTypeProtoFormat,
+		From:      index.From,
+		Limit:     index.Limit,
+	})
+
+	if err != nil {
+		return errorHandler(err)
+	}
+
+	// Iterate through each returned Treasure and convert it into a usable model instance
+	for _, treasure := range response.GetTreasures() {
+
+		// Skip non-existent records
+		if treasure.IsExist == false {
+			continue
+		}
+
+		// Create a fresh instance of the model (we clone the type, not the original value)
+		modelValue := reflect.New(reflect.TypeOf(model)).Interface()
+
+		// Unmarshal the Treasure into the model using the internal conversion logic
+		if convErr := convertProtoTreasureToCatalogModel(treasure, modelValue); convErr != nil {
+			return NewError(ErrCodeInvalidModel, convErr.Error())
+		}
+
+		// Pass the result to the user-provided iterator function
+		// If it returns an error, halt iteration and return the error
+		if iterErr := iterator(modelValue); iterErr != nil {
+			return iterErr
+		}
+	}
+
+	// If we reached here, everything was successful
+	return nil
+}
+
+// CatalogUpdate updates a single existing Treasure inside a given Swamp.
+//
+// This method performs an *in-place update* based on the key derived from the provided model.
+// It will NOT create the Swamp or the key if they do not already exist.
+// If the Swamp or key is missing, a descriptive error will be returned.
+//
+// ✅ Use when:
+//   - You want to overwrite an existing value in a Swamp
+//   - You already know the key exists and just want to update its content
+//
+// ⚠️ Constraints:
+//   - `model` must not be nil
+//   - `model` must implement a valid key via `hydrun:"key"`
+//   - The Swamp and key must already exist
+//
+// 🧠 Behavior:
+//   - Converts the model to a typed binary KeyValuePair
+//   - Sends an update (not insert) request to the Hydra engine
+//   - If the key or Swamp doesn’t exist, returns a clear error
+//
+// 🛠️ No creation. No upsert. Just pure update.
+func (h *hydraidego) CatalogUpdate(ctx context.Context, swampName name.Name, model any) error {
+
+	// Ensure the model is provided
+	if model == nil {
+		return NewError(ErrCodeInvalidModel, "model is nil")
+	}
+
+	// Convert the model into a typed key-value pair based on struct tags and reflection
+	kvPair, err := convertCatalogModelToKeyValuePair(model)
+	if err != nil {
+		return NewError(ErrCodeInvalidModel, err.Error())
+	}
+
+	// Send a Set request to update the value in Hydra
+	// Note:
+	// - CreateIfNotExist = false → Swamp must already exist
+	// - Overwrite = true         → Overwrite existing key, but do NOT create new key
+	response, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
+		Swamps: []*hydraidepbgo.SwampRequest{
+			{
+				SwampName:        swampName.Get(),
+				KeyValues:        []*hydraidepbgo.KeyValuePair{kvPair},
+				CreateIfNotExist: false,
+				Overwrite:        true,
+			},
+		},
+	})
+
+	// Handle potential gRPC or Hydra-specific errors
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.Canceled:
+				return NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+			case codes.Internal:
+				return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		}
+		// Non-gRPC error
+		return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+	// Check if the Swamp exists in the response
+	for _, swamp := range response.GetSwamps() {
+		if swamp.GetErrorCode() == hydraidepbgo.SwampResponse_SwampDoesNotExist {
+			return NewError(ErrCodeSwampNotFound, errorMessageSwampNotFound)
+		}
+
+		// Check if the key was actually found and updated
+		for _, kStatus := range swamp.GetKeysAndStatuses() {
+			if kStatus.GetStatus() == hydraidepbgo.Status_NOT_FOUND {
+				return NewError(ErrCodeNotFound, errorMessageKeyNotFound)
+			}
+		}
+	}
+
+	// Success — the update was completed
+	return nil
+}
+
+type CatalogUpdateManyIteratorFunc func(key string, status EventStatus) error
+
+// CatalogUpdateMany updates multiple existing Treasures inside a single Swamp.
+//
+// This is a batch-safe operation that performs a non-creating update:
+// it will only update Treasures that already exist — and will skip or report keys that don’t.
+//
+// ✅ Use when:
+//   - You want to update many Treasures at once (bulk overwrite)
+//   - You want to ensure that no new Treasures are accidentally created
+//   - You want per-Treasure feedback using a callback
+//
+// ⚠️ Constraints:
+//   - Treasures that do not exist will not be created
+//   - The Swamp must already exist
+//   - The `iterator` (if provided) will receive a status per key
+//
+// 💡 Typical use case:
+//   - Audit-safe batch update: "only touch existing records"
+//   - Change tracking: get status feedback per update
+//
+// 🧠 Behavior:
+//   - Converts each model to a binary KeyValuePair
+//   - Sends them in a single Set request with overwrite-only behavior
+//   - Streams each key’s result status to the provided iterator
+//   - Iterator can early-return with error to abort processing
+func (h *hydraidego) CatalogUpdateMany(ctx context.Context, swampName name.Name, models []any, iterator CatalogUpdateManyIteratorFunc) error {
+
+	// Ensure models slice is not nil
+	if models == nil {
+		return NewError(ErrCodeInvalidModel, "model is nil")
+	}
+
+	// Convert all models to KeyValuePair (binary form)
+	kvPairs := make([]*hydraidepbgo.KeyValuePair, 0, len(models))
+	for _, model := range models {
+		kvPair, err := convertCatalogModelToKeyValuePair(model)
+		if err != nil {
+			return NewError(ErrCodeInvalidModel, err.Error())
+		}
+		kvPairs = append(kvPairs, kvPair)
+	}
+
+	// Perform the batch Set request
+	// Note:
+	// - CreateIfNotExist = false → No new Swamps will be created
+	// - Overwrite = true         → Only update existing keys
+	response, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
+		Swamps: []*hydraidepbgo.SwampRequest{
+			{
+				SwampName:        swampName.Get(),
+				KeyValues:        kvPairs,
+				CreateIfNotExist: false,
+				Overwrite:        true,
+			},
+		},
+	})
+
+	// Handle transport or protocol-level errors
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.Canceled:
+				return NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+			case codes.Internal:
+				return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		}
+		return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+	// If an iterator is provided, report status per key
+	if iterator != nil {
+		for _, swamp := range response.GetSwamps() {
+
+			// Report if the entire Swamp was not found
+			if swamp.GetErrorCode() == hydraidepbgo.SwampResponse_SwampDoesNotExist {
+				if iterErr := iterator("", StatusSwampNotFound); iterErr != nil {
+					return iterErr
+				}
+			}
+
+			// Report status per Treasure (key)
+			for _, kStatus := range swamp.GetKeysAndStatuses() {
+				stat := convertProtoStatusToStatus(kStatus.GetStatus())
+				if iterErr := iterator(kStatus.GetKey(), stat); iterErr != nil {
+					return iterErr
+				}
+			}
+		}
+	}
+
+	// All updates and iteration finished successfully
+	return nil
+}
+
+// CatalogDelete removes a single Treasure from a given Swamp by key.
+//
+// This operation performs a hard delete. If the key exists, it is removed immediately.
+// If the key is the last in the Swamp, the entire Swamp is also deleted.
+//
+// ✅ Use when:
+//   - You want to permanently delete a Treasure by its key
+//   - You want automatic cleanup of empty Swamps (zero-state)
+//
+// ⚠️ Behavior:
+//   - If the Swamp does not exist → returns ErrCodeSwampNotFound
+//   - If the key does not exist   → returns ErrCodeNotFound
+//   - If deletion is successful   → returns nil
+//   - If the deleted Treasure was the last → the Swamp folder is removed entirely
+//
+// 💡 This is an idempotent operation: calling it on a non-existent key is safe, but results in error.
+func (h *hydraidego) CatalogDelete(ctx context.Context, swampName name.Name, key string) error {
+
+	// Send a delete request for the specified key inside the given Swamp
+	response, err := h.client.GetServiceClient(swampName).Delete(ctx, &hydraidepbgo.DeleteRequest{
+		Swamps: []*hydraidepbgo.DeleteRequest_SwampKeys{
+			{
+				SwampName: swampName.Get(),
+				Keys:      []string{key},
+			},
+		},
+	})
+
+	// Handle transport or protocol-level errors
+	if err != nil {
+		return errorHandler(err)
+	}
+
+	// Iterate over Swamp-level responses
+	for _, r := range response.GetResponses() {
+
+		// If the Swamp doesn't exist at all, return specific error
+		if r.ErrorCode != nil && r.GetErrorCode() == hydraidepbgo.DeleteResponse_SwampDeleteResponse_SwampDoesNotExist {
+			return NewError(ErrCodeSwampNotFound, errorMessageSwampNotFound)
+		}
+
+		// Check per-key deletion status
+		for _, ksPair := range r.GetKeyStatuses() {
+			switch ksPair.GetStatus() {
+
+			// Key was not found in the Swamp
+			case hydraidepbgo.Status_NOT_FOUND:
+				return NewError(ErrCodeNotFound, errorMessageKeyNotFound)
+
+			// Key was successfully deleted
+			case hydraidepbgo.Status_DELETED:
+				return nil
+			}
+		}
+	}
+
+	// If no status matched or something unexpected happened
+	return NewError(ErrCodeUnknown, errorMessageUnknown)
+}
+
+type CatalogDeleteIteratorFunc func(key string, err error) error
+
+// CatalogDeleteMany removes multiple Treasures from a single Swamp by key.
+//
+// This batch operation performs hard deletes across multiple keys in one request.
+// It does **not** create or ignore missing Swamps or Treasures — instead, it explicitly reports each outcome.
+//
+// If provided, the `iterator` callback will be invoked once for each processed key (or Swamp-level error),
+// allowing custom error handling, metrics, or conditional flow control.
+//
+// ✅ Use when:
+//   - You want to delete many Treasures at once
+//   - You want to handle each deletion result individually
+//   - You need full visibility into what was deleted, not found, or failed
+//
+// ⚠️ Behavior:
+//   - If the Swamp does not exist → `iterator("", ErrCodeSwampNotFound)`
+//   - If a key does not exist     → `iterator(key, ErrCodeNotFound)`
+//   - If a key is deleted         → `iterator(key, nil)`
+//   - If `iterator` returns an error → iteration stops immediately and the same error is returned
+//
+// 💡 Swamps with zero Treasures left after deletion are automatically removed.
+func (h *hydraidego) CatalogDeleteMany(ctx context.Context, swampName name.Name, keys []string, iterator CatalogDeleteIteratorFunc) error {
+
+	// Send a bulk delete request to Hydra for all specified keys
+	response, err := h.client.GetServiceClient(swampName).Delete(ctx, &hydraidepbgo.DeleteRequest{
+		Swamps: []*hydraidepbgo.DeleteRequest_SwampKeys{
+			{
+				SwampName: swampName.Get(),
+				Keys:      keys,
+			},
+		},
+	})
+	if err != nil {
+		return errorHandler(err)
+	}
+
+	// If an iterator is provided, walk through all results and emit per-key outcome
+	if iterator != nil {
+		for _, r := range response.GetResponses() {
+
+			// Swamp-level error: Swamp not found
+			if r.ErrorCode != nil && r.GetErrorCode() == hydraidepbgo.DeleteResponse_SwampDeleteResponse_SwampDoesNotExist {
+				if iterErr := iterator("", NewError(ErrCodeSwampNotFound, errorMessageSwampNotFound)); iterErr != nil {
+					return iterErr
+				}
+				continue
+			}
+
+			// Iterate over each key and report its individual status
+			for _, ksPair := range r.GetKeyStatuses() {
+				switch ksPair.GetStatus() {
+
+				// Key not found in Swamp
+				case hydraidepbgo.Status_NOT_FOUND:
+					if iterErr := iterator(ksPair.GetKey(),
+						NewError(ErrCodeNotFound, fmt.Sprintf("key (%s) not found", ksPair.GetKey()))); iterErr != nil {
+						return iterErr
+					}
+
+				// Key successfully deleted
+				case hydraidepbgo.Status_DELETED:
+					if iterErr := iterator(ksPair.GetKey(), nil); iterErr != nil {
+						return iterErr
+					}
+				}
+			}
+		}
+	}
+
+	// Deletion complete, all statuses reported (if iterator was set)
+	return nil
+}
+
+type CatalogDeleteManyFromManyRequest struct {
+	SwampName name.Name
+	Keys      []string
+}
+
+// CatalogDeleteManyFromMany deletes keys from multiple Swamps — across multiple servers — in a single operation.
+//
+// This function performs distributed, batched deletion of Treasures using their Swamp name and key,
+// regardless of which Hydra server holds the Swamp. The system automatically resolves which server
+// handles each Swamp, groups the operations by host, and executes the deletes efficiently.
+//
+// ✅ Use when:
+//   - You need to delete Treasures from many Swamps at once
+//   - You are in a multi-server / distributed environment
+//   - You want to preserve full control and observability using an iterator
+//
+// ⚠️ Behavior:
+//   - Automatically resolves the host for each Swamp via `GetServiceClientAndHost`
+//   - Groups deletion requests by server to minimize roundtrips
+//   - Calls the `iterator` (if provided) with each key's result status
+//   - If the last key in a Swamp is deleted, the Swamp is removed as well
+//
+// 💡 Internally built on Hydra’s stateless distributed architecture — no central coordinator needed.
+func (h *hydraidego) CatalogDeleteManyFromMany(ctx context.Context, request []*CatalogDeleteManyFromManyRequest, iterator CatalogDeleteIteratorFunc) error {
+
+	type requestGroup struct {
+		client hydraidepbgo.HydraideServiceClient
+		keys   []string
+	}
+
+	// Group delete requests by server (host)
+	serverRequests := make(map[string]*requestGroup)
+
+	for _, req := range request {
+
+		// Determine which server hosts the given Swamp (based on its name)
+		clientAndHost := h.client.GetServiceClientAndHost(req.SwampName)
+
+		// Initialize group for this server if needed
+		if _, ok := serverRequests[clientAndHost.Host]; !ok {
+			serverRequests[clientAndHost.Host] = &requestGroup{
+				client: clientAndHost.GrpcClient,
+			}
+		}
+
+		// Add keys to this server group
+		serverRequests[clientAndHost.Host].keys = req.Keys
+	}
+
+	// Process each group of Swamps per server
+	for _, reqGroup := range serverRequests {
+
+		// Build a list of Swamp+Key combinations for this batch
+		swamps := make([]*hydraidepbgo.DeleteRequest_SwampKeys, 0, len(request))
+		for _, req := range request {
+			swampName := req.SwampName.Get()
+			swamps = append(swamps, &hydraidepbgo.DeleteRequest_SwampKeys{
+				SwampName: swampName,
+				Keys:      req.Keys,
+			})
+		}
+
+		// Execute the delete request to this server
+		response, err := reqGroup.client.Delete(ctx, &hydraidepbgo.DeleteRequest{
+			Swamps: swamps,
+		})
+
+		// If the server is unreachable or error occurs, return immediately
+		if err != nil {
+			return errorHandler(err)
+		}
+
+		// Process response and call the iterator (if provided)
+		if iterator != nil {
+			for _, r := range response.GetResponses() {
+
+				// Swamp does not exist
+				if r.ErrorCode != nil && r.GetErrorCode() == hydraidepbgo.DeleteResponse_SwampDeleteResponse_SwampDoesNotExist {
+					if iterErr := iterator("", NewError(ErrCodeSwampNotFound, errorMessageSwampNotFound)); iterErr != nil {
+						return iterErr
+					}
+					continue
+				}
+
+				// Iterate over each key's deletion status
+				for _, ksPair := range r.GetKeyStatuses() {
+					switch ksPair.GetStatus() {
+
+					// Key not found in the Swamp
+					case hydraidepbgo.Status_NOT_FOUND:
+						if iterErr := iterator(
+							ksPair.GetKey(),
+							NewError(ErrCodeNotFound, fmt.Sprintf("key (%s) not found", ksPair.GetKey())),
+						); iterErr != nil {
+							return iterErr
+						}
+
+					// Key successfully deleted
+					case hydraidepbgo.Status_DELETED:
+						if iterErr := iterator(ksPair.GetKey(), nil); iterErr != nil {
+							return iterErr
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// All deletions processed successfully
+	return nil
+}
+
+// CatalogSave stores or updates a single Treasure in a Swamp — creating the Swamp and key if needed.
+//
+// This function performs an intelligent write operation:
+// - If the Swamp does not exist → it is automatically created
+// - If the key does not exist   → it is created with the given value
+// - If the key exists           → it is updated (only if needed)
+//
+// ✅ Use when:
+//   - You want a safe "set-if-new, update-if-exists" logic
+//   - You don’t care if the Treasure already exists — you just want the current value saved
+//   - You need feedback about *what actually happened* (was it created, updated, unchanged?)
+//
+// ⚙️ Returns:
+//   - `StatusNew`:        The Treasure was newly created
+//   - `StatusModified`:   The Treasure existed and was modified
+//   - `StatusNothingChanged`: The Treasure already existed and the new value was identical
+//   - `StatusUnknown`:    Something went wrong (see error)
+//
+// 💡 This function is preferred for cases where you don’t want to check existence beforehand.
+// It is atomic, clean, and supports real-time reactive updates.
+func (h *hydraidego) CatalogSave(ctx context.Context, swampName name.Name, model any) (eventStatus EventStatus, err error) {
+
+	// Convert the model into a KeyValuePair (binary format) using reflection + hydrun tags
+	kvPair, err := convertCatalogModelToKeyValuePair(model)
+	if err != nil {
+		return StatusUnknown, NewError(ErrCodeInvalidModel, err.Error())
+	}
+
+	// Perform the Set operation with full upsert behavior:
+	// - CreateIfNotExist = true → will create Swamp if needed
+	// - Overwrite = true        → will update key if it exists
+	setResponse, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
+		Swamps: []*hydraidepbgo.SwampRequest{
+			{
+				SwampName:        swampName.Get(),
+				KeyValues:        []*hydraidepbgo.KeyValuePair{kvPair},
+				CreateIfNotExist: true,
+				Overwrite:        true,
+			},
+		},
+	})
+	if err != nil {
+		// Translate gRPC or Hydra-specific error into user-friendly error
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return StatusUnknown, NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return StatusUnknown, NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.Canceled:
+				return StatusUnknown, NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+			case codes.Internal:
+				return StatusUnknown, NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return StatusUnknown, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		}
+		// Non-gRPC error
+		return StatusUnknown, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+	// Extract the result status from the first key in the response
+	// (We only sent one key, so only one result is expected)
+	for _, swamp := range setResponse.GetSwamps() {
+		for _, kv := range swamp.GetKeysAndStatuses() {
+			// Translate the proto response status into our local EventStatus enum
+			return convertProtoStatusToStatus(kv.GetStatus()), nil
+		}
+	}
+
+	// Should never reach here – fallback in case something unexpected happens
+	return StatusUnknown, NewError(ErrCodeUnknown, errorMessageUnknown)
+}
+
+// CatalogSaveManyIteratorFunc is a callback used by CatalogSaveMany.
+//
+// It is invoked for each Treasure that was processed, with:
+//   - `key`: The unique identifier of the Treasure
+//   - `status`: The result status (New, Modified, NothingChanged)
+//
+// Returning an error will immediately halt the entire operation.
+type CatalogSaveManyIteratorFunc func(key string, status EventStatus) error
+
+// CatalogSaveMany stores or updates multiple Treasures in a single Swamp in a single batch operation.
+//
+// This is the multi-record variant of `Save()`, optimized for batch scenarios. It accepts a slice of models,
+// converts them into binary KeyValuePairs, and upserts them into the specified Swamp.
+//
+// ✅ Use when:
+//   - You want to insert or update multiple Treasures at once
+//   - You want to ensure the Swamp is created if it doesn’t exist
+//   - You want per-key feedback using an iterator
+//
+// ⚙️ Behavior:
+//   - If the Swamp does not exist → it will be created
+//   - If a key does not exist     → it will be created
+//   - If a key exists             → it will be updated or left untouched (if identical)
+//   - `iterator` (optional) will be called for each key with its EventStatus
+//
+// 🔁 Possible statuses per key (via iterator):
+//   - StatusNew
+//   - StatusModified
+//   - StatusNothingChanged
+//
+// 💡 Efficient for bulk imports, migrations, or synchronized state updates.
+func (h *hydraidego) CatalogSaveMany(ctx context.Context, swampName name.Name, models []any, iterator CatalogSaveManyIteratorFunc) error {
+
+	// Convert all provided models into KeyValuePair slices
+	kvPairs := make([]*hydraidepbgo.KeyValuePair, 0, len(models))
+	for _, model := range models {
+		kvPair, err := convertCatalogModelToKeyValuePair(model)
+		if err != nil {
+			return NewError(ErrCodeInvalidModel, err.Error())
+		}
+		kvPairs = append(kvPairs, kvPair)
+	}
+
+	// Send a Set request with upsert semantics:
+	// - CreateIfNotExist = true → creates Swamp if needed
+	// - Overwrite = true        → updates keys if they exist
+	setResponse, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
+		Swamps: []*hydraidepbgo.SwampRequest{
+			{
+				SwampName:        swampName.Get(),
+				KeyValues:        kvPairs,
+				CreateIfNotExist: true,
+				Overwrite:        true,
+			},
+		},
+	})
+
+	// Handle gRPC or internal errors with detailed messages
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.Canceled:
+				return NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+			case codes.Internal:
+				return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		}
+		// Non-gRPC error
+		return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+	// Process response and trigger iterator if defined
+	if iterator != nil {
+		for _, swamp := range setResponse.GetSwamps() {
+			for _, kv := range swamp.GetKeysAndStatuses() {
+
+				// Convert proto status to user-level status and pass it to iterator
+				if iterErr := iterator(kv.GetKey(), convertProtoStatusToStatus(kv.GetStatus())); iterErr != nil {
+					return iterErr
+				}
+			}
+		}
+	}
+
+	// All operations completed successfully
+	return nil
+}
+
+// CatalogSaveManyToManyIteratorFunc is used to stream per-Treasure result feedback in CatalogSaveManyToMany.
+//
+// Parameters:
+//   - `swampName`: The Swamp in which the key was saved
+//   - `key`: The unique identifier of the Treasure
+//   - `status`: The result of the operation (New, Modified, NothingChanged)
+//
+// Returning an error aborts the entire save operation immediately.
+type CatalogSaveManyToManyIteratorFunc func(swampName name.Name, key string, status EventStatus) error
+
+// CatalogSaveManyToMany performs a multi-Swamp, multi-Treasure batch upsert across distributed servers.
+//
+// This function accepts a list of Swamp–model pairs and efficiently distributes the write operations
+// to the correct Hydra servers based on Swamp name. It acts as a bulk "save" (insert-or-update)
+// for heterogeneous, distributed Swamp structures.
+//
+// ✅ Use when:
+//   - You want to upsert into many different Swamps in a single operation
+//   - You want the Swamps to be automatically created if they don’t exist
+//   - You want per-Treasure feedback using an iterator
+//   - You’re in a multi-server environment and need transparent routing
+//
+// ⚙️ Behavior:
+//   - Each model is converted into a Treasure (KeyValuePair)
+//   - Swamps are grouped by their deterministic host (via name hashing)
+//   - Each server receives its subset of Swamps and executes a batch Set
+//   - Iterator (if provided) reports back key-level status with Swamp name context
+//
+// 🔁 Possible `EventStatus` values per key:
+//   - StatusNew
+//   - StatusModified
+//   - StatusNothingChanged
+//
+// 💡 This is one of the most powerful primitives in HydrAIDE – a true distributed, deterministic upsert.
+func (h *hydraidego) CatalogSaveManyToMany(ctx context.Context, request []*CatalogManyToManyRequest, iterator CatalogSaveManyToManyIteratorFunc) error {
+
+	type requestBySwamp struct {
+		swampName name.Name
+		request   *hydraidepbgo.SwampRequest
+	}
+
+	// Prepare the per-swamp KeyValuePairs
+	swamps := make([]*requestBySwamp, 0, len(request))
+	for _, req := range request {
+
+		swampName := req.SwampName.Get()
+		kvPairs := make([]*hydraidepbgo.KeyValuePair, 0, len(req.Models))
+
+		// Convert each model into a KeyValuePair
+		for _, model := range req.Models {
+			kvPair, err := convertCatalogModelToKeyValuePair(model)
+			if err != nil {
+				return NewError(ErrCodeInvalidModel, err.Error())
+			}
+			kvPairs = append(kvPairs, kvPair)
+		}
+
+		// Build the SwampRequest for this Swamp
+		swamps = append(swamps, &requestBySwamp{
+			swampName: req.SwampName,
+			request: &hydraidepbgo.SwampRequest{
+				SwampName:        swampName,
+				KeyValues:        kvPairs,
+				CreateIfNotExist: true,
+				Overwrite:        true,
+			},
+		})
+	}
+
+	type requestGroup struct {
+		client   hydraidepbgo.HydraideServiceClient
+		requests []*hydraidepbgo.SwampRequest
+	}
+
+	// Group requests by target Hydra server (based on SwampName hashing)
+	serverRequests := make(map[string]*requestGroup)
+	for _, sw := range swamps {
+
+		// Resolve which server should handle this Swamp
+		clientAndHost := h.client.GetServiceClientAndHost(sw.swampName)
+
+		// Initialize group for server if needed
+		if _, ok := serverRequests[clientAndHost.Host]; !ok {
+			serverRequests[clientAndHost.Host] = &requestGroup{
+				client: clientAndHost.GrpcClient,
+			}
+		}
+
+		// Add this SwampRequest to the correct server group
+		serverRequests[clientAndHost.Host].requests = append(serverRequests[clientAndHost.Host].requests, sw.request)
+	}
+
+	// Process requests grouped per server
+	for _, reqGroup := range serverRequests {
+
+		// Perform the batch Set operation for this server
+		setResponse, err := reqGroup.client.Set(ctx, &hydraidepbgo.SetRequest{
+			Swamps: reqGroup.requests,
+		})
+
+		if err != nil {
+			// Map gRPC-level errors to internal codes
+			if s, ok := status.FromError(err); ok {
+				switch s.Code() {
+				case codes.Unavailable:
+					return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+				case codes.DeadlineExceeded:
+					return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+				case codes.Canceled:
+					return NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+				case codes.Internal:
+					return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+				default:
+					return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+				}
+			}
+			// Non-gRPC error
+			return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+		}
+
+		// Stream back statuses to the iterator, if one was provided
+		if iterator != nil {
+			for _, swamp := range setResponse.GetSwamps() {
+
+				// Restore the logical Swamp name from the response
+				swampNameObj := name.Load(swamp.GetSwampName())
+
+				// Iterate through each key's status and invoke the callback
+				for _, kv := range swamp.GetKeysAndStatuses() {
+					if iterErr := iterator(swampNameObj, kv.GetKey(), convertProtoStatusToStatus(kv.GetStatus())); iterErr != nil {
+						return iterErr
+					}
+				}
+			}
+		}
+	}
+
+	// All operations completed successfully
+	return nil
+}
+
+// ProfileSave stores a full profile-like struct in the given Swamp as a set of key-value pairs.
+//
+// Unlike the Catalog-based Save methods (which use a single key per record), ProfileSave decomposes
+// the given struct into individual fields — each saved as a standalone Treasure inside the same Swamp.
+//
+// ✅ Use when:
+//   - You want to store a logically unified object (e.g. user profile, app config, product metadata)
+//   - You want to load and save the full object *as one unit*
+//   - You want each field to be addressable as its own key
+//
+// ⚙️ Behavior:
+//   - Each struct field becomes its own key inside the Swamp
+//   - Fields are encoded efficiently (primitive types and GOB structs supported)
+//   - Fields with `hydraide:"omitempty"` tag will be skipped if they’re empty
+//   - If the Swamp doesn’t exist, it will be created
+//
+// ⚠️ **Important: `model` must be a pointer to a struct.**
+//   - This is required for proper field extraction via reflection.
+//   - Passing a non-pointer value will result in an error.
+//
+// 💡 Best used for profiles, preferences, system snapshots, or grouped state representations.
+func (h *hydraidego) ProfileSave(ctx context.Context, swampName name.Name, model any) (err error) {
+
+	kvPairs, err := convertProfileModelToKeyValuePair(model)
+
+	if err != nil {
+		return NewError(ErrCodeInvalidModel, err.Error())
+	}
+
+	_, err = h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
+		Swamps: []*hydraidepbgo.SwampRequest{
+			{
+				SwampName:        swampName.Get(),
+				KeyValues:        kvPairs,
+				CreateIfNotExist: true,
+				Overwrite:        true,
+			},
+		},
+	})
+
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.Canceled:
+				return NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+			case codes.Internal:
+				return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		} else {
+			return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+		}
+	}
+
+	return nil
+
+}
+
+// ProfileRead loads a complete profile-like struct from a Swamp, field by field.
+//
+// This is the counterpart of `ProfileSave`, used to reconstruct a previously saved struct
+// where each field was stored as a separate Treasure under the same Swamp.
+//
+// ✅ Use when:
+//   - You previously saved a full object using ProfileSave
+//   - You want to load the entire profile into a struct with one operation
+//   - You expect all keys to be grouped under the same Swamp
+//
+// ⚙️ Behavior:
+//   - Uses the struct field tags to determine the expected keys
+//   - Tries to retrieve all specified keys in one `Get` call
+//   - If the Swamp doesn't exist → returns ErrCodeSwampNotFound
+//   - If a key is missing → silently skipped
+//   - Fields are populated using reflection-based decoding
+//
+// ⚠️ **Important: `model` must be a pointer to a struct.**
+//   - This is required for mutation and correct data binding via reflection.
+//
+// 💡 Best used for reading profiles, grouped settings, or full-object states.
+func (h *hydraidego) ProfileRead(ctx context.Context, swampName name.Name, model any) (err error) {
+
+	// Extract the expected keys from the model using reflection and struct tags
+	keys, err := getKeyFromProfileModel(model)
+	if err != nil {
+		return NewError(ErrCodeInvalidModel, err.Error())
+	}
+
+	// Try to fetch all keys from the Swamp in a single operation
+	response, err := h.client.GetServiceClient(swampName).Get(ctx, &hydraidepbgo.GetRequest{
+		Swamps: []*hydraidepbgo.GetSwamp{
+			{
+				SwampName: swampName.Get(),
+				Keys:      keys,
+			},
+		},
+	})
+	if err != nil {
+		// Translate server-side or network error to client-side semantics
 		if s, ok := status.FromError(err); ok {
 			switch s.Code() {
 			case codes.Unavailable:
@@ -1126,30 +2146,406 @@ func (h *hydraidego) CatalogRead(ctx context.Context, swampName name.Name, key s
 			default:
 				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
 			}
-		} else {
-			return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
 		}
-
+		return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
 	}
 
+	// Parse the response and assign values to the model fields
 	for _, swamp := range response.GetSwamps() {
 		for _, treasure := range swamp.GetTreasures() {
-			if treasure.IsExist == false {
-				return NewError(ErrCodeNotFound, "key not found")
+			// If the key does not exist, skip it silently
+			if !treasure.IsExist {
+				continue
 			}
-			if convErr := convertProtoTreasureToModel(treasure, model); convErr != nil {
-				return NewError(ErrCodeInvalidModel, convErr.Error())
+
+			// Use reflection to set the value into the model struct
+			err = setTreasureValueToComplexModel(model, treasure)
+			if err != nil {
+				// Skip faulty assignments silently to avoid halting the whole load
+				continue
 			}
-			return nil
 		}
 	}
 
-	// the treasure does not exist
-	return NewError(ErrCodeNotFound, "key not found")
+	// Successfully populated all available fields into the model
+	return nil
 
 }
 
-// convertModelToKeyValuePair converts a Go struct (passed as pointer) into a HydrAIDE-compatible KeyValuePair message.
+// Count returns the number of Treasures stored in a given Swamp.
+//
+// This function queries the Hydra cluster and asks for the element count (Treasure count)
+// for the specified Swamp. It is optimized for fast metadata retrieval without loading the actual data.
+//
+// ✅ Use when:
+//   - You need to check how many elements are inside a Swamp
+//   - You want to decide whether to load, paginate, or process based on size
+//   - You want to verify existence (a non-existent Swamp will return an error)
+//
+// ⚙️ Behavior:
+//   - If the Swamp exists, returns its element count (int32)
+//   - If the Swamp does not exist → returns `ErrCodeSwampNotFound`
+//   - If other errors occur (timeout, unavailable, etc.) → returns relevant wrapped error
+//   - A valid Swamp will always contain at least 1 Treasure
+//
+// 💡 Best used for dashboards, admin tooling, paginated APIs, or cleanup logic.
+func (h *hydraidego) Count(ctx context.Context, swampName name.Name) (int32, error) {
+
+	// Request the count of treasures from the given Swamp
+	response, err := h.client.GetServiceClient(swampName).Count(ctx, &hydraidepbgo.CountRequest{
+		SwampNames: []string{
+			swampName.Get(),
+		},
+	})
+
+	// Translate known gRPC and internal errors
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return 0, NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return 0, NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.Canceled:
+				return 0, NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+			case codes.Internal:
+				return 0, NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			case codes.FailedPrecondition:
+				return 0, NewError(ErrCodeSwampNotFound, fmt.Sprintf("%s: %v", errorMessageSwampNotFound, s.Message()))
+			case codes.InvalidArgument:
+				return 0, NewError(ErrCodeInvalidArgument, fmt.Sprintf("%s: %v", errorMessageInvalidArgument, s.Message()))
+			default:
+				return 0, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		}
+		return 0, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+	// Return the count from the response (exactly one Swamp expected)
+	for _, swamp := range response.GetSwamps() {
+		return swamp.GetCount(), nil
+	}
+
+	// Should not reach here – fallback error
+	return 0, NewError(ErrCodeUnknown, errorMessageUnknown)
+}
+
+// Destroy permanently deletes an entire Swamp and all of its Treasures.
+//
+// This operation irreversibly removes all key-value pairs from the specified Swamp.
+// It is the most destructive function in the HydrAIDE system and should be used with caution.
+//
+// ✅ Use when:
+//   - You want to completely delete a logical unit of data (e.g. user profile, product snapshot)
+//   - You no longer need *any* of the keys within a Swamp
+//   - You are cleaning up inactive, orphaned, or deprecated Swamps
+//
+// ⚙️ Behavior:
+//   - Deletes all Treasures under the given Swamp name
+//   - Swamp will no longer be addressable or countable after this operation
+//   - The operation is atomic and handled on the server side
+//
+// 💡 Typical usage:
+//   - Deleting an entire user profile (`Profile*` Swamps)
+//   - Resetting a sandbox/test environment
+//   - Cleanup after full deactivation or archival
+//
+// ⚠️ There is no undo.
+//   - Once a Swamp is destroyed, its data is permanently gone.
+//   - Always confirm the swampName before using this function.
+func (h *hydraidego) Destroy(ctx context.Context, swampName name.Name) error {
+
+	// Send the destroy request to the correct server based on swampName hashing
+	_, err := h.client.GetServiceClient(swampName).Destroy(ctx, &hydraidepbgo.DestroyRequest{
+		SwampName: swampName.Get(),
+	})
+
+	if err != nil {
+		// Return internal error with context
+		return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+	// Swamp successfully removed
+	return nil
+}
+
+type SubscribeIteratorFunc func(model any, eventStatus EventStatus, err error) error
+
+// Subscribe sets up a real-time event stream for a given Swamp, allowing you to react to changes as they happen.
+//
+// This is one of the most powerful primitives in HydrAIDE – it enables reactive, event-driven systems
+// without the need for external brokers (e.g. Kafka, NATS).
+//
+// ✅ Use when:
+//   - You want to track changes in a Swamp live (insert, update, delete)
+//   - You want to unify existing data and future updates in a single stream
+//   - You are building reactive systems (notifications, brokers, socket push, AI pipeline progress)
+//
+// ⚙️ Behavior:
+//   - Subscribes to Swamp-level changes via gRPC stream
+//   - The `iterator` callback receives one message per change (with status)
+//   - `model` must be a **non-pointer type**, used as a blueprint
+//   - Each call to `iterator(modelInstance, status, err)` passes a freshly filled pointer to modelInstance
+//   - If `getExistingData` is true:
+//   - All current Treasures are loaded and passed first (in ascending creation time)
+//   - Then the live stream begins from that point
+//
+// ⚠️ Notes:
+//   - The subscription is **non-blocking**; the stream runs in a background goroutine
+//   - The stream will stop if:
+//   - the context is canceled
+//   - the iterator returns an error
+//   - the server closes the stream
+//   - If an event conversion fails, the error is passed to the iterator (non-fatal)
+//
+// 💡 Typical use cases:
+//   - Watching a Swamp for AI completion signals
+//   - Acting as a message queue for microservices
+//   - Forwarding real-time updates to WebSocket clients
+//   - Triggering logic in distributed workflows
+func (h *hydraidego) Subscribe(ctx context.Context, swampName name.Name, getExistingData bool, model any, iterator SubscribeIteratorFunc) error {
+
+	// check if the iterator is nil
+	if iterator == nil {
+		// iterator can not be nil
+		return NewError(ErrCodeInvalidArgument, "iterator can not be nil")
+	}
+
+	// get the existing data if needed
+	if getExistingData {
+
+		// get all data by the index creation time in ascending order
+		response, err := h.client.GetServiceClient(swampName).GetByIndex(ctx, &hydraidepbgo.GetByIndexRequest{
+			SwampName: swampName.Get(),
+			IndexType: hydraidepbgo.IndexType_CREATION_TIME,
+			OrderType: hydraidepbgo.OrderType_ASC,
+			From:      0,
+			Limit:     0,
+		})
+
+		if err != nil {
+			if s, ok := status.FromError(err); ok {
+				switch s.Code() {
+				case codes.Unavailable:
+					return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+				case codes.DeadlineExceeded:
+					return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+				case codes.InvalidArgument:
+					return NewError(ErrCodeInvalidArgument, errorMessageInvalidArgument)
+				case codes.Internal:
+					return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+				default:
+					return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+				}
+			} else {
+				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		}
+
+		// go through the treasures and load them to the model if the user wants to get the existing data
+		for _, treasure := range response.GetTreasures() {
+
+			if treasure.IsExist == false {
+				continue
+			}
+
+			// create a new instance of the model
+			modelInstance := reflect.New(reflect.TypeOf(model)).Interface()
+
+			// ConvertProtoTreasureToModel function will load the data to the model
+			if convErr := convertProtoTreasureToCatalogModel(treasure, modelInstance); convErr != nil {
+				return NewError(ErrCodeInvalidModel, convErr.Error())
+			}
+
+			// call the iterator function and handle its error
+			// exit the loop if the iterator returns an error
+			if iErr := iterator(modelInstance, StatusNothingChanged, nil); iErr != nil {
+				return iErr
+			}
+
+		}
+
+	}
+
+	// subscribe to the events
+	eventClient, err := h.client.GetServiceClient(swampName).SubscribeToEvents(ctx, &hydraidepbgo.SubscribeToEventsRequest{
+		SwampName: swampName.Get(),
+	})
+
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.InvalidArgument:
+				return NewError(ErrCodeInvalidArgument, errorMessageInvalidArgument)
+			case codes.Internal:
+				return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		} else {
+			return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+		}
+	}
+
+	// listen to the events and block until the context is closed, the event stream is closed or error occurs in the
+	// stream or the iterator
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				// context closed by client
+				return
+			default:
+
+				event, receiveErr := eventClient.Recv()
+				// if the connection is closed, then we can exit the loop and do not listen to the events anymore
+				if receiveErr != nil {
+					if receiveErr == io.EOF {
+						// connection gracefully closed by the server
+						return
+					}
+					// call iterator function with error
+					if iErr := iterator(nil, StatusUnknown, NewError(ErrCodeUnknown, receiveErr.Error())); iErr != nil {
+						return
+					}
+					// unexpected error while receiving the event
+					return
+				}
+
+				// create a new instance of the model
+				modelInstance := reflect.New(reflect.TypeOf(model)).Interface()
+				var convErr error
+
+				// switch the event status and load the data to the model
+				// the conversion error will be stored in the convErr variable and pass it to the iterator
+				switch event.Status {
+				case hydraidepbgo.Status_NEW, hydraidepbgo.Status_UPDATED, hydraidepbgo.Status_NOTHING_CHANGED:
+					convErr = convertProtoTreasureToCatalogModel(event.GetTreasure(), modelInstance)
+				case hydraidepbgo.Status_DELETED:
+					convErr = convertProtoTreasureToCatalogModel(event.GetDeletedTreasure(), modelInstance)
+				}
+
+				// call the iterator function and handle its error
+				// exit the loop if the iterator returns an error
+				if iErr := iterator(modelInstance, convertProtoStatusToStatus(event.Status), convErr); iErr != nil {
+					// iteration error
+					return
+				}
+
+				continue
+
+			}
+		}
+	}()
+
+	return nil
+
+}
+
+func (h *hydraidego) Increment() {}
+
+func getKeyFromProfileModel(model any) ([]string, error) {
+
+	// check if the model is not a pointer
+	v := reflect.ValueOf(model)
+
+	// ellenőrizzük, hogy a model egy pointer-e és egy struct-e
+	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
+		return nil, errors.New("input must be a pointer to a struct")
+	}
+
+	var keys []string
+
+	v = v.Elem()
+	t := v.Type()
+
+	// get the keys from the struct
+	for i := 0; i < t.NumField(); i++ {
+		keys = append(keys, t.Field(i).Name)
+	}
+
+	return keys, nil
+
+}
+
+func setTreasureValueToComplexModel(model any, treasure *hydraidepbgo.Treasure) error {
+
+	key := treasure.GetKey()
+	// find the key in the model by the name of the field.
+
+	v := reflect.ValueOf(model)
+	v = v.Elem()
+	t := v.Type()
+
+	for i := 0; i < t.NumField(); i++ {
+		if t.Field(i).Name == key {
+			// we found the key in the model
+			field := v.Field(i)
+			if err := setProtoTreasureToModel(treasure, field); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+
+}
+
+// ConvertIndexTypeToProtoIndexType convert the index type to proto index type
+func convertIndexTypeToProtoIndexType(indexType IndexType) hydraidepbgo.IndexType_Type {
+	switch indexType {
+	case IndexKey:
+		return hydraidepbgo.IndexType_KEY
+	case IndexValueString:
+		return hydraidepbgo.IndexType_VALUE_STRING
+	case IndexValueUint8:
+		return hydraidepbgo.IndexType_VALUE_UINT8
+	case IndexValueUint16:
+		return hydraidepbgo.IndexType_VALUE_UINT16
+	case IndexValueUint32:
+		return hydraidepbgo.IndexType_VALUE_UINT32
+	case IndexValueUint64:
+		return hydraidepbgo.IndexType_VALUE_UINT64
+	case IndexValueInt8:
+		return hydraidepbgo.IndexType_VALUE_INT8
+	case IndexValueInt16:
+		return hydraidepbgo.IndexType_VALUE_INT16
+	case IndexValueInt32:
+		return hydraidepbgo.IndexType_VALUE_INT32
+	case IndexValueInt64:
+		return hydraidepbgo.IndexType_VALUE_INT64
+	case IndexValueFloat32:
+		return hydraidepbgo.IndexType_VALUE_FLOAT32
+	case IndexValueFloat64:
+		return hydraidepbgo.IndexType_VALUE_FLOAT64
+	case IndexExpirationTime:
+		return hydraidepbgo.IndexType_EXPIRATION_TIME
+	case IndexCreationTime:
+		return hydraidepbgo.IndexType_CREATION_TIME
+	case IndexUpdateTime:
+		return hydraidepbgo.IndexType_UPDATE_TIME
+	default:
+		return hydraidepbgo.IndexType_CREATION_TIME
+	}
+}
+
+// ConvertOrderTypeToProtoOrderType convert the order type to proto order type
+func convertOrderTypeToProtoOrderType(orderType IndexOrder) hydraidepbgo.OrderType_Type {
+	switch orderType {
+	case IndexOrderAsc:
+		return hydraidepbgo.OrderType_ASC
+	case IndexOrderDesc:
+		return hydraidepbgo.OrderType_DESC
+	default:
+		return hydraidepbgo.OrderType_ASC
+	}
+}
+
+// convertCatalogModelToKeyValuePair converts a Go struct (passed as pointer) into a HydrAIDE-compatible KeyValuePair message.
 //
 // 🧠 This is an **internal serialization helper** used by the Go SDK to translate user-defined models
 // into the binary format that HydrAIDE expects when inserting or updating Treasures.
@@ -1189,7 +2585,7 @@ func (h *hydraidego) CatalogRead(ctx context.Context, swampName name.Name, key s
 // - Metadata injection
 // - Optional field skipping (e.g. omitempty)
 // - Consistent type coercion for known value types
-func convertModelToKeyValuePair(model any) (*hydraidepbgo.KeyValuePair, error) {
+func convertCatalogModelToKeyValuePair(model any) (*hydraidepbgo.KeyValuePair, error) {
 
 	// Get the reflection value of the input model
 	v := reflect.ValueOf(model)
@@ -1219,36 +2615,12 @@ func convertModelToKeyValuePair(model any) (*hydraidepbgo.KeyValuePair, error) {
 		// Check if the field has a `hydraide:"omitempty"` tag,
 		// and skip it if the value is considered "empty" (zero, nil, blank, etc.)
 		if tag, ok := field.Tag.Lookup(tagHydrAIDE); ok && tag == tagOmitempty {
+
 			value := v.Field(i)
-
-			// Evaluate "emptiness" based on Go's zero-value semantics per type
-			// Strings → must not be empty
-			// Pointers → must not be nil
-			// Numbers → must not be zero
-			// Slices/Maps → must not be nil or empty
-			// time.Time → must not be zero (uninitialized)
-
-			if (value.Kind() == reflect.String && value.String() == "") ||
-				(value.Kind() == reflect.Ptr && value.IsNil()) ||
-				(value.Kind() == reflect.Int8 && value.Int() == 0) ||
-				(value.Kind() == reflect.Int16 && value.Int() == 0) ||
-				(value.Kind() == reflect.Int32 && value.Int() == 0) ||
-				(value.Kind() == reflect.Int64 && value.Int() == 0) ||
-				(value.Kind() == reflect.Int && value.Int() == 0) ||
-				(value.Kind() == reflect.Uint8 && value.Uint() == 0) ||
-				(value.Kind() == reflect.Uint16 && value.Uint() == 0) ||
-				(value.Kind() == reflect.Uint32 && value.Uint() == 0) ||
-				(value.Kind() == reflect.Uint64 && value.Uint() == 0) ||
-				(value.Kind() == reflect.Uint && value.Uint() == 0) ||
-				(value.Kind() == reflect.Float32 && value.Float() == 0) ||
-				(value.Kind() == reflect.Float64 && value.Float() == 0) ||
-				(value.Kind() == reflect.Slice && (value.IsNil() || value.Len() == 0)) ||
-				(value.Kind() == reflect.Map && (value.IsNil() || value.Len() == 0)) ||
-				(value.Type() == reflect.TypeOf(time.Time{}) && value.Interface().(time.Time).IsZero()) {
-
-				// If the field is empty, skip further processing and continue to the next field
+			if isFieldEmpty(value) {
 				continue
 			}
+
 		}
 
 		// Check if the current field is marked as the `key` field (via `hydraide:"key"` tag)
@@ -1276,141 +2648,11 @@ func convertModelToKeyValuePair(model any) (*hydraidepbgo.KeyValuePair, error) {
 
 			value := v.Field(i)
 
-			switch value.Kind() {
-
-			// 🧵 Simple primitives (string, bool, numbers)
-			case reflect.String:
-				stringVal := value.String()
-				kvPair.StringVal = &stringVal
-				valueVoid = false
-				continue
-
-			case reflect.Bool:
-				// HydrAIDE uses a custom Boolean enum to allow storing `false` values explicitly
-				boolVal := hydraidepbgo.Boolean_FALSE
-				if value.Bool() {
-					boolVal = hydraidepbgo.Boolean_TRUE
-				}
-				kvPair.BoolVal = &boolVal
-				valueVoid = false
-				continue
-
-			// 🧮 Unsigned integers
-			case reflect.Uint8, reflect.Uint16, reflect.Uint32:
-				intVal := uint32(value.Uint())
-				switch value.Kind() {
-				case reflect.Uint8:
-					kvPair.Uint8Val = &intVal
-				case reflect.Uint16:
-					kvPair.Uint16Val = &intVal
-				case reflect.Uint32:
-					kvPair.Uint32Val = &intVal
-				}
-				valueVoid = false
-				continue
-
-			case reflect.Uint64:
-				intVal := value.Uint()
-				kvPair.Uint64Val = &intVal
-				valueVoid = false
-				continue
-
-			// 🔢 Signed integers
-			case reflect.Int8, reflect.Int16, reflect.Int32:
-				intVal := int32(value.Int())
-				switch value.Kind() {
-				case reflect.Int8:
-					kvPair.Int8Val = &intVal
-				case reflect.Int16:
-					kvPair.Int16Val = &intVal
-				case reflect.Int32:
-					kvPair.Int32Val = &intVal
-				}
-				valueVoid = false
-				continue
-
-			case reflect.Int, reflect.Int64:
-				intVal := value.Int()
-				kvPair.Int64Val = &intVal
-				valueVoid = false
-				continue
-
-			// 🔬 Floating point numbers
-			case reflect.Float32:
-				floatVal := float32(value.Float())
-				kvPair.Float32Val = &floatVal
-				valueVoid = false
-				continue
-
-			case reflect.Float64:
-				floatVal := value.Float()
-				kvPair.Float64Val = &floatVal
-				valueVoid = false
-				continue
-
-			// 🧱 Complex binary types – slices, maps, pointers, structs (excluding time)
-			case reflect.Slice:
-
-				// Special case for []byte → raw binary value
-				if value.Type().Elem().Kind() == reflect.Uint8 {
-					kvPair.BytesVal = value.Bytes()
-					valueVoid = false
-				} else {
-					// All other slices are GOB-encoded
-					registerGobTypeIfNeeded(value.Interface())
-					var buf bytes.Buffer
-					encoder := gob.NewEncoder(&buf)
-					if err := encoder.Encode(value.Interface()); err != nil {
-						return nil, fmt.Errorf("could not GOB-encode slice: %w", err)
-					}
-					kvPair.BytesVal = buf.Bytes()
-					valueVoid = false
-				}
-				continue
-
-			case reflect.Map:
-				registerGobTypeIfNeeded(value.Interface())
-				var buf bytes.Buffer
-				encoder := gob.NewEncoder(&buf)
-				if err := encoder.Encode(value.Interface()); err != nil {
-					return nil, fmt.Errorf("could not GOB-encode map: %w", err)
-				}
-				kvPair.BytesVal = buf.Bytes()
-				valueVoid = false
-				continue
-
-			case reflect.Ptr:
-
-				if value.IsNil() {
-					// Ignore nil pointers
-					continue
-				}
-				registerGobTypeIfNeeded(value.Interface())
-				var buf bytes.Buffer
-				encoder := gob.NewEncoder(&buf)
-				if err := encoder.Encode(value.Interface()); err != nil {
-					return nil, fmt.Errorf("could not GOB-encode pointer value: %w", err)
-				}
-				kvPair.BytesVal = buf.Bytes()
-				valueVoid = false
-				continue
-
-			// 🕒 Special case for time.Time → store as int64 (Unix timestamp)
-			case reflect.Struct:
-				if value.Type() == reflect.TypeOf(time.Time{}) {
-					timeValue := value.Interface().(time.Time)
-					if !timeValue.IsZero() {
-						intVal := timeValue.UTC().Unix()
-						kvPair.Int64Val = &intVal
-						valueVoid = false
-						continue
-					}
-				}
-
-			// ❌ Any other unsupported type is rejected explicitly
-			default:
-				return nil, errors.New(fmt.Sprintf("unsupported value type: %s", value.Kind().String()))
+			// convert the value to KeyValuePair
+			if err := convertFieldToKvPair(value, kvPair); err != nil {
+				return nil, err
 			}
+
 		}
 
 		// Process the `expireAt` field (tagged with `hydraide:"expireAt"`).
@@ -1524,7 +2766,7 @@ func convertModelToKeyValuePair(model any) (*hydraidepbgo.KeyValuePair, error) {
 
 }
 
-// convertProtoTreasureToModel maps a hydraidepbgo.Treasure protobuf object back into a Go struct.
+// convertProtoTreasureToCatalogModel maps a hydraidepbgo.Treasure protobuf object back into a Go struct.
 //
 // The target model must be a pointer to a struct. Fields are matched using `hydraide` struct tags:
 // - `key`: assigns Treasure.Key to the struct's key field.
@@ -1539,7 +2781,7 @@ func convertModelToKeyValuePair(model any) (*hydraidepbgo.KeyValuePair, error) {
 //
 // If the field type does not match the Treasure value type, it is silently skipped.
 // If decoding fails (e.g. from GOB), an error is returned.
-func convertProtoTreasureToModel(treasure *hydraidepbgo.Treasure, model any) error {
+func convertProtoTreasureToCatalogModel(treasure *hydraidepbgo.Treasure, model any) error {
 
 	v := reflect.ValueOf(model)
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
@@ -1556,180 +2798,11 @@ func convertProtoTreasureToModel(treasure *hydraidepbgo.Treasure, model any) err
 
 		if key, ok := t.Field(i).Tag.Lookup(tagHydrAIDE); ok && key == tagValue {
 
-			if treasure.StringVal != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.String:
-					v.Elem().Field(i).SetString(treasure.GetStringVal())
-					continue
-				default:
-					continue
-				}
-			}
+			field := v.Elem().Field(i)
 
-			if treasure.Uint8Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Uint8:
-					v.Elem().Field(i).SetUint(uint64(treasure.GetUint8Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Uint16Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Uint16:
-					v.Elem().Field(i).SetUint(uint64(treasure.GetUint16Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Uint32Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Uint32:
-					v.Elem().Field(i).SetUint(uint64(treasure.GetUint32Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Uint64Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Uint64:
-					v.Elem().Field(i).SetUint(treasure.GetUint64Val())
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Int8Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Int8:
-					v.Elem().Field(i).SetInt(int64(treasure.GetInt8Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Int16Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Int16:
-					v.Elem().Field(i).SetInt(int64(treasure.GetInt16Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Int32Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Int32:
-					v.Elem().Field(i).SetInt(int64(treasure.GetInt32Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Int64Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Int64:
-
-					v.Elem().Field(i).SetInt(treasure.GetInt64Val())
-					continue
-
-				case reflect.Struct:
-
-					// ha time.Time típusú mezőről van szó
-					if v.Elem().Field(i).Type() == reflect.TypeOf(time.Time{}) {
-						// konvertáljuk vissza time.Time-ra az int64 UNIX timestampet
-						timestamp := time.Unix(treasure.GetInt64Val(), 0).UTC()
-						v.Elem().Field(i).Set(reflect.ValueOf(timestamp))
-					}
-					continue
-
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Float32Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Float32:
-					v.Elem().Field(i).SetFloat(float64(treasure.GetFloat32Val()))
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.Float64Val != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Float64:
-					v.Elem().Field(i).SetFloat(treasure.GetFloat64Val())
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.BoolVal != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Bool:
-					v.Elem().Field(i).SetBool(treasure.GetBoolVal() == hydraidepbgo.Boolean_TRUE)
-					continue
-				default:
-					// skip the field because the value type is not the same as the model field type
-					continue
-				}
-			}
-
-			if treasure.BytesVal != nil {
-				switch v.Elem().Field(i).Kind() {
-				case reflect.Slice:
-					if v.Elem().Field(i).Type().Elem().Kind() == reflect.Uint8 {
-						v.Elem().Field(i).SetBytes(treasure.GetBytesVal())
-					} else {
-
-						decoder := gob.NewDecoder(bytes.NewReader(treasure.GetBytesVal()))
-						decoded := reflect.New(v.Elem().Field(i).Type()).Interface()
-
-						if err := decoder.Decode(decoded); err != nil {
-							return fmt.Errorf("failed to decode gob into slice field %s: %w", t.Name(), err)
-						}
-
-						v.Elem().Field(i).Set(reflect.ValueOf(decoded).Elem())
-					}
-
-				case reflect.Map, reflect.Ptr:
-
-					decoder := gob.NewDecoder(bytes.NewReader(treasure.GetBytesVal()))
-					decoded := reflect.New(v.Elem().Field(i).Type()).Interface()
-
-					if err := decoder.Decode(decoded); err != nil {
-						return fmt.Errorf("failed to decode gob into map/ptr field %s: %w", t.Name(), err)
-					}
-
-					v.Elem().Field(i).Set(reflect.ValueOf(decoded).Elem())
-
-				default:
-					continue
-				}
+			// set proto treasure to model
+			if err := setProtoTreasureToModel(treasure, field); err != nil {
+				return err
 			}
 
 			continue
@@ -1777,6 +2850,385 @@ func convertProtoTreasureToModel(treasure *hydraidepbgo.Treasure, model any) err
 
 }
 
+func setProtoTreasureToModel(treasure *hydraidepbgo.Treasure, field reflect.Value) error {
+
+	if treasure.StringVal != nil {
+		switch field.Kind() {
+		case reflect.String:
+			field.SetString(treasure.GetStringVal())
+			return nil
+		default:
+			return nil
+		}
+	}
+
+	if treasure.Uint8Val != nil {
+		switch field.Kind() {
+		case reflect.Uint8:
+			field.SetUint(uint64(treasure.GetUint8Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Uint16Val != nil {
+		switch field.Kind() {
+		case reflect.Uint16:
+			field.SetUint(uint64(treasure.GetUint16Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Uint32Val != nil {
+		switch field.Kind() {
+		case reflect.Uint32:
+			field.SetUint(uint64(treasure.GetUint32Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Uint64Val != nil {
+		switch field.Kind() {
+		case reflect.Uint64:
+			field.SetUint(treasure.GetUint64Val())
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Int8Val != nil {
+		switch field.Kind() {
+		case reflect.Int8:
+			field.SetInt(int64(treasure.GetInt8Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Int16Val != nil {
+		switch field.Kind() {
+		case reflect.Int16:
+			field.SetInt(int64(treasure.GetInt16Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Int32Val != nil {
+		switch field.Kind() {
+		case reflect.Int32:
+			field.SetInt(int64(treasure.GetInt32Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Int64Val != nil {
+		switch field.Kind() {
+		case reflect.Int64:
+			field.SetInt(treasure.GetInt64Val())
+			return nil
+
+		case reflect.Struct:
+
+			// ha time.Time típusú mezőről van szó
+			if field.Type() == reflect.TypeOf(time.Time{}) {
+				// konvertáljuk vissza time.Time-ra az int64 UNIX timestampet
+				timestamp := time.Unix(treasure.GetInt64Val(), 0).UTC()
+				field.Set(reflect.ValueOf(timestamp))
+			}
+			return nil
+
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Float32Val != nil {
+		switch field.Kind() {
+		case reflect.Float32:
+			field.SetFloat(float64(treasure.GetFloat32Val()))
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.Float64Val != nil {
+		switch field.Kind() {
+		case reflect.Float64:
+			field.SetFloat(treasure.GetFloat64Val())
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.BoolVal != nil {
+		switch field.Kind() {
+		case reflect.Bool:
+			field.SetBool(treasure.GetBoolVal() == hydraidepbgo.Boolean_TRUE)
+			return nil
+		default:
+			// skip the field because the value type is not the same as the model field type
+			return nil
+		}
+	}
+
+	if treasure.BytesVal != nil {
+		switch field.Kind() {
+		case reflect.Slice:
+			if field.Type().Elem().Kind() == reflect.Uint8 {
+				field.SetBytes(treasure.GetBytesVal())
+			} else {
+
+				decoder := gob.NewDecoder(bytes.NewReader(treasure.GetBytesVal()))
+				decoded := reflect.New(field.Type()).Interface()
+
+				if err := decoder.Decode(decoded); err != nil {
+					return fmt.Errorf("failed to decode gob into slice field: %w", err)
+				}
+
+				field.Set(reflect.ValueOf(decoded).Elem())
+			}
+
+		case reflect.Map, reflect.Ptr:
+
+			decoder := gob.NewDecoder(bytes.NewReader(treasure.GetBytesVal()))
+			decoded := reflect.New(field.Type()).Interface()
+
+			if err := decoder.Decode(decoded); err != nil {
+				return fmt.Errorf("failed to decode gob into map/ptr field: %w", err)
+			}
+
+			field.Set(reflect.ValueOf(decoded).Elem())
+
+		default:
+			return nil
+		}
+	}
+
+	return nil
+
+}
+
+// convertComplexModelToKeyValuePair convert a complex model to a key value pair
+func convertProfileModelToKeyValuePair(model any) ([]*hydraidepbgo.KeyValuePair, error) {
+
+	// check if the model is not a pointer
+	v := reflect.ValueOf(model)
+
+	// ellenőrizzük, hogy a model egy pointer-e és egy struct-e
+	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
+		return nil, errors.New("input must be a pointer to a struct")
+	}
+
+	var kvPairs []*hydraidepbgo.KeyValuePair
+
+	v = v.Elem()
+	t := v.Type()
+
+	// ellenőrizzük és kiszedjük a szükséges mezőket és azok értékeit
+	for i := 0; i < t.NumField(); i++ {
+
+		field := t.Field(i)
+
+		// Skip fields with "omitempty" if they are empty or nil
+		if tag, ok := field.Tag.Lookup(tagHydrAIDE); ok && tag == tagOmitempty {
+			value := v.Field(i)
+			if isFieldEmpty(value) {
+				continue
+			}
+		}
+
+		kvPair := &hydraidepbgo.KeyValuePair{
+			Key: field.Name,
+		}
+
+		// ellenőrizzük, hogy mi a mező típusa és annak megfelelően beállítjuk a value-t
+		value := v.Field(i)
+
+		// convert to KeyValuePair the value
+		if err := convertFieldToKvPair(value, kvPair); err != nil {
+			return nil, err
+		}
+
+		kvPairs = append(kvPairs, kvPair)
+
+	}
+
+	// process the value field
+	return kvPairs, nil
+
+}
+
+func isFieldEmpty(value reflect.Value) bool {
+
+	// Evaluate "emptiness" based on Go's zero-value semantics per type
+	// Strings → must not be empty
+	// Pointers → must not be nil
+	// Numbers → must not be zero
+	// Slices/Maps → must not be nil or empty
+	// time.Time → must not be zero (uninitialized)
+	if (value.Kind() == reflect.String && value.String() == "") ||
+		(value.Kind() == reflect.Ptr && value.IsNil()) ||
+		(value.Kind() == reflect.Int8 && value.Int() == 0) ||
+		(value.Kind() == reflect.Int16 && value.Int() == 0) ||
+		(value.Kind() == reflect.Int32 && value.Int() == 0) ||
+		(value.Kind() == reflect.Int64 && value.Int() == 0) ||
+		(value.Kind() == reflect.Int && value.Int() == 0) ||
+		(value.Kind() == reflect.Uint8 && value.Uint() == 0) ||
+		(value.Kind() == reflect.Uint16 && value.Uint() == 0) ||
+		(value.Kind() == reflect.Uint32 && value.Uint() == 0) ||
+		(value.Kind() == reflect.Uint64 && value.Uint() == 0) ||
+		(value.Kind() == reflect.Uint && value.Uint() == 0) ||
+		(value.Kind() == reflect.Float32 && value.Float() == 0) ||
+		(value.Kind() == reflect.Float64 && value.Float() == 0) ||
+		(value.Kind() == reflect.Slice && (value.IsNil() || value.Len() == 0)) ||
+		(value.Kind() == reflect.Map && (value.IsNil() || value.Len() == 0)) ||
+		(value.Type() == reflect.TypeOf(time.Time{}) && value.Interface().(time.Time).IsZero()) {
+
+		// If the field is empty, skip further processing and continue to the next field
+		return true
+	}
+
+	return false
+
+}
+
+// convert one field to a key value pair
+func convertFieldToKvPair(value reflect.Value, kvPair *hydraidepbgo.KeyValuePair) (err error) {
+
+	switch value.Kind() {
+	// 🧵 Simple primitives (string, bool, numbers)
+	case reflect.String:
+		stringVal := value.String()
+		kvPair.StringVal = &stringVal
+	case reflect.Bool:
+		// HydrAIDE uses a custom Boolean enum to allow storing `false` values explicitly
+		boolVal := hydraidepbgo.Boolean_FALSE
+		if value.Bool() {
+			boolVal = hydraidepbgo.Boolean_TRUE
+		}
+		kvPair.BoolVal = &boolVal
+	// 🧮 Unsigned integers
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32:
+		intVal := uint32(value.Uint())
+		switch value.Kind() {
+		case reflect.Uint8:
+			kvPair.Uint8Val = &intVal
+		case reflect.Uint16:
+			kvPair.Uint16Val = &intVal
+		case reflect.Uint32:
+			kvPair.Uint32Val = &intVal
+		}
+	case reflect.Uint64:
+		intVal := value.Uint()
+		kvPair.Uint64Val = &intVal
+	// 🔢 Signed integers
+	case reflect.Int8, reflect.Int16, reflect.Int32:
+		intVal := int32(value.Int())
+		switch value.Kind() {
+		case reflect.Int8:
+			kvPair.Int8Val = &intVal
+		case reflect.Int16:
+			kvPair.Int16Val = &intVal
+		case reflect.Int32:
+			kvPair.Int32Val = &intVal
+		}
+	case reflect.Int, reflect.Int64:
+		intVal := value.Int()
+		kvPair.Int64Val = &intVal
+	// 🔬 Floating point numbers
+	case reflect.Float32:
+		floatVal := float32(value.Float())
+		kvPair.Float32Val = &floatVal
+	case reflect.Float64:
+		floatVal := value.Float()
+		kvPair.Float64Val = &floatVal
+	// 🧱 Complex binary types – slices, maps, pointers, structs (excluding time)
+	case reflect.Slice:
+
+		// Special case for []byte → raw binary value
+		if value.Type().Elem().Kind() == reflect.Uint8 {
+			kvPair.BytesVal = value.Bytes()
+		} else {
+			// All other slices are GOB-encoded
+			registerGobTypeIfNeeded(value.Interface())
+			var buf bytes.Buffer
+			encoder := gob.NewEncoder(&buf)
+			if encErr := encoder.Encode(value.Interface()); encErr != nil {
+				err = fmt.Errorf("could not GOB-encode slice: %w", encErr)
+				break
+			}
+			kvPair.BytesVal = buf.Bytes()
+		}
+
+	case reflect.Map:
+		registerGobTypeIfNeeded(value.Interface())
+		var buf bytes.Buffer
+		encoder := gob.NewEncoder(&buf)
+		if encErr := encoder.Encode(value.Interface()); encErr != nil {
+			err = fmt.Errorf("could not GOB-encode map: %w", encErr)
+			break
+		}
+		kvPair.BytesVal = buf.Bytes()
+
+	case reflect.Ptr:
+
+		if value.IsNil() {
+			// Ignore nil pointers
+			break
+		}
+
+		registerGobTypeIfNeeded(value.Interface())
+		var buf bytes.Buffer
+		encoder := gob.NewEncoder(&buf)
+		if encErr := encoder.Encode(value.Interface()); encErr != nil {
+			err = fmt.Errorf("could not GOB-encode pointer value: %w", encErr)
+			break
+		}
+
+		kvPair.BytesVal = buf.Bytes()
+
+	// 🕒 Special case for time.Time → store as int64 (Unix timestamp)
+	case reflect.Struct:
+		if value.Type() == reflect.TypeOf(time.Time{}) {
+			timeValue := value.Interface().(time.Time)
+			if !timeValue.IsZero() {
+				intVal := timeValue.UTC().Unix()
+				kvPair.Int64Val = &intVal
+			}
+		}
+
+	// ❌ Any other unsupported type is rejected explicitly
+	default:
+		err = errors.New(fmt.Sprintf("unsupported value type: %s", value.Kind().String()))
+	}
+
+	return err
+
+}
+
 var (
 	// registeredTypes keeps track of all types registered with gob to prevent duplicate registrations.
 	registeredTypes = make(map[reflect.Type]struct{})
@@ -1816,4 +3268,47 @@ func registerGobTypeIfNeeded(val interface{}) {
 		gob.Register(val)
 		registeredTypes[t] = struct{}{}
 	}
+}
+
+// convertProtoStatusToStatus convert the proto status to the event status
+func convertProtoStatusToStatus(status hydraidepbgo.Status_Code) EventStatus {
+
+	switch status {
+	case hydraidepbgo.Status_NOT_FOUND:
+		return StatusTreasureNotFound
+	case hydraidepbgo.Status_NEW:
+		return StatusNew
+	case hydraidepbgo.Status_UPDATED:
+		return StatusModified
+	case hydraidepbgo.Status_DELETED:
+		return StatusDeleted
+	case hydraidepbgo.Status_NOTHING_CHANGED:
+		return StatusNothingChanged
+	default:
+		return StatusNothingChanged
+	}
+
+}
+
+func errorHandler(err error) error {
+
+	if s, ok := status.FromError(err); ok {
+		switch s.Code() {
+		case codes.Unavailable:
+			return NewError(ErrCodeConnectionError, errorMessageConnectionError)
+		case codes.DeadlineExceeded:
+			return NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+		case codes.Canceled:
+			return NewError(ErrCodeCtxClosedByClient, errorMessageCtxClosedByClient)
+		case codes.FailedPrecondition:
+			return NewError(ErrCodeSwampNotFound, fmt.Sprintf("%s: %v", errorMessageSwampNotFound, s.Message()))
+		case codes.Internal:
+			return NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+		default:
+			return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+		}
+	} else {
+		return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
 }

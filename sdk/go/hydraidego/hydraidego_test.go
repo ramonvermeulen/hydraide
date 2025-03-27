@@ -160,13 +160,13 @@ func TestHydraideTypeConversions(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			kv, err := convertModelToKeyValuePair(tc.input)
+			kv, err := convertCatalogModelToKeyValuePair(tc.input)
 			require.NoError(t, err)
 
 			treasure := convertKeyValuePairToTreasure(kv)
 
 			restored := reflect.New(reflect.TypeOf(tc.expected)).Interface()
-			err = convertProtoTreasureToModel(treasure, restored)
+			err = convertProtoTreasureToCatalogModel(treasure, restored)
 			require.NoError(t, err)
 
 			require.Equal(t, tc.expected, reflect.ValueOf(restored).Elem().Interface())
