@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HydrAIDE Docs</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0b0c10;
+            color: #c5c6c7;
+        }
+        header {
+            background: linear-gradient(90deg, #5c258d, #4389a2);
+        }
+        .card {
+            background-color: #1f1f1f;
+            border: 1px solid #2f2f2f;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+            background-color: #2a2a2a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+<body class="font-sans">
+<div id="app">
+    <header class="p-6 text-white">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">HydrAIDE Documentation</h1>
+            <a href="https://hydraide.io" class="text-white underline hover:text-gray-300">← Back to Main Site</a>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto py-12 px-6">
+        <section class="text-center">
+            <h2 class="text-4xl font-extrabold mb-4 text-white">🧠 Start Thinking in HydrAIDE</h2>
+            <p class="text-gray-400 text-lg mb-8">
+                This is your launchpad into the future of real-time, reactive data engines.
+                Start with the philosophy. Dive into the patterns. Master the SDK.
+            </p>
+        </section>
+
+        <section class="grid gap-6 md:grid-cols-2 mt-10">
+            <a href="#/thinking-in-hydraide/thinking-in-hydraide.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🧠 Thinking in HydrAIDE</h3>
+                <p class="text-gray-400">The philosophy and mindset of reactive, intentional data.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/swamp-pattern.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🌿 Swamp Pattern</h3>
+                <p class="text-gray-400">Configure data persistence and memory in-code, not config files.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/treasures.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">💎 Treasures</h3>
+                <p class="text-gray-400">HydrAIDE's smallest unit of value – typed, fast, and reactive.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/indexing.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🧩 Indexing</h3>
+                <p class="text-gray-400">Build and discard in-memory indexes with blazing speed.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/subscriptions.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🔄 Subscriptions</h3>
+                <p class="text-gray-400">Real-time updates baked into the engine.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/locking.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🔐 Locking</h3>
+                <p class="text-gray-400">Fine-grained, TTL-protected locking per Treasure.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/clean-system.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🧹 Clean System</h3>
+                <p class="text-gray-400">No garbage. No daemons. Just self-cleaning logic.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/distributed-architecture.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🌐 Distributed Architecture</h3>
+                <p class="text-gray-400">Horizontal scaling without orchestrators or complexity.</p>
+            </a>
+            <a href="#/thinking-in-hydraide/how-to-install-update-hydraide.md" class="card p-6 rounded-xl">
+                <h3 class="text-xl font-semibold mb-2 text-white">🚀 Install & Update</h3>
+                <p class="text-gray-400">From Docker to production in minutes.</p>
+            </a>
+        </section>
+
+        <div class="text-center mt-16">
+            <p class="text-sm text-gray-600">© 2025 HydrAIDE. Built with love and Go ⚙️</p>
+        </div>
+    </main>
+</div>
+
+<!-- Docsify loader -->
+<script>
+    window.$docsify = {
+        name: 'HydrAIDE Docs',
+        routerMode: 'hash',
+        loadSidebar: true,
+        subMaxLevel: 2,
+        themeColor: '#5c258d'
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+</body>
+</html>
