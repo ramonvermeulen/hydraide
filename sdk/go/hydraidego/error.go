@@ -64,6 +64,7 @@ const (
 	ErrCodeCtxClosedByClient
 	ErrCodeCtxTimeout
 	ErrCodeSwampNotFound
+	ErrCodeFailedPrecondition
 	ErrCodeInvalidArgument
 	ErrCodeNotFound
 	ErrCodeAlreadyExists
@@ -144,6 +145,12 @@ func IsCtxTimeout(err error) bool {
 // This may not always be a strict error, but it indicates the absence of the swamp.
 func IsSwampNotFound(err error) bool {
 	return GetErrorCode(err) == ErrCodeSwampNotFound
+}
+
+// IsFailedPrecondition returns true if the operation was not executed
+// because the preconditions were not met.
+func IsFailedPrecondition(err error) bool {
+	return GetErrorCode(err) == ErrCodeFailedPrecondition
 }
 
 // IsInvalidArgument returns true if the error was caused by invalid input parameters,

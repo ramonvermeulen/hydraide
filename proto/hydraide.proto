@@ -1095,7 +1095,7 @@ message IncrementInt64Condition {
   Relational.Operator RelationalOperator = 1;
 
   // The reference value to compare the current value against.
-  int64 Value = 2;
+  int64  Value = 2;
 }
 
 message IncrementInt64Response {

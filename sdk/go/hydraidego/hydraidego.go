@@ -65,6 +65,7 @@ const (
 	errorMessageInternalError       = "internal error"
 	errorMessageKeyAlreadyExists    = "key already exists"
 	errorMessageKeyNotFound         = "key not found"
+	errorMessageConditionNotMet     = "condition not met - the value is"
 )
 
 const (
@@ -105,6 +106,20 @@ type Hydraidego interface {
 	Count(ctx context.Context, swampName name.Name) (int32, error)
 	Destroy(ctx context.Context, swampName name.Name) error
 	Subscribe(ctx context.Context, swampName name.Name, getExistingData bool, model any, iterator SubscribeIteratorFunc) error
+	IncrementInt8(ctx context.Context, swampName name.Name, key string, value int8, condition *Int8Condition) (int8, error)
+	IncrementInt16(ctx context.Context, swampName name.Name, key string, value int16, condition *Int16Condition) (int16, error)
+	IncrementInt32(ctx context.Context, swampName name.Name, key string, value int32, condition *Int32Condition) (int32, error)
+	IncrementInt64(ctx context.Context, swampName name.Name, key string, value int64, condition *Int64Condition) (int64, error)
+	IncrementUint8(ctx context.Context, swampName name.Name, key string, value uint8, condition *Uint8Condition) (uint8, error)
+	IncrementUint16(ctx context.Context, swampName name.Name, key string, value uint16, condition *Uint16Condition) (uint16, error)
+	IncrementUint32(ctx context.Context, swampName name.Name, key string, value uint32, condition *Uint32Condition) (uint32, error)
+	IncrementUint64(ctx context.Context, swampName name.Name, key string, value uint64, condition *Uint64Condition) (uint64, error)
+	IncrementFloat32(ctx context.Context, swampName name.Name, key string, value float32, condition *Float32Condition) (float32, error)
+	IncrementFloat64(ctx context.Context, swampName name.Name, key string, value float64, condition *Float64Condition) (float64, error)
+	Uint32SlicePush(ctx context.Context, swampName name.Name, KeyValuesPair []*KeyValuesPair) error
+	Uint32SliceDelete(ctx context.Context, swampName name.Name, KeyValuesPair []*KeyValuesPair) error
+	Uint32SliceSize(ctx context.Context, swampName name.Name, key string) (int64, error)
+	Uint32SliceIsValueExist(ctx context.Context, swampName name.Name, key string, value uint32) (bool, error)
 }
 
 type Index struct {
@@ -2159,7 +2174,7 @@ func (h *hydraidego) ProfileRead(ctx context.Context, swampName name.Name, model
 			}
 
 			// Use reflection to set the value into the model struct
-			err = setTreasureValueToComplexModel(model, treasure)
+			err = setTreasureValueToProfileModel(model, treasure)
 			if err != nil {
 				// Skip faulty assignments silently to avoid halting the whole load
 				continue
@@ -2446,7 +2461,1173 @@ func (h *hydraidego) Subscribe(ctx context.Context, swampName name.Name, getExis
 
 }
 
-func (h *hydraidego) Increment() {}
+type Int8Condition struct {
+	RelationalOperator RelationalOperator
+	Value              int8
+}
+
+type Int16Condition struct {
+	RelationalOperator RelationalOperator
+	Value              int16
+}
+
+type Int32Condition struct {
+	RelationalOperator RelationalOperator
+	Value              int32
+}
+type Int64Condition struct {
+	RelationalOperator RelationalOperator
+	Value              int64
+}
+
+type Uint8Condition struct {
+	RelationalOperator RelationalOperator
+	Value              uint8
+}
+
+type Uint16Condition struct {
+	RelationalOperator RelationalOperator
+	Value              uint16
+}
+
+type Uint32Condition struct {
+	RelationalOperator RelationalOperator
+	Value              uint32
+}
+type Uint64Condition struct {
+	RelationalOperator RelationalOperator
+	Value              uint64
+}
+
+type Float32Condition struct {
+	RelationalOperator RelationalOperator
+	Value              float32
+}
+
+type Float64Condition struct {
+	RelationalOperator RelationalOperator
+	Value              float64
+}
+
+type RelationalOperator int
+
+const (
+	NotEqual RelationalOperator = iota
+	Equal
+	GreaterThanOrEqual
+	GreaterThan
+	LessThanOrEqual
+	LessThan
+)
+
+// IncrementInt8 performs an atomic int8 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Int8 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int16, Int32, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive or negative) to add
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new int8 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., float64), this operation will fail.
+//   - Decrementing is supported by simply passing a **negative delta value**.
+//   - All proto values are transmitted as int32, but converted back to int8 here.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is greater than 10:
+//     &Int8Condition{RelationalOperator: GreaterThan, Value: 10}
+//
+// ✅ Example usage:
+//
+//	IncrementInt8(ctx, "scoreboard", "user:42", 1, &Int8Condition{GreaterThan, 0})
+func (h *hydraidego) IncrementInt8(ctx context.Context, swampName name.Name, key string, value int8, condition *Int8Condition) (int8, error) {
+
+	r := &hydraidepbgo.IncrementInt8Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: int32(value),
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementInt8Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			// convert to int32 because the proto message is int32, but the HydrAIDE will convert it back to int8
+			Value: int32(condition.Value),
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementInt8(ctx, r)
+
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	// return with the new value if the increment was successful
+	if response.GetIsIncremented() {
+		return int8(response.GetValue()), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+
+}
+
+// IncrementInt16 performs an atomic int16 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Int16 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int8, Int32, Uint64, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive or negative) to add
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new int16 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int32), this operation will fail.
+//   - Decrementing is supported by simply passing a **negative delta value**.
+//   - All proto values are transmitted as int32, but converted back to int16 here.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is less than or equal to 500:
+//     &Int16Condition{RelationalOperator: LessThanOrEqual, Value: 500}
+//
+// ✅ Example usage:
+//
+//	IncrementInt16(ctx, "metrics", "api:retry-count", 1, &Int16Condition{GreaterThan, 0})
+func (h *hydraidego) IncrementInt16(ctx context.Context, swampName name.Name, key string, value int16, condition *Int16Condition) (int16, error) {
+
+	r := &hydraidepbgo.IncrementInt16Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: int32(value),
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementInt16Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			// convert to int32 because the proto message is int32, but the HydrAIDE will convert it back to int8
+			Value: int32(condition.Value),
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementInt16(ctx, r)
+
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	// return with the new value if the increment was successful
+	if response.GetIsIncremented() {
+		return int16(response.GetValue()), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+
+}
+
+// IncrementInt32 performs an atomic int32 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Int32 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int8, Int16, Uint64, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive or negative) to add
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new int32 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., float64), this operation will fail.
+//   - Decrementing is supported by simply passing a **negative delta value**.
+//   - All proto values are transmitted as int32, and this function also returns an int32 directly.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is exactly 100:
+//     &Int32Condition{RelationalOperator: Equal, Value: 100}
+//
+// ✅ Example usage:
+//
+//	IncrementInt32(ctx, "user-stats", "user:1234:logins", 1, &Int32Condition{GreaterThanOrEqual, 0})
+func (h *hydraidego) IncrementInt32(ctx context.Context, swampName name.Name, key string, value int32, condition *Int32Condition) (int32, error) {
+
+	r := &hydraidepbgo.IncrementInt32Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: value,
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementInt32Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			Value:              condition.Value,
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementInt32(ctx, r)
+
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	// return with the new value if the increment was successful
+	if response.GetIsIncremented() {
+		return response.GetValue(), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+
+}
+
+// IncrementInt64 performs an atomic int64 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Int64 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int8, Int16, Int32, Uint64, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive or negative) to add
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new int64 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int32 or float64), this operation will fail.
+//   - Decrementing is supported by simply passing a **negative delta value**.
+//   - All proto values are transmitted as int64 and returned as int64.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is greater than or equal to 10,000:
+//     &Int64Condition{RelationalOperator: GreaterThanOrEqual, Value: 10000}
+//
+// ✅ Example usage:
+//
+//	IncrementInt64(ctx, "finance", "user:987:balance", 500, &Int64Condition{LessThan, 100000})
+func (h *hydraidego) IncrementInt64(ctx context.Context, swampName name.Name, key string, value int64, condition *Int64Condition) (int64, error) {
+
+	r := &hydraidepbgo.IncrementInt64Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: value,
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementInt64Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			Value:              condition.Value,
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementInt64(ctx, r)
+
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	// return with the new value if the increment was successful
+	if response.GetIsIncremented() {
+		return response.GetValue(), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+
+}
+
+// IncrementUint8 performs an atomic uint8 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Uint8 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int16, Uint32, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive or negative) to add (note: negative values will underflow)
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new uint8 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int64 or float32), this operation will fail.
+//   - Since this is an unsigned type, **negative delta values are not allowed** (and may cause underflow).
+//   - All proto values are transmitted as uint32, and this function converts them to uint8.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is less than 255:
+//     &Uint8Condition{RelationalOperator: LessThan, Value: 255}
+//
+// ✅ Example usage:
+//
+//	IncrementUint8(ctx, "badge-points", "user:100:stars", 1, &Uint8Condition{GreaterThanOrEqual, 0})
+func (h *hydraidego) IncrementUint8(ctx context.Context, swampName name.Name, key string, value uint8, condition *Uint8Condition) (uint8, error) {
+	r := &hydraidepbgo.IncrementUint8Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: uint32(value),
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementUint8Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			// convert to uint32 because the proto message is uint32, but the HydrAIDE will convert it back to uint8
+			Value: uint32(condition.Value),
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementUint8(ctx, r)
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	if response.GetIsIncremented() {
+		return uint8(response.GetValue()), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+}
+
+// IncrementUint16 performs an atomic uint16 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Uint16 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Uint8, Uint32, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive value to add — negative values are not supported)
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new uint16 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int32 or float64), this operation will fail.
+//   - Since this is an unsigned type, **negative delta values are not allowed** (and may cause underflow).
+//   - All proto values are transmitted as uint32, and this function converts them to uint16.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is less than 10000:
+//     &Uint16Condition{RelationalOperator: LessThan, Value: 10000}
+//
+// ✅ Example usage:
+//
+//	IncrementUint16(ctx, "api-quota", "user:42:limit", 250, &Uint16Condition{GreaterThanOrEqual, 100})
+func (h *hydraidego) IncrementUint16(ctx context.Context, swampName name.Name, key string, value uint16, condition *Uint16Condition) (uint16, error) {
+	r := &hydraidepbgo.IncrementUint16Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: uint32(value),
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementUint16Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			// convert to uint32 because the proto message is uint32, but the HydrAIDE will convert it back to uint16
+			Value: uint32(condition.Value),
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementUint16(ctx, r)
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	if response.GetIsIncremented() {
+		return uint16(response.GetValue()), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+}
+
+// IncrementUint32 performs an atomic uint32 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Uint32 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Uint8, Uint16, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive value to add — negative values are not supported)
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new uint32 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int64 or float32), this operation will fail.
+//   - Since this is an unsigned type, **negative delta values are not allowed** (and may cause underflow).
+//   - All proto values are transmitted and returned as uint32 — no conversion is required in this case.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is greater than 1,000,000:
+//     &Uint32Condition{RelationalOperator: GreaterThan, Value: 1_000_000}
+//
+// ✅ Example usage:
+//
+//	IncrementUint32(ctx, "metrics", "user:42:pageviews", 100, &Uint32Condition{LessThanOrEqual, 5_000_000})
+func (h *hydraidego) IncrementUint32(ctx context.Context, swampName name.Name, key string, value uint32, condition *Uint32Condition) (uint32, error) {
+	r := &hydraidepbgo.IncrementUint32Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: value,
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementUint32Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			Value:              condition.Value,
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementUint32(ctx, r)
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	if response.GetIsIncremented() {
+		return response.GetValue(), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+}
+
+// IncrementUint64 performs an atomic uint64 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Uint64 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Uint8, Uint32, Float64, etc.),
+//	and this function can be duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the delta (positive value to add — negative values are not supported)
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new uint64 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int32 or float64), this operation will fail.
+//   - Since this is an unsigned type, **negative delta values are not allowed** (and may cause underflow).
+//   - All proto values are transmitted and returned as uint64 — no conversion is required in this case.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is less than 1 billion:
+//     &Uint64Condition{RelationalOperator: LessThan, Value: 1_000_000_000}
+//
+// ✅ Example usage:
+//
+//	IncrementUint64(ctx, "billing", "user:abc:total-bytes-used", 1_000_000, &Uint64Condition{LessThanOrEqual, 5_000_000_000})
+func (h *hydraidego) IncrementUint64(ctx context.Context, swampName name.Name, key string, value uint64, condition *Uint64Condition) (uint64, error) {
+	r := &hydraidepbgo.IncrementUint64Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: value,
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementUint64Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			Value:              condition.Value,
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementUint64(ctx, r)
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	if response.GetIsIncremented() {
+		return response.GetValue(), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %d", errorMessageConditionNotMet, response.GetValue()))
+}
+
+// IncrementFloat32 performs an atomic float32 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Float32 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int32, Float64, etc.), and this function can be
+//	duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the amount to increment by (can be negative to decrement)
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new float32 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int64), this operation will fail.
+//   - Decrementing is supported by simply passing a **negative delta value**.
+//   - All proto values are transmitted as float32 and returned as float32.
+//   - Floating-point equality comparisons (`==`, `!=`) may be affected by precision limits — use with care.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is less than 99.9:
+//     &Float32Condition{RelationalOperator: LessThan, Value: 99.9}
+//
+// ✅ Example usage:
+//
+//	IncrementFloat32(ctx, "analytics", "user:session-duration", 2.5, &Float32Condition{GreaterThan, 0})
+func (h *hydraidego) IncrementFloat32(ctx context.Context, swampName name.Name, key string, value float32, condition *Float32Condition) (float32, error) {
+	r := &hydraidepbgo.IncrementFloat32Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: value,
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementFloat32Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			Value:              condition.Value,
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementFloat32(ctx, r)
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	if response.GetIsIncremented() {
+		return response.GetValue(), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %f", errorMessageConditionNotMet, response.GetValue()))
+}
+
+// IncrementFloat64 performs an atomic float64 increment on a Treasure inside the given Swamp.
+//
+// If the specified Swamp or Treasure does not exist, this function will automatically create them.
+// This means you do **not** need to call CatalogCreate or CatalogSave beforehand.
+//
+// If a condition is provided, the increment will only occur if the current value
+// satisfies the given relational constraint — evaluated **atomically on the server**.
+//
+// 🧠 This is the Float64 version of HydrAIDE’s type-safe increment operation.
+//
+//	The same logic applies for other numeric types (Int64, Float32, etc.), and this function can be
+//	duplicated/adapted accordingly.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  target Swamp where the Treasure lives
+//   - key:        unique key of the Treasure to increment
+//   - value:      the amount to increment by (can be negative to decrement)
+//   - condition:  optional constraint on the current value before incrementing
+//
+// Returns:
+//   - new float64 value after increment (if successful)
+//   - error if the operation failed, or if the condition was not met
+//
+// ⚠️ Notes:
+//   - If the Treasure exists but holds a value of a **different type** (e.g., int64), this operation will fail.
+//   - Decrementing is supported by simply passing a **negative delta value**.
+//   - All proto values are transmitted and returned as float64 — no conversion needed.
+//   - Floating-point equality comparisons (`==`, `!=`) may be affected by precision limits — consider using tolerances.
+//   - If the condition is not met, the function returns a specific ErrConditionNotMet error.
+//
+// ✅ Conditional Logic:
+//
+//   - The `condition` lets you define rules for when an increment should occur.
+//
+//   - It uses a `RelationalOperator` enum to compare the **current value** against a reference.
+//
+//     Supported operators include:
+//
+//   - Equal (==)
+//
+//   - NotEqual (!=)
+//
+//   - GreaterThan (>)
+//
+//   - GreaterThanOrEqual (>=)
+//
+//   - LessThan (<)
+//
+//   - LessThanOrEqual (<=)
+//
+//     Example:
+//     Only increment if the current value is greater than or equal to 1000.0:
+//     &Float64Condition{RelationalOperator: GreaterThanOrEqual, Value: 1000.0}
+//
+// ✅ Example usage:
+//
+//	IncrementFloat64(ctx, "finance", "user:abc:wallet-balance", 49.95, &Float64Condition{LessThan, 10_000.0})
+func (h *hydraidego) IncrementFloat64(ctx context.Context, swampName name.Name, key string, value float64, condition *Float64Condition) (float64, error) {
+	r := &hydraidepbgo.IncrementFloat64Request{
+		SwampName:   swampName.Get(),
+		Key:         key,
+		IncrementBy: value,
+	}
+
+	if condition != nil {
+		r.Condition = &hydraidepbgo.IncrementFloat64Condition{
+			RelationalOperator: convertRelationalOperatorToProtoOperator(condition.RelationalOperator),
+			Value:              condition.Value,
+		}
+	}
+
+	response, err := h.client.GetServiceClient(swampName).IncrementFloat64(ctx, r)
+	if err != nil {
+		return 0, errorHandler(err)
+	}
+
+	if response.GetIsIncremented() {
+		return response.GetValue(), nil
+	}
+
+	return 0, NewError(ErrConditionNotMet, fmt.Sprintf("%s: %f", errorMessageConditionNotMet, response.GetValue()))
+}
+
+type KeyValuesPair struct {
+	Key    string
+	Values []uint32
+}
+
+// Uint32SlicePush adds unique uint32 values to multiple slice-type Treasures within a given Swamp.
+//
+// For each key in the provided KeyValuesPair list, the function will push the given values
+// to the corresponding slice in the Swamp — but **only if those values are not already present**.
+//
+// If the Swamp or any referenced Treasure does not yet exist, they will be **automatically created**.
+//
+// 🧠 This is an atomic, idempotent mutation function for managing uint32 slices in HydrAIDE.
+//
+// Parameters:
+//   - ctx:           context for cancellation and timeout
+//   - swampName:     the target Swamp where the Treasures are stored
+//   - KeyValuesPair: list of keys and the values to add to each corresponding Treasure slice
+//
+// Behavior:
+//   - If a value is **already present** in the slice, it will not be added again.
+//   - Values that are **not yet present** will be appended in the order received.
+//   - The operation is **atomic** per key: each slice update is isolated and deduplicated server-side.
+//   - The Swamp and Treasures will be **auto-created** if they don't exist.
+//   - If the Treasure exists but is **not of uint32 slice type**, an error is returned.
+//
+// Returns:
+//   - nil if all operations succeed
+//   - error only if there is a low-level database or type mismatch issue
+//
+// ✅ Example usage:
+//
+//	err := sdk.Uint32SlicePush(ctx, "index:reverse", []*KeyValuesPair{
+//	  {Key: "domain:google.com", Values: []uint32{123, 456}},
+//	  {Key: "domain:openai.com",  Values: []uint32{789}},
+//	})
+//
+//	// Result:
+//	// - domain:google.com slice will now include 123 and 456 (only if not already present)
+//	// - domain:openai.com slice will now include 789
+func (h *hydraidego) Uint32SlicePush(ctx context.Context, swampName name.Name, KeyValuesPair []*KeyValuesPair) error {
+
+	keySlices := make([]*hydraidepbgo.KeySlicePair, len(KeyValuesPair))
+
+	for _, value := range KeyValuesPair {
+		keySlices = append(keySlices, &hydraidepbgo.KeySlicePair{
+			Key:    value.Key,
+			Values: value.Values,
+		})
+	}
+
+	_, err := h.client.GetServiceClient(swampName).Uint32SlicePush(ctx, &hydraidepbgo.AddToUint32SlicePushRequest{
+		SwampName:     swampName.Get(),
+		KeySlicePairs: keySlices,
+	})
+
+	if err != nil {
+		return errorHandler(err)
+	}
+
+	return nil
+
+}
+
+// Uint32SliceDelete removes specific uint32 values from slice-type Treasures inside a given Swamp.
+//
+// For each key in the provided KeyValuesPair list, the function attempts to delete the specified
+// values from the corresponding Treasure's uint32 slice.
+//
+// ⚠️ If the Treasure does not exist, the operation **does not return an error** — it is treated as a no-op.
+//
+// 🧠 This is an atomic, idempotent mutation function with built-in garbage collection:
+//   - If a Treasure becomes empty after deletion, it is **automatically removed**
+//   - If a Swamp becomes empty as a result, it is **also removed**
+//
+// Parameters:
+//   - ctx:           context for cancellation and timeout
+//   - swampName:     the target Swamp where the Treasures are stored
+//   - KeyValuesPair: list of keys and the values to remove from each corresponding Treasure slice
+//
+// Behavior:
+//   - Values that do not exist in the slice will be ignored (no error)
+//   - Treasures that do not exist will be skipped (no error)
+//   - Empty Treasures are deleted automatically
+//   - Empty Swamps are deleted automatically
+//   - The operation is **atomic per key**, and safe to repeat (idempotent)
+//
+// Returns:
+//   - nil if all operations succeed or are skipped
+//   - error only in case of low-level database or type mismatch issues
+//
+// ✅ Example usage:
+//
+//	err := sdk.Uint32SliceDelete(ctx, "index:reverse", []*KeyValuesPair{
+//	  {Key: "domain:google.com", Values: []uint32{123, 456}},
+//	  {Key: "domain:openai.com",  Values: []uint32{789}},
+//	})
+//
+//	// Result:
+//	// - domain:google.com: values 123 and 456 are removed (if present)
+//	// - domain:openai.com: value 789 is removed (if present)
+//	// - Empty Treasures/Swamps are automatically garbage collected
+func (h *hydraidego) Uint32SliceDelete(ctx context.Context, swampName name.Name, KeyValuesPair []*KeyValuesPair) error {
+
+	keySlices := make([]*hydraidepbgo.KeySlicePair, len(KeyValuesPair))
+
+	for _, value := range KeyValuesPair {
+		keySlices = append(keySlices, &hydraidepbgo.KeySlicePair{
+			Key:    value.Key,
+			Values: value.Values,
+		})
+	}
+
+	_, err := h.client.GetServiceClient(swampName).Uint32SliceDelete(ctx, &hydraidepbgo.Uint32SliceDeleteRequest{
+		SwampName:     swampName.Get(),
+		KeySlicePairs: keySlices,
+	})
+
+	if err != nil {
+		return errorHandler(err)
+	}
+
+	return nil
+
+}
+
+// Uint32SliceSize returns the number of unique uint32 values stored in a slice-type Treasure.
+//
+// This operation is useful for diagnostics, monitoring, or when you need to evaluate
+// whether a slice is empty, near capacity, or ready for cleanup.
+//
+// 🧠 This is a read-only, atomic operation that works on slice-based Treasures.
+//
+//	It only applies to Treasures that store `[]uint32` values.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  the name of the Swamp where the Treasure lives
+//   - key:        the unique key of the Treasure to inspect
+//
+// Behavior:
+//   - If the key does **not exist**, an `ErrCodeInvalidArgument` is returned
+//   - If the key exists but is **not a uint32 slice**, an `ErrCodeFailedPrecondition` is returned
+//   - Otherwise, returns the exact number of values in the slice
+//
+// Returns:
+//   - the current size of the slice (number of elements)
+//   - error if the key is invalid or a low-level database error occurs
+//
+// ✅ Example usage:
+//
+//	size, err := sdk.Uint32SliceSize(ctx, "index:reverse", "domain:openai.com")
+//	if err != nil {
+//	  log.Fatal(err)
+//	}
+//	fmt.Printf("Slice has %d items.\n", size)
+func (h *hydraidego) Uint32SliceSize(ctx context.Context, swampName name.Name, key string) (int64, error) {
+
+	response, err := h.client.GetServiceClient(swampName).Uint32SliceSize(ctx, &hydraidepbgo.Uint32SliceSizeRequest{
+		SwampName: swampName.Get(),
+		Key:       key,
+	})
+
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return 0, NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return 0, NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.FailedPrecondition:
+				return 0, NewError(ErrCodeFailedPrecondition, fmt.Sprintf("%v", s.Message()))
+			case codes.InvalidArgument:
+				return 0, NewError(ErrCodeInvalidArgument, "the key does not exist")
+			case codes.Internal:
+				return 0, NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return 0, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		} else {
+			return 0, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+		}
+	}
+
+	// if the request was successful, return the size
+	return response.GetSize(), nil
+
+}
+
+// Uint32SliceIsValueExist checks whether a specific uint32 value exists in the slice-type Treasure.
+//
+// This is a lightweight, read-only operation that can be used to validate if a reverse index
+// already contains a given value before pushing or deleting it.
+//
+// 🧠 This is a fast lookup function that works on `[]uint32`-based Treasures.
+//
+//	It is particularly useful in indexing, deduplication, and logic-driven filtering.
+//
+// Parameters:
+//   - ctx:        context for cancellation and timeout
+//   - swampName:  the name of the Swamp where the Treasure lives
+//   - key:        the unique key of the Treasure (i.e., the slice container)
+//   - value:      the uint32 value to check for existence in the slice
+//
+// Behavior:
+//   - If the key exists and the value is present, returns `true`
+//   - If the key exists but the value is not in the slice, returns `false`
+//   - If the key does not exist or type is invalid, returns an error
+//
+// Returns:
+//   - `true` if the value is found in the slice
+//   - `false` if not found
+//   - `error` if the key is invalid, type mismatched, or a database-level failure occurred
+//
+// ✅ Example usage:
+//
+//	exists, err := sdk.Uint32SliceIsValueExist(ctx, "index:reverse", "domain:google.com", 123)
+//	if err != nil {
+//	  log.Fatal(err)
+//	}
+//	if exists {
+//	  fmt.Println("Already indexed")
+//	} else {
+//	  fmt.Println("Needs indexing")
+//	}
+func (h *hydraidego) Uint32SliceIsValueExist(ctx context.Context, swampName name.Name, key string, value uint32) (bool, error) {
+
+	response, err := h.client.GetServiceClient(swampName).Uint32SliceIsValueExist(ctx, &hydraidepbgo.Uint32SliceIsValueExistRequest{
+		SwampName: swampName.Get(),
+		Key:       key,
+		Value:     value,
+	})
+
+	if err != nil {
+		if s, ok := status.FromError(err); ok {
+			switch s.Code() {
+			case codes.Unavailable:
+				return false, NewError(ErrCodeConnectionError, errorMessageConnectionError)
+			case codes.DeadlineExceeded:
+				return false, NewError(ErrCodeCtxTimeout, errorMessageCtxTimeout)
+			case codes.FailedPrecondition:
+				return false, NewError(ErrCodeFailedPrecondition, fmt.Sprintf("%v", s.Message()))
+			case codes.Internal:
+				return false, NewError(ErrCodeInternalDatabaseError, fmt.Sprintf("%s: %v", errorMessageInternalError, s.Message()))
+			default:
+				return false, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+			}
+		} else {
+			return false, NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+		}
+	}
+
+	// if the request was successful
+	return response.GetIsExist(), nil
+
+}
 
 func getKeyFromProfileModel(model any) ([]string, error) {
 
@@ -2472,7 +3653,7 @@ func getKeyFromProfileModel(model any) ([]string, error) {
 
 }
 
-func setTreasureValueToComplexModel(model any, treasure *hydraidepbgo.Treasure) error {
+func setTreasureValueToProfileModel(model any, treasure *hydraidepbgo.Treasure) error {
 
 	key := treasure.GetKey()
 	// find the key in the model by the name of the field.
@@ -3309,6 +4490,27 @@ func errorHandler(err error) error {
 		}
 	} else {
 		return NewError(ErrCodeUnknown, fmt.Sprintf("%s: %v", errorMessageUnknown, err))
+	}
+
+}
+
+// ConvertRelationalOperatorToProtoOperator connvert the relational operator to proto operator
+func convertRelationalOperatorToProtoOperator(operator RelationalOperator) hydraidepbgo.Relational_Operator {
+	switch operator {
+	case NotEqual:
+		return hydraidepbgo.Relational_NOT_EQUAL
+	case GreaterThanOrEqual:
+		return hydraidepbgo.Relational_GREATER_THAN_OR_EQUAL
+	case GreaterThan:
+		return hydraidepbgo.Relational_GREATER_THAN
+	case LessThanOrEqual:
+		return hydraidepbgo.Relational_LESS_THAN_OR_EQUAL
+	case LessThan:
+		return hydraidepbgo.Relational_LESS_THAN
+	case Equal:
+		fallthrough
+	default:
+		return hydraidepbgo.Relational_EQUAL
 	}
 
 }
