@@ -276,6 +276,7 @@ func (c *client) Connect(connectionLog bool) error {
 			}
 
 			c.connections = append(c.connections, conn)
+			c.uniqueServices = append(c.uniqueServices, serviceClient)
 
 		}()
 
