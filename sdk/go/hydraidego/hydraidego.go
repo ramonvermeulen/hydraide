@@ -644,6 +644,7 @@ func (h *hydraidego) Unlock(ctx context.Context, key string, lockID string) erro
 func (h *hydraidego) IsSwampExist(ctx context.Context, swampName name.Name) (bool, error) {
 
 	response, err := h.client.GetServiceClient(swampName).IsSwampExist(ctx, &hydraidepbgo.IsSwampExistRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 	})
 
@@ -708,6 +709,7 @@ func (h *hydraidego) IsSwampExist(ctx context.Context, swampName name.Name) (boo
 func (h *hydraidego) IsKeyExists(ctx context.Context, swampName name.Name, key string) (bool, error) {
 
 	response, err := h.client.GetServiceClient(swampName).IsKeyExist(ctx, &hydraidepbgo.IsKeyExistRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 		Key:       key,
 	})
@@ -821,6 +823,7 @@ func (h *hydraidego) CatalogCreate(ctx context.Context, swampName name.Name, mod
 	setResponse, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName: swampName.Get(),
 				KeyValues: []*hydraidepbgo.KeyValuePair{
 					kvPair,
@@ -935,6 +938,7 @@ func (h *hydraidego) CatalogCreateMany(ctx context.Context, swampName name.Name,
 	setResponse, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:         swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName.Get(),
 				KeyValues:        kvPairs,
 				CreateIfNotExist: true,
@@ -1081,6 +1085,7 @@ func (h *hydraidego) CatalogCreateManyToMany(ctx context.Context, request []*Cat
 		}
 
 		serverRequests[clientAndHost.Host].swampRequests = append(serverRequests[clientAndHost.Host].swampRequests, &hydraidepbgo.SwampRequest{
+			IslandID:         req.SwampName.GetIslandID(h.client.GetAllIslands()),
 			SwampName:        req.SwampName.Get(),
 			KeyValues:        kvPairs,
 			CreateIfNotExist: true,
@@ -1176,6 +1181,7 @@ func (h *hydraidego) CatalogRead(ctx context.Context, swampName name.Name, key s
 
 	swamps := []*hydraidepbgo.GetSwamp{
 		{
+			IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 			SwampName: swampName.Get(),
 			Keys:      []string{key},
 		},
@@ -1261,6 +1267,7 @@ func (h *hydraidego) CatalogReadMany(ctx context.Context, swampName name.Name, i
 
 	// Fetch all matching Treasures from the Hydra engine based on the Index parameters
 	response, err := h.client.GetServiceClient(swampName).GetByIndex(ctx, &hydraidepbgo.GetByIndexRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 		IndexType: indexTypeProtoFormat,
 		OrderType: orderTypeProtoFormat,
@@ -1340,6 +1347,7 @@ func (h *hydraidego) CatalogUpdate(ctx context.Context, swampName name.Name, mod
 	response, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:         swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName.Get(),
 				KeyValues:        []*hydraidepbgo.KeyValuePair{kvPair},
 				CreateIfNotExist: false,
@@ -1436,6 +1444,7 @@ func (h *hydraidego) CatalogUpdateMany(ctx context.Context, swampName name.Name,
 	response, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:         swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName.Get(),
 				KeyValues:        kvPairs,
 				CreateIfNotExist: false,
@@ -1510,6 +1519,7 @@ func (h *hydraidego) CatalogDelete(ctx context.Context, swampName name.Name, key
 	response, err := h.client.GetServiceClient(swampName).Delete(ctx, &hydraidepbgo.DeleteRequest{
 		Swamps: []*hydraidepbgo.DeleteRequest_SwampKeys{
 			{
+				IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName: swampName.Get(),
 				Keys:      []string{key},
 			},
@@ -1576,6 +1586,7 @@ func (h *hydraidego) CatalogDeleteMany(ctx context.Context, swampName name.Name,
 	response, err := h.client.GetServiceClient(swampName).Delete(ctx, &hydraidepbgo.DeleteRequest{
 		Swamps: []*hydraidepbgo.DeleteRequest_SwampKeys{
 			{
+				IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName: swampName.Get(),
 				Keys:      keys,
 			},
@@ -1679,6 +1690,7 @@ func (h *hydraidego) CatalogDeleteManyFromMany(ctx context.Context, request []*C
 		for _, req := range request {
 			swampName := req.SwampName.Get()
 			swamps = append(swamps, &hydraidepbgo.DeleteRequest_SwampKeys{
+				IslandID:  req.SwampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName: swampName,
 				Keys:      req.Keys,
 			})
@@ -1768,6 +1780,7 @@ func (h *hydraidego) CatalogSave(ctx context.Context, swampName name.Name, model
 	setResponse, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:         swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName.Get(),
 				KeyValues:        []*hydraidepbgo.KeyValuePair{kvPair},
 				CreateIfNotExist: true,
@@ -1857,6 +1870,7 @@ func (h *hydraidego) CatalogSaveMany(ctx context.Context, swampName name.Name, m
 	setResponse, err := h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:         swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName.Get(),
 				KeyValues:        kvPairs,
 				CreateIfNotExist: true,
@@ -1963,6 +1977,7 @@ func (h *hydraidego) CatalogSaveManyToMany(ctx context.Context, request []*Catal
 		swamps = append(swamps, &requestBySwamp{
 			swampName: req.SwampName,
 			request: &hydraidepbgo.SwampRequest{
+				IslandID:         req.SwampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName,
 				KeyValues:        kvPairs,
 				CreateIfNotExist: true,
@@ -2075,6 +2090,7 @@ func (h *hydraidego) ProfileSave(ctx context.Context, swampName name.Name, model
 	_, err = h.client.GetServiceClient(swampName).Set(ctx, &hydraidepbgo.SetRequest{
 		Swamps: []*hydraidepbgo.SwampRequest{
 			{
+				IslandID:         swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName:        swampName.Get(),
 				KeyValues:        kvPairs,
 				CreateIfNotExist: true,
@@ -2139,6 +2155,7 @@ func (h *hydraidego) ProfileRead(ctx context.Context, swampName name.Name, model
 	response, err := h.client.GetServiceClient(swampName).Get(ctx, &hydraidepbgo.GetRequest{
 		Swamps: []*hydraidepbgo.GetSwamp{
 			{
+				IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 				SwampName: swampName.Get(),
 				Keys:      keys,
 			},
@@ -2208,8 +2225,11 @@ func (h *hydraidego) Count(ctx context.Context, swampName name.Name) (int32, err
 
 	// Request the count of treasures from the given Swamp
 	response, err := h.client.GetServiceClient(swampName).Count(ctx, &hydraidepbgo.CountRequest{
-		SwampNames: []string{
-			swampName.Get(),
+		Swamps: []*hydraidepbgo.CountRequest_SwampIdentifier{
+			{
+				IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
+				SwampName: swampName.Get(),
+			},
 		},
 	})
 
@@ -2272,6 +2292,7 @@ func (h *hydraidego) Destroy(ctx context.Context, swampName name.Name) error {
 
 	// Send the destroy request to the correct server based on swampName hashing
 	_, err := h.client.GetServiceClient(swampName).Destroy(ctx, &hydraidepbgo.DestroyRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 	})
 
@@ -2331,6 +2352,7 @@ func (h *hydraidego) Subscribe(ctx context.Context, swampName name.Name, getExis
 
 		// get all data by the index creation time in ascending order
 		response, err := h.client.GetServiceClient(swampName).GetByIndex(ctx, &hydraidepbgo.GetByIndexRequest{
+			IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 			SwampName: swampName.Get(),
 			IndexType: hydraidepbgo.IndexType_CREATION_TIME,
 			OrderType: hydraidepbgo.OrderType_ASC,
@@ -2384,6 +2406,7 @@ func (h *hydraidego) Subscribe(ctx context.Context, swampName name.Name, getExis
 
 	// subscribe to the events
 	eventClient, err := h.client.GetServiceClient(swampName).SubscribeToEvents(ctx, &hydraidepbgo.SubscribeToEventsRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 	})
 
@@ -2580,6 +2603,7 @@ const (
 func (h *hydraidego) IncrementInt8(ctx context.Context, swampName name.Name, key string, value int8, condition *Int8Condition) (int8, error) {
 
 	r := &hydraidepbgo.IncrementInt8Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: int32(value),
@@ -2668,6 +2692,7 @@ func (h *hydraidego) IncrementInt8(ctx context.Context, swampName name.Name, key
 func (h *hydraidego) IncrementInt16(ctx context.Context, swampName name.Name, key string, value int16, condition *Int16Condition) (int16, error) {
 
 	r := &hydraidepbgo.IncrementInt16Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: int32(value),
@@ -2756,6 +2781,7 @@ func (h *hydraidego) IncrementInt16(ctx context.Context, swampName name.Name, ke
 func (h *hydraidego) IncrementInt32(ctx context.Context, swampName name.Name, key string, value int32, condition *Int32Condition) (int32, error) {
 
 	r := &hydraidepbgo.IncrementInt32Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: value,
@@ -2843,6 +2869,7 @@ func (h *hydraidego) IncrementInt32(ctx context.Context, swampName name.Name, ke
 func (h *hydraidego) IncrementInt64(ctx context.Context, swampName name.Name, key string, value int64, condition *Int64Condition) (int64, error) {
 
 	r := &hydraidepbgo.IncrementInt64Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: value,
@@ -2929,6 +2956,7 @@ func (h *hydraidego) IncrementInt64(ctx context.Context, swampName name.Name, ke
 //	IncrementUint8(ctx, "badge-points", "user:100:stars", 1, &Uint8Condition{GreaterThanOrEqual, 0})
 func (h *hydraidego) IncrementUint8(ctx context.Context, swampName name.Name, key string, value uint8, condition *Uint8Condition) (uint8, error) {
 	r := &hydraidepbgo.IncrementUint8Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: uint32(value),
@@ -3013,6 +3041,7 @@ func (h *hydraidego) IncrementUint8(ctx context.Context, swampName name.Name, ke
 //	IncrementUint16(ctx, "api-quota", "user:42:limit", 250, &Uint16Condition{GreaterThanOrEqual, 100})
 func (h *hydraidego) IncrementUint16(ctx context.Context, swampName name.Name, key string, value uint16, condition *Uint16Condition) (uint16, error) {
 	r := &hydraidepbgo.IncrementUint16Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: uint32(value),
@@ -3097,6 +3126,7 @@ func (h *hydraidego) IncrementUint16(ctx context.Context, swampName name.Name, k
 //	IncrementUint32(ctx, "metrics", "user:42:pageviews", 100, &Uint32Condition{LessThanOrEqual, 5_000_000})
 func (h *hydraidego) IncrementUint32(ctx context.Context, swampName name.Name, key string, value uint32, condition *Uint32Condition) (uint32, error) {
 	r := &hydraidepbgo.IncrementUint32Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: value,
@@ -3180,6 +3210,7 @@ func (h *hydraidego) IncrementUint32(ctx context.Context, swampName name.Name, k
 //	IncrementUint64(ctx, "billing", "user:abc:total-bytes-used", 1_000_000, &Uint64Condition{LessThanOrEqual, 5_000_000_000})
 func (h *hydraidego) IncrementUint64(ctx context.Context, swampName name.Name, key string, value uint64, condition *Uint64Condition) (uint64, error) {
 	r := &hydraidepbgo.IncrementUint64Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: value,
@@ -3264,6 +3295,7 @@ func (h *hydraidego) IncrementUint64(ctx context.Context, swampName name.Name, k
 //	IncrementFloat32(ctx, "analytics", "user:session-duration", 2.5, &Float32Condition{GreaterThan, 0})
 func (h *hydraidego) IncrementFloat32(ctx context.Context, swampName name.Name, key string, value float32, condition *Float32Condition) (float32, error) {
 	r := &hydraidepbgo.IncrementFloat32Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: value,
@@ -3348,6 +3380,7 @@ func (h *hydraidego) IncrementFloat32(ctx context.Context, swampName name.Name, 
 //	IncrementFloat64(ctx, "finance", "user:abc:wallet-balance", 49.95, &Float64Condition{LessThan, 10_000.0})
 func (h *hydraidego) IncrementFloat64(ctx context.Context, swampName name.Name, key string, value float64, condition *Float64Condition) (float64, error) {
 	r := &hydraidepbgo.IncrementFloat64Request{
+		IslandID:    swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:   swampName.Get(),
 		Key:         key,
 		IncrementBy: value,
@@ -3424,6 +3457,7 @@ func (h *hydraidego) Uint32SlicePush(ctx context.Context, swampName name.Name, K
 	}
 
 	_, err := h.client.GetServiceClient(swampName).Uint32SlicePush(ctx, &hydraidepbgo.AddToUint32SlicePushRequest{
+		IslandID:      swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:     swampName.Get(),
 		KeySlicePairs: keySlices,
 	})
@@ -3486,6 +3520,7 @@ func (h *hydraidego) Uint32SliceDelete(ctx context.Context, swampName name.Name,
 	}
 
 	_, err := h.client.GetServiceClient(swampName).Uint32SliceDelete(ctx, &hydraidepbgo.Uint32SliceDeleteRequest{
+		IslandID:      swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName:     swampName.Get(),
 		KeySlicePairs: keySlices,
 	})
@@ -3531,6 +3566,7 @@ func (h *hydraidego) Uint32SliceDelete(ctx context.Context, swampName name.Name,
 func (h *hydraidego) Uint32SliceSize(ctx context.Context, swampName name.Name, key string) (int64, error) {
 
 	response, err := h.client.GetServiceClient(swampName).Uint32SliceSize(ctx, &hydraidepbgo.Uint32SliceSizeRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 		Key:       key,
 	})
@@ -3600,6 +3636,7 @@ func (h *hydraidego) Uint32SliceSize(ctx context.Context, swampName name.Name, k
 func (h *hydraidego) Uint32SliceIsValueExist(ctx context.Context, swampName name.Name, key string, value uint32) (bool, error) {
 
 	response, err := h.client.GetServiceClient(swampName).Uint32SliceIsValueExist(ctx, &hydraidepbgo.Uint32SliceIsValueExistRequest{
+		IslandID:  swampName.GetIslandID(h.client.GetAllIslands()),
 		SwampName: swampName.Get(),
 		Key:       key,
 		Value:     value,
@@ -4312,30 +4349,28 @@ func convertFieldToKvPair(value reflect.Value, kvPair *hydraidepbgo.KeyValuePair
 		}
 		kvPair.BoolVal = &boolVal
 	// 🧮 Unsigned integers
-	case reflect.Uint8, reflect.Uint16, reflect.Uint32:
-		intVal := uint32(value.Uint())
-		switch value.Kind() {
-		case reflect.Uint8:
-			kvPair.Uint8Val = &intVal
-		case reflect.Uint16:
-			kvPair.Uint16Val = &intVal
-		case reflect.Uint32:
-			kvPair.Uint32Val = &intVal
-		}
+	case reflect.Uint8:
+		val := uint32(value.Uint())
+		kvPair.Uint8Val = &val
+	case reflect.Uint16:
+		val := uint32(value.Uint())
+		kvPair.Uint16Val = &val
+	case reflect.Uint32:
+		val := uint32(value.Uint())
+		kvPair.Uint32Val = &val
 	case reflect.Uint64:
 		intVal := value.Uint()
 		kvPair.Uint64Val = &intVal
 	// 🔢 Signed integers
-	case reflect.Int8, reflect.Int16, reflect.Int32:
-		intVal := int32(value.Int())
-		switch value.Kind() {
-		case reflect.Int8:
-			kvPair.Int8Val = &intVal
-		case reflect.Int16:
-			kvPair.Int16Val = &intVal
-		case reflect.Int32:
-			kvPair.Int32Val = &intVal
-		}
+	case reflect.Int8:
+		val := int32(value.Int())
+		kvPair.Int8Val = &val
+	case reflect.Int16:
+		val := int32(value.Int())
+		kvPair.Int16Val = &val
+	case reflect.Int32:
+		val := int32(value.Int())
+		kvPair.Int32Val = &val
 	case reflect.Int, reflect.Int64:
 		intVal := value.Int()
 		kvPair.Int64Val = &intVal

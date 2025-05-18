@@ -386,11 +386,13 @@ message UnlockResponse {
 }
 
 message DestroyRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp to be permanently deleted.
   //
   // This removes all treasures and metadata associated with the swamp.
   // Use with caution – this operation is irreversible.
-  string SwampName = 1;
+  string SwampName = 2;
 }
 
 
@@ -400,6 +402,8 @@ message DestroyResponse {
 }
 
 message SubscribeToInfoRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp to observe.
   //
   // The server will monitor this swamp and send realtime updates
@@ -418,6 +422,8 @@ message SubscribeToInfoResponse {
 }
 
 message SubscribeToEventsRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp to subscribe to.
   //
   // All changes (insert, update, delete) in this swamp will be streamed in real time.
@@ -519,18 +525,45 @@ message SetRequest {
 }
 
 message SwampRequest {
+  // IslandID is the globally consistent identifier of the "island" where this Swamp physically resides.
+  //
+  // An Island is a deterministic storage zone, derived from the full Swamp name
+  // (Sanctuary / Realm / Swamp) using a fast hash function (e.g. xxhash).
+  // The total number of Islands (i.e. hash slots) is fixed (e.g. 1000),
+  // and each Swamp is anchored to exactly one Island based on its full name.
+  //
+  // 🏝️ What is an Island?
+  // An Island is the smallest movable unit in the HydrAIDE system — a self-contained physical space
+  // where one or many Swamps live. On disk, it maps to a top-level folder like: `/data/234/...`.
+  //
+  // 🌐 Why is this important?
+  // This enables decentralized, orchestrator-free scaling:
+  // - The client decides which Island a Swamp belongs to.
+  // - The server simply accepts the IslandID and writes within that zone — it never hashes or routes.
+  //
+  // 🔁 How does this support scaling and migration?
+  // Island-based partitioning allows you to:
+  // - Move Swamps between servers without altering their names
+  // - Keep servers stateless and swappable
+  // - Perform migrations by just copying Island folders and updating client routing
+  // - Avoid global rebalancing or coordination layers
+  //
+  // ✨ This design ensures:
+  // - Deterministic Swamp placement
+  // - Stateless and swappable servers
+  // - Seamless, offline migration of data
+  // - True horizontal scaling without any cluster manager
+  uint64 IslandID = 1;
+  
   // SwampName is the name of the target swamp where the data should be written.
-  string SwampName = 1;
-
+  string SwampName = 2;
   // KeyValues is the list of key-value pairs to insert or update in this swamp.
-  repeated KeyValuePair KeyValues = 2;
-
+  repeated KeyValuePair KeyValues = 3;
   // CreateIfNotExist determines whether HydrAIDE should create the swamp and/or key if they don't exist yet.
   //
   // - true → create missing swamp and keys if needed (upsert)
   // - false → only allow updates to existing values
-  bool CreateIfNotExist = 3;
-
+  bool CreateIfNotExist = 4;
   // Overwrite controls whether existing values should be replaced.
   //
   // - true → existing values will be overwritten
@@ -541,7 +574,7 @@ message SwampRequest {
   // - false + true = update only
   // - true + false = insert only
   // - false + false = no-op (used for dry run / test)
-  bool Overwrite = 4;
+  bool Overwrite = 5;
 }
 
 
@@ -666,9 +699,10 @@ message GetRequest {
 
 
 message GetSwamp {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp to read from.
-  string SwampName = 1;
-
+  string SwampName = 2;
   // Keys is the list of treasure keys to retrieve from this swamp.
   repeated string Keys = 3;
 }
@@ -681,12 +715,10 @@ message GetResponse {
 message GetSwampResponse {
   // SwampName is the swamp from which the treasures were returned.
   string SwampName = 1;
-
   // IsExist tells whether the swamp actually exists.
   //
   // If false, no data will be returned for this swamp.
   bool IsExist = 2;
-
   // Treasures contains the values of all successfully retrieved keys.
   // If a key did not exist, it will be omitted from the list.
   repeated Treasure Treasures = 3;
@@ -694,13 +726,15 @@ message GetSwampResponse {
 
 
 message GetAllRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp you want to retrieve all treasures from.
   //
   // HydrAIDE will return every key-value pair stored in this swamp, regardless of expiration or status.
   //
   // ⚠️ Caution: For large swamps, this can return a lot of data.
   // Consider using pagination or GetByIndex instead for better control.
-  string SwampName = 1;
+  string SwampName = 2;
 }
 
 
@@ -719,8 +753,11 @@ message GetAllResponse {
 
 
 message ShiftExpiredTreasuresRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp you want to shift expired treasures from.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // HowMany defines how many expired treasures should be returned and deleted.
   //
@@ -728,7 +765,7 @@ message ShiftExpiredTreasuresRequest {
   // - If greater than 0 → only the specified number of expired treasures will be returned.
   //
   // ⚠️ Note: This operation is destructive – the shifted treasures will be removed immediately.
-  int32 HowMany = 2;
+  int32 HowMany = 3;
 }
 
 
@@ -827,10 +864,12 @@ message Boolean {
 }
 
 message GetByIndexRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp to query.
   //
   // The index will be built in memory for this swamp at query time.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // IndexType specifies which field to index and query on.
   //
@@ -840,23 +879,23 @@ message GetByIndexRequest {
   // - CREATION_TIME → Query based on CreatedAt timestamps
   // - UPDATE_TIME → Query based on UpdatedAt timestamps
   // - VALUE_* → Query by the actual value (e.g., int, string, float)
-  IndexType.Type IndexType = 2;
+  IndexType.Type IndexType = 3;
 
   // OrderType defines the sort direction:
   // - ASC → Oldest/smallest first
   // - DESC → Newest/largest first
-  OrderType.Type OrderType = 3;
+  OrderType.Type OrderType = 4;
 
   // From defines the starting index (zero-based).
   //
   // Use it for pagination or skipping elements.
   // Set to 0 to start from the beginning.
-  int32 From = 4;
+  int32 From = 5;
 
   // Limit defines how many items to return.
   //
   // Set to 0 to return all results (⚠️ caution on large datasets).
-  int32 Limit = 5;
+  int32 Limit = 6;
 }
 
 message IndexType {
@@ -907,11 +946,15 @@ message DeleteRequest {
   repeated SwampKeys Swamps = 1;
 
   message SwampKeys {
+
+    // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+    uint64 IslandID = 1;
+
     // SwampName identifies the target swamp.
-    string SwampName = 1;
+    string SwampName = 2;
 
     // Keys are the specific treasure keys to delete from the swamp.
-    repeated string Keys = 2;
+    repeated string Keys = 3;
   }
 }
 
@@ -939,10 +982,19 @@ message DeleteResponse {
 
 
 message CountRequest {
+
   // SwampNames is the list of swamps you want to inspect.
   //
   // You can count multiple swamps at once.
-  repeated string SwampNames = 1;
+  repeated SwampIdentifier Swamps = 1;
+
+  message SwampIdentifier {
+    // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+    uint64 IslandID = 1;
+    // SwampName is the name of the swamp to count.
+    string SwampName = 2;
+  }
+
 }
 
 message CountResponse {
@@ -963,11 +1015,15 @@ message CountSwamp {
 
 
 message IncrementInt8Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp where the value resides.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key is the identifier of the treasure to increment.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the signed integer to add (or subtract) from the current value.
   //
@@ -975,10 +1031,10 @@ message IncrementInt8Request {
   // HydrAIDE internally converts and enforces the correct range.
   //
   // 💡 Supports negative values for decrementing.
-  int32 IncrementBy = 3;
+  int32 IncrementBy = 4;
 
   // Condition determines whether the increment should proceed.
-  IncrementInt8Condition Condition = 4;
+  IncrementInt8Condition Condition = 5;
 }
 
 
@@ -1005,20 +1061,25 @@ message IncrementInt8Response {
 }
 
 message IncrementInt16Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp where the value resides.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key is the identifier of the treasure to increment.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the signed integer to add (or subtract) from the current value.
   //
   // ⚠️ Although this is declared as int32, HydrAIDE stores the value as int16.
   // The system enforces proper bounds and type conversion internally.
-  int32 IncrementBy = 3;
+  int32 IncrementBy = 4;
 
   // Condition determines whether the increment should proceed.
-  IncrementInt16Condition Condition = 4;
+  IncrementInt16Condition Condition = 5;
+
 }
 
 message IncrementInt16Condition {
@@ -1044,17 +1105,21 @@ message IncrementInt16Response {
 }
 
 message IncrementInt32Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp where the value resides.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key is the treasure key whose value we want to increment.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the signed 32-bit integer to add or subtract.
-  int32 IncrementBy = 3;
+  int32 IncrementBy = 4;
 
   // Condition must be satisfied for the increment to apply.
-  IncrementInt32Condition Condition = 4;
+  IncrementInt32Condition Condition = 5;
 }
 
 message IncrementInt32Condition {
@@ -1074,19 +1139,23 @@ message IncrementInt32Response {
 }
 
 message IncrementInt64Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp where the treasure is stored.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key identifies the treasure you want to increment.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the signed 64-bit integer to add (can be negative).
   //
   // 💡 Ideal for working with timestamps, counters, large numeric values.
-  int64 IncrementBy = 3;
+  int64 IncrementBy = 4;
 
   // Condition must be met for the increment to happen.
-  IncrementInt64Condition Condition = 4;
+  IncrementInt64Condition Condition = 5;
 }
 
 
@@ -1109,11 +1178,15 @@ message IncrementInt64Response {
 
 
 message IncrementUint8Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName identifies the swamp where the treasure lives.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key is the treasure to increment.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the unsigned integer to add to the current value.
   //
@@ -1121,10 +1194,10 @@ message IncrementUint8Request {
   // HydrAIDE stores this as a true uint8 internally (0–255).
   //
   // Any overflow is safely rejected and not applied.
-  uint32 IncrementBy = 3;
+  uint32 IncrementBy = 4;
 
   // Condition to be evaluated before applying the increment.
-  IncrementUint8Condition Condition = 4;
+  IncrementUint8Condition Condition = 5;
 }
 
 message IncrementUint8Condition {
@@ -1149,20 +1222,24 @@ message IncrementUint8Response {
 
 
 message IncrementUint16Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp where the treasure is stored.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key identifies the target treasure.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the unsigned integer to add (or subtract, if allowed).
   //
   // ⚠️ Represented as `uint32` in the gRPC interface, but HydrAIDE stores it as true `uint16` internally.
   // Allowed value range: 0 to 65,535
-  uint32 IncrementBy = 3;
+  uint32 IncrementBy = 4;
 
   // Condition to be satisfied before increment is applied.
-  IncrementUint16Condition Condition = 4;
+  IncrementUint16Condition Condition = 5;
 }
 
 
@@ -1188,19 +1265,23 @@ message IncrementUint16Response {
 
 
 message IncrementUint32Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName specifies the target swamp.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key identifies the treasure to increment.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the unsigned 32-bit integer value to add.
   //
   // 💡 Supports any uint32 value (0–4,294,967,295)
-  uint32 IncrementBy = 3;
+  uint32 IncrementBy = 4;
 
   // Condition must be true for the increment to be applied.
-  IncrementUint32Condition Condition = 4;
+  IncrementUint32Condition Condition = 5;
 }
 
 message IncrementUint32Condition {
@@ -1222,19 +1303,23 @@ message IncrementUint32Response {
 
 
 message IncrementUint64Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the swamp where the treasure is located.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key identifies the treasure whose value will be incremented.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the amount to add.
   //
   // 💡 Supports the full range of unsigned 64-bit integers (0 to 18 quintillion+)
-  uint64 IncrementBy = 3;
+  uint64 IncrementBy = 4;
 
   // Condition must be satisfied for the operation to take place.
-  IncrementUint64Condition Condition = 4;
+  IncrementUint64Condition Condition = 5;
 }
 
 
@@ -1269,19 +1354,23 @@ message Relational {
 
 
 message IncrementFloat32Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName identifies the swamp where the treasure is stored.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key points to the specific treasure we want to modify.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the amount to add (can be negative).
   //
   // 💡 Supports 32-bit floating point numbers.
-  float IncrementBy = 3;
+  float IncrementBy = 4;
 
   // Condition must be met for the change to happen.
-  IncrementFloat32Condition Condition = 4;
+  IncrementFloat32Condition Condition = 5;
 }
 
 
@@ -1303,20 +1392,24 @@ message IncrementFloat32Response {
 
 
 message IncrementFloat64Request {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the target swamp where the treasure lives.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key identifies the treasure to be incremented.
-  string Key = 2;
+  string Key = 3;
 
   // IncrementBy is the floating-point value to add.
   //
   // ✅ Can be positive or negative.
   // ✅ Uses 64-bit floating-point precision.
-  double IncrementBy = 3;
+  double IncrementBy = 4;
 
   // Condition that must be true for the increment to apply.
-  IncrementFloat64Condition Condition = 4;
+  IncrementFloat64Condition Condition = 5;
 }
 
 message IncrementFloat64Condition {
@@ -1347,11 +1440,13 @@ message KeySlicePair {
 
 // AddToUint32SlicePushRequest adds one or more uint32 values to one or more keys.
 message AddToUint32SlicePushRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp containing the target slices.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // KeySlicePairs contains one or more key → value(s) mappings to push into the slices.
-  repeated KeySlicePair KeySlicePairs = 2;
+  repeated KeySlicePair KeySlicePairs = 3;
 }
 
 // AddToUint32SlicePushResponse is returned after a successful push operation.
@@ -1360,11 +1455,14 @@ message AddToUint32SlicePushResponse {}
 
 // Uint32SliceDeleteRequest removes one or more values from one or more uint32 slices.
 message Uint32SliceDeleteRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp where the slices are located.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // KeySlicePairs contains the keys and values to remove from the corresponding slices.
-  repeated KeySlicePair KeySlicePairs = 2;
+  repeated KeySlicePair KeySlicePairs = 3;
 }
 
 // Uint32SliceDeleteResponse is returned after a successful delete operation.
@@ -1373,11 +1471,15 @@ message Uint32SliceDeleteResponse {}
 
 // Uint32SliceSizeRequest queries the size (number of elements) of a specific uint32 slice.
 message Uint32SliceSizeRequest {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp containing the slice.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key is the identifier of the treasure whose slice we want to measure.
-  string Key = 2;
+  string Key = 3;
 }
 
 // Uint32SliceSizeResponse returns the current number of values in the requested slice.
@@ -1388,14 +1490,18 @@ message Uint32SliceSizeResponse {
 
 // Uint32SliceIsValueExistRequest checks if a specific uint32 value exists in a slice.
 message Uint32SliceIsValueExistRequest {
+
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
+
   // SwampName is the name of the swamp containing the slice.
-  string SwampName = 1;
+  string SwampName = 2;
 
   // Key is the treasure containing the slice.
-  string Key = 2;
+  string Key = 3;
 
   // Value is the uint32 number we want to check for existence.
-  uint32 Value = 3;
+  uint32 Value = 4;
 }
 
 // Uint32SliceIsValueExistResponse returns whether the specified value is present in the slice.
@@ -1406,8 +1512,10 @@ message Uint32SliceIsValueExistResponse {
 
 // IsSwampExistRequest checks whether a specific swamp exists in the current sanctuary.
 message IsSwampExistRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp to check.
-  string SwampName = 1;
+  string SwampName = 2;
 }
 
 // IsSwampExistResponse returns the existence status of the swamp.
@@ -1418,11 +1526,12 @@ message IsSwampExistResponse {
 
 // IsKeyExistRequest checks whether a specific key exists within a given swamp.
 message IsKeyExistRequest {
+  // IslandID is the deterministic storage zone (or "island") where this Swamp lives.
+  uint64 IslandID = 1;
   // SwampName is the name of the swamp where the key is expected.
-  string SwampName = 1;
-
+  string SwampName = 2;
   // Key is the identifier of the treasure to check for existence.
-  string Key = 2;
+  string Key = 3;
 }
 
 // IsKeyExistResponse returns the existence status of the given key in the swamp.

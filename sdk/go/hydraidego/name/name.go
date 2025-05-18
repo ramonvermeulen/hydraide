@@ -45,14 +45,14 @@
 //
 // Each Name is constructed step-by-step (Sanctuary → Realm → Swamp),
 // and the full path can be retrieved using Get(). Additionally,
-// GetFolderNumber(allFolders) maps the current name to a consistent
+// GetIslandID(allFolders) maps the current name to a consistent
 // server index (1-based), using a fast and collision-resistant hash.
 //
 // Example usage:
 //
 //	name := New().Sanctuary("users").Realm("profiles").Swamp("alice123")
 //	fmt.Println(name.Get()) // "users/profiles/alice123"
-//	fmt.Println(name.GetFolderNumber(1000)) // e.g. 774
+//	fmt.Println(name.GetIslandID(1000)) // e.g. 774
 //
 // Use Load(path) to reconstruct a Name from an existing path string.
 //
@@ -93,7 +93,7 @@ import (
 //	    Swamp("alice123")
 //
 //	name.Get()                 // "users/profiles/alice123"
-//	name.GetFolderNumber(100) // e.g. 42
+//	name.GetIslandID(100) // e.g. 42
 //
 // Usage of GetFolderNumber ensures even distribution of data across N folders,
 // enabling stateless multi-node architectures without external orchestrators.
@@ -104,7 +104,7 @@ type Name interface {
 	Realm(realmName string) Name
 	Swamp(swampName string) Name
 	Get() string
-	GetFolderNumber(allFolders uint16) uint16
+	GetIslandID(allIslands uint64) uint64
 	IsWildcardPattern() bool
 }
 
@@ -113,7 +113,7 @@ type name struct {
 	SanctuaryID    string
 	RealmName      string
 	SwampName      string
-	FolderNumber   uint16
+	IslandNumber   uint64
 	hashPathMu     sync.Mutex
 	folderNumberMu sync.Mutex
 }
@@ -167,31 +167,50 @@ func (n *name) Get() string {
 	return n.Path
 }
 
-// GetFolderNumber returns the 1-based index of the server responsible for this Name.
-// It uses a fast, consistent xxhash hash over the combined Sanctuary, Realm, and Swamp
-// to deterministically assign the Name to one of `allFolders` available slots.
+// GetIslandID returns the deterministic, 1-based ID of the Island where this Name physically resides.
 //
-// 🔒 Internal use only: This function is used by the SDK to route
-// the Name to the correct Hydra client instance in a distributed setup.
-// It should not be called directly by application developers.
+// An Island is HydrAIDE’s smallest migratable physical unit — a deterministic storage zone that groups
+// one or more Swamps under the same hash bucket. The result of this function is used to determine
+// which HydrAIDE server should store the Swamp represented by this Name.
 //
-// Example (inside SDK logic):
+// The IslandID is calculated using a fast, consistent xxhash over the combined
+// SanctuaryID, RealmName, and SwampName. The hash value is mapped into the provided `allIslands`
+// range, which must be consistent across all clients and routers to ensure predictable behavior.
 //
-//	client := router.Route(name.GetFolderNumber(1000))
-func (n *name) GetFolderNumber(allFolders uint16) uint16 {
+// 📦 What is an Island?
+// - A logical+physical storage unit that lives as a top-level folder (e.g. /data/234/)
+// - The place where a Swamp is anchored
+// - A fixed destination for a given SwampName, regardless of infrastructure changes
+//
+// 🌐 Why does this matter?
+// - Enables decentralized routing without coordination
+// - Makes server assignments stateless and predictable
+// - Supports seamless migration (moving Islands ≠ renaming Swamps)
+//
+// 🚫 This function should not be used directly by application code.
+// It is intended for SDK-internal routing logic.
+//
+// Example:
+//
+//	islandID := name.GetIslandID(1000)
+//	client := router.Route(islandID)
+//
+// 💡 If you update the hash space (allIslands), all previous IslandID mappings change.
+// Keep `allIslands` fixed across your system lifetime for stable routing.
+func (n *name) GetIslandID(allIslands uint64) uint64 {
 
 	n.folderNumberMu.Lock()
 	defer n.folderNumberMu.Unlock()
 
-	if n.FolderNumber != 0 {
-		return n.FolderNumber
+	if n.IslandNumber != 0 {
+		return n.IslandNumber
 	}
 
 	hash := xxhash.Sum64([]byte(n.SanctuaryID + n.RealmName + n.SwampName))
 
-	n.FolderNumber = uint16(hash%uint64(allFolders)) + 1
+	n.IslandNumber = hash%allIslands + 1
 
-	return n.FolderNumber
+	return n.IslandNumber
 
 }
 

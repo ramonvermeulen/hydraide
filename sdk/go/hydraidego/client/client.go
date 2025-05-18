@@ -64,6 +64,7 @@ type Client interface {
 	GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServiceClient
 	GetServiceClientAndHost(swampName name.Name) *ServiceClient
 	GetUniqueServiceClients() []hydraidepbgo.HydraideServiceClient
+	GetAllIslands() uint64
 }
 
 type ServiceClient struct {
@@ -72,8 +73,8 @@ type ServiceClient struct {
 }
 
 type client struct {
-	allFolders     uint16
-	serviceClients map[uint16]*ServiceClient
+	allIslands     uint64
+	serviceClients map[uint64]*ServiceClient
 	uniqueServices []hydraidepbgo.HydraideServiceClient
 	connections    []*grpc.ClientConn
 	maxMessageSize int
@@ -82,38 +83,76 @@ type client struct {
 	certFile       string
 }
 
+// Server represents a HydrAIDE server instance that handles one or more Islands.
+//
+// Each HydrAIDE server is responsible for a specific, non-overlapping range of Islands —
+// these are deterministic hash slots assigned based on Swamp names.
+// The client uses the IslandID to route requests to the appropriate server.
+//
+// Fields:
+//   - Host: The gRPC endpoint of the HydrAIDE server (e.g. "hydra01:4444")
+//   - FromIsland: The first Island (inclusive) that this server is responsible for
+//   - ToIsland: The last Island (inclusive) this server handles
+//   - CertFilePath: Optional TLS certificate path for secure connections
+//
+// 🏝️ Why Islands?
+// An Island is a routing and storage unit — a top-level hash partition where Swamps reside.
+// Moving an Island means migrating its folder and updating this struct on the client side.
+// Servers themselves are stateless and don’t compute hash assignments — they only serve.
+//
+// 💡 Best practices:
+// - Island ranges must not overlap between servers.
+// - The Island range must be consistent with the total `allIslands` space (e.g. 1–1000).
+// - The client is responsible for ensuring deterministic routing via Swamp name hashing.
+//
+// Example:
+//
+//	client.New([]*Server{
+//	    {Host: "hydra01:4444", FromIsland: 1, ToIsland: 500, CertFilePath: "certs/01.pem"},
+//	    {Host: "hydra02:4444", FromIsland: 501, ToIsland: 1000, CertFilePath: "certs/02.pem"},
+//	}, 1000, ...)
 type Server struct {
 	Host         string
-	FromFolder   uint16
-	ToFolder     uint16
+	FromIsland   uint64
+	ToIsland     uint64
 	CertFilePath string
 }
 
 // New creates a new HydrAIDE client instance that connects to one or more servers,
-// and distributes requests based on folder-based hashing logic.
+// and distributes Swamp requests based on Island-based routing logic.
 //
-// This constructor is designed for distributed setups, where each HydrAIDE server
-// is responsible for a specific range of folders (i.e. Swamp partitions).
+// In HydrAIDE, every Swamp is deterministically assigned to an Island — a hash-based,
+// migratable storage zone — based on its full name (Sanctuary / Realm / Swamp).
+// The client is responsible for computing the IslandID and routing the request
+// to the correct server instance, based on the configured Island ranges.
 //
 // Parameters:
-//   - servers: list of HydrAIDE servers to connect to (each with a folder range and TLS certificate)
-//   - allFolders: total number of folders across the entire system (e.g. 1000)
-//   - maxMessageSize: maximum allowed message size for gRPC requests/responses (in bytes)
+//   - servers: list of HydrAIDE servers to connect to
+//     Each server is responsible for a specific Island range (From → To).
+//   - allIslands: total number of hash buckets (Islands) in the system — must be fixed (e.g. 1000)
+//   - maxMessageSize: maximum allowed message size for gRPC communication (in bytes)
 //
 // The returned Client instance handles:
-//   - Stateless resolution of Swamp names to folders and corresponding servers
-//   - Thread-safe access to internal gRPC connections (via RWMutex)
-//   - Internal mapping from folder → *ServiceClient (which includes the gRPC client and Host info)
+//   - Stateless and deterministic Swamp → Island → server resolution
+//   - Thread-safe management of gRPC connections using internal routing maps
+//   - Lazy connection establishment via `Connect()`
+//   - Island-based partitioning for horizontal scalability and orchestrator-free migration
 //
-// Note:
-// - Each gRPC connection is created lazily upon calling `Connect()`
-// - The folder-based routing is consistent across all services, derived from Swamp name hash
+// 🏝️ What's an Island?
+// An Island is a physical-logical routing unit. It corresponds to a top-level folder
+// (e.g. `/data/234/`) that hosts one or more Swamps. Migrating an Island means copying
+// the folder and updating the client’s routing map — no server restart or rehashing required.
+//
+// 📦 Why is this useful?
+// - Enables fully decentralized scaling
+// - Makes server responsibilities transparent and adjustable
+// - Keeps Swamp names stable even during server topology changes
 //
 // Example:
 //
 //	client := client.New([]*client.Server{
-//	    {Host: "hydra01:4444", FromFolder: 1, ToFolder: 500, CertFilePath: "certs/01.pem"},
-//	    {Host: "hydra02:4444", FromFolder: 501, ToFolder: 1000, CertFilePath: "certs/02.pem"},
+//	    {Host: "hydra01:4444", FromIsland: 1, ToIsland: 500, CertFilePath: "certs/01.pem"},
+//	    {Host: "hydra02:4444", FromIsland: 501, ToIsland: 1000, CertFilePath: "certs/02.pem"},
 //	}, 1000, 1024*1024*1024) // 1 GB max message size
 //
 //	err := client.Connect(true)
@@ -124,13 +163,13 @@ type Server struct {
 //	swamp := name.New().Sanctuary("users").Realm("profiles").Swamp("alex123")
 //	service := client.GetServiceClient(swamp)
 //	if service != nil {
-//	    res, err := service.Read(...) // raw gRPC call
+//	    res, err := service.Read(...) // raw gRPC call to the correct Island-hosting server
 //	}
-func New(servers []*Server, allFolders uint16, maxMessageSize int) Client {
+func New(servers []*Server, allIslands uint64, maxMessageSize int) Client {
 	return &client{
-		serviceClients: make(map[uint16]*ServiceClient),
+		serviceClients: make(map[uint64]*ServiceClient),
 		servers:        servers,
-		allFolders:     allFolders,
+		allIslands:     allIslands,
 		maxMessageSize: maxMessageSize,
 	}
 }
@@ -268,8 +307,8 @@ func (c *client) Connect(connectionLog bool) error {
 				"serverAddress": server.Host,
 			}).Info("connected to the hydra server successfully")
 
-			for folder := server.FromFolder; folder <= server.ToFolder; folder++ {
-				c.serviceClients[folder] = &ServiceClient{
+			for island := server.FromIsland; island <= server.ToIsland; island++ {
+				c.serviceClients[island] = &ServiceClient{
 					GrpcClient: serviceClient,
 					Host:       server.Host,
 				}
@@ -352,7 +391,7 @@ func (c *client) GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServ
 	defer c.mu.RUnlock()
 
 	// lekérdezzük a folder számát
-	folderNumber := swampName.GetFolderNumber(c.allFolders)
+	folderNumber := swampName.GetIslandID(c.allIslands)
 
 	// a folder száma alapján visszaadjuk a klienst
 	if serviceClient, ok := c.serviceClients[folderNumber]; ok {
@@ -366,6 +405,11 @@ func (c *client) GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServ
 
 	return nil
 
+}
+
+// GetAllIslands returns the total number of Islands configured in the client.
+func (c *client) GetAllIslands() uint64 {
+	return c.allIslands
 }
 
 // GetServiceClientAndHost returns the full HydrAIDE service client wrapper for a given Swamp name.
@@ -395,14 +439,14 @@ func (c *client) GetServiceClient(swampName name.Name) hydraidepbgo.HydraideServ
 //
 // Note:
 // - Thread-safe via internal read lock
-// - The folder number is derived from the full Swamp name and `allFolders` total
+// - The folder number is derived from the full Swamp name and `allIslands` total
 func (c *client) GetServiceClientAndHost(swampName name.Name) *ServiceClient {
 
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 
 	// lekérdezzük a folder számát
-	folderNumber := swampName.GetFolderNumber(c.allFolders)
+	folderNumber := swampName.GetIslandID(c.allIslands)
 
 	// a folder száma alapján visszaadjuk a klienst
 	if serviceClient, ok := c.serviceClients[folderNumber]; ok {

@@ -28,8 +28,8 @@ func setup() {
 
 	server := &client.Server{
 		Host:         "",
-		FromFolder:   0,
-		ToFolder:     0,
+		FromIsland:   0,
+		ToIsland:     0,
 		CertFilePath: "",
 	}
 

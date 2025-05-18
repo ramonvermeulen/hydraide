@@ -50,9 +50,9 @@ type fakeHydraideServiceClient struct {
 }
 
 func (f *fakeHydraideServiceClient) Heartbeat(
-	ctx context.Context,
-	in *hydraidepbgo.HeartbeatRequest,
-	opts ...grpc.CallOption,
+	_ context.Context,
+	_ *hydraidepbgo.HeartbeatRequest,
+	_ ...grpc.CallOption,
 ) (*hydraidepbgo.HeartbeatResponse, error) {
 	return &hydraidepbgo.HeartbeatResponse{Pong: "beat"}, nil
 }
@@ -63,13 +63,13 @@ func TestClient_GetServiceClient(t *testing.T) {
 	mockClient := &fakeHydraideServiceClient{}
 	c := &mockedClient{
 		allFolders: 1000,
-		serviceClients: map[uint16]hydraidepbgo.HydraideServiceClient{
+		serviceClients: map[uint64]hydraidepbgo.HydraideServiceClient{
 			518: mockClient, // assume this is the computed folder
 		},
 	}
 
 	swamp := name.New().Sanctuary("users").Realm("profiles").Swamp("john.doe")
-	folder := swamp.GetFolderNumber(c.allFolders)
+	folder := swamp.GetIslandID(c.allFolders)
 
 	// Act
 	serviceClient := c.GetServiceClient(swamp)
@@ -77,19 +77,19 @@ func TestClient_GetServiceClient(t *testing.T) {
 	// Assert
 	assert.NotNil(t, serviceClient)
 	assert.Equal(t, mockClient, serviceClient)
-	assert.Equal(t, uint16(518), folder, "Folder number mismatch – update map if needed")
+	assert.Equal(t, uint64(518), folder, "Folder number mismatch – update map if needed")
 
 }
 
 // mockedClient implements client.Client but skips actual gRPC connection
 type mockedClient struct {
-	allFolders     uint16
-	serviceClients map[uint16]hydraidepbgo.HydraideServiceClient
+	allFolders     uint64
+	serviceClients map[uint64]hydraidepbgo.HydraideServiceClient
 }
 
 func (c *mockedClient) Connect(_ bool) error { return nil }
 func (c *mockedClient) CloseConnection()     {}
 func (c *mockedClient) GetServiceClient(swamp name.Name) hydraidepbgo.HydraideServiceClient {
-	folder := swamp.GetFolderNumber(c.allFolders)
+	folder := swamp.GetIslandID(c.allFolders)
 	return c.serviceClients[folder]
 }

@@ -58,7 +58,7 @@ func randomString(length int) string {
 }
 
 func TestGetFolderNumberDistribution(t *testing.T) {
-	folderCounts := make(map[uint16]int)
+	folderCounts := make(map[uint64]int)
 
 	for i := 0; i < testDataCount; i++ {
 		// Generate random Sanctuary, Realm, and Swamp names
@@ -70,7 +70,7 @@ func TestGetFolderNumberDistribution(t *testing.T) {
 		n := New().Sanctuary(sanctuary).Realm(realm).Swamp(swamp)
 
 		// Determine the folder number
-		folder := n.GetFolderNumber(allFolders)
+		folder := n.GetIslandID(allFolders)
 
 		// Increment the counter for the corresponding server
 		folderCounts[folder]++
@@ -157,7 +157,7 @@ func BenchmarkName_Add(b *testing.B) {
 }
 
 // BenchmarkGetFolderNumber measures the performance of computing the
-// folder assignment for a given Name using the GetFolderNumber() method.
+// folder assignment for a given Name using the GetIslandID() method.
 //
 // This method uses xxhash to deterministically assign a Name to one of N folders,
 // enabling stateless, distributed routing logic inside the SDK.
@@ -179,6 +179,6 @@ func BenchmarkGetFolderNumber(b *testing.B) {
 	n := New().Sanctuary(sanctuary).Realm(realm).Swamp(swamp)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		_ = n.GetFolderNumber(allFolders)
+		_ = n.GetIslandID(allFolders)
 	}
 }
