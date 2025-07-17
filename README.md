@@ -11,6 +11,13 @@
 > **HydrAIDE isn’t just a database. It’s a philosophy.**
 > Built to serve real-time, reactive systems where every operation is intentional — and everything else vanishes.
 
+> ⚠️ **Just a heads-up**
+>
+> I’m currently the sole developer of the HydrAIDE project.  
+> Due to serious time constraints, all documentation was generated with a bit of AI help based on my own notes.  
+> **But the code? 100% mine — no vibes coding involved 😄**  
+> Just figured I’d say this upfront before someone yells at me for it.
+
 Welcome to the engine behind platforms like [Trendizz.com](https://trendizz.com), where billions of records are searched, updated, and streamed in **real-time**. HydrAIDE 2.0 is the result of 3+ years of battle-tested evolution, powering search engines, dashboards, crawlers, and more.
 
 HydrAIDE brings:
