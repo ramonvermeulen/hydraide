@@ -2,11 +2,11 @@
 
 HydrAIDE is not just growing. It’s evolving.
 
-It redefines how data is stored, queried, and synchronized — combining the precision of databases with the flexibility of real-time processing.
+It redefines how data is stored, queried, and synchronized, combining the precision of databases with the flexibility of real-time processing.
 
-Built on a modular hierarchy of Sanctuaries, Realms, Swamps, and Indexes, HydrAIDE empowers developers to model dynamic data, perform powerful set operations, and subscribe to instant changes — all with a simple, elegant API.
+Built on a modular hierarchy of Sanctuaries, Realms, Swamps, and Indexes, HydrAIDE empowers developers to model dynamic data, perform powerful set operations, and subscribe to instant changes. All with a simple, elegant API.
 
-This roadmap outlines what we’re building, improving, and dreaming about — together with the community.
+This roadmap outlines what we’re building, improving, and dreaming about, together with the community.
 
 ---
 
@@ -19,25 +19,17 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 - Hydrungo SDK embedded and preconfigured
 - Initial documentation: Thinking in HydrAIDE, Indexing, Locking, Subscriptions
 
-### 🔐 Internal / Work-in-Progress:
-
-- Authentication and access system (token-based)
-- Version limitation / developer tier licensing mechanism
-- HydrAIDE license generator system for controlled access
-
-> 🔒 Some components are internal, but the public release will provide a full sandbox experience for early adopters.
-
 ---
 
 ## 🧠 SDK Roadmap (Community Maintainers Welcome)
 
-| Language | Status               | Notes                                 |
-| -------- | -------------------- | ------------------------------------- |
-| Go       | 🔄 Core SDK          | Maintained by core team (Hydrungo)    |
-| Node.js  | 🔧 Under development | Contributors welcome                  |
-| Python   | 🧠 In planning phase | Waiting for internal proof-of-concept |
-| Rust     | 🧠 Not started       | Community exploration welcome         |
-| Java     | 🧠 Not started       | Planned for schema-first tools        |
+| Language | Status               | Notes                                                        |
+| -------- | -------------------- |--------------------------------------------------------------|
+| Go       | 🔄 Core SDK          | Maintained by core team and contributors welcome (Hydrungo) |
+| Node.js  | 🔧 Under development | Contributors welcome                                         |
+| Python   | 🧠 In planning phase | Waiting for internal proof-of-concept                        |
+| Rust     | 🧠 Not started       | Community exploration welcome                                |
+| Java     | 🧠 Not started       | Planned for schema-first tools                               |
 
 ---
 
@@ -45,14 +37,14 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 
 - Public documentation site (docs) ✅ (done)
 - Contributor playbook: labels, workflow, onboarding ✅ (done)
-- Markdown-based SDK docs (AI-readable) 🔄 (in progress)
+- Markdown-based SDK docs  🔄 (in progress)
 - Real-world examples with guided commentary *(Q2 2025)*
 
 ---
 
-## 🌐 Website *(Q2 2025)*
+## 🌐 Website *(Q4 2025)*
 
-- HydrAIDE.io  marketing site 🔄
+- HydrAIDE.io landing site 🔄
 - Introduction, features, quickstart guide
 - Link to GitHub, docs, and community tools
 - SEO & branding improvements
@@ -64,7 +56,7 @@ This roadmap outlines what we’re building, improving, and dreaming about — t
 - Public contributor application process ✅ *(done)*
 - Issue templates and PR standards ✅ *(done)*
 - Maintainer label guide ✅ *(done)*
-- First contributor onboarding wave *(Q2 2025)*
+- First contributor onboarding wave *(Q3 2025)*
 - Discussion group for early builders *(Q3 2025)*
 - Launch “HydrAIDE Hero” badge system
 

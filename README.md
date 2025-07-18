@@ -6,13 +6,11 @@
 ![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)
 ![Version](https://img.shields.io/badge/version-2.0-informational?style=for-the-badge)
 ![Speed](https://img.shields.io/badge/Access-O(1)%20Always-ff69b4?style=for-the-badge)
-[![License](https://img.shields.io/badge/license-Custom--Restricted-red?style=for-the-badge)](./LICENSE.md)
+![License: Dual](https://img.shields.io/badge/license-LGPL--3.0%20%2F%20SSPL--1.0-red?style=for-the-badge)
 
-> **HydrAIDE isn’t just a database. It’s a philosophy.**
-> Built to serve real-time, reactive systems where every operation is intentional — and everything else vanishes.
+> **HydrAIDE is a zero-waste, real-time data engine. Like a database, but built for reactive systems**
 
 > ⚠️ **Just a heads-up**
->
 > I’m currently the sole developer of the HydrAIDE project.  
 > Due to serious time constraints, all documentation was generated with a bit of AI help based on my own notes.  
 > **But the code? 100% mine — no vibes coding involved 😄**  
@@ -51,7 +49,22 @@ To truly understand HydrAIDE, start with its **core philosophy and architecture*
 | 8️⃣ | [🌐 Distributed Architecture](docs/thinking-in-hydraide/distributed-architecture.md) | Scale horizontally without orchestration pain. |
 | 9️⃣ | [🚀 Install & Update](docs/thinking-in-hydraide/how-to-install-update-hydraide.md) | Deploy HydrAIDE in minutes, not days. |
 
+---
 
+## 🔥 Why Developers Choose HydrAIDE
+
+| Feature | What It Means                                                     |
+|--------|-------------------------------------------------------------------|
+| ⚡ Instant Swamp access | O(1) folder-mapped resolution, no indexing required               |
+| 🧠 On-the-fly indexing | Built in RAM only when needed, disappears after use               |
+| 🔄 Subscriptions | Real-time streams of change, built into every write/update/delete |
+| 🔐 Zero-deadlock locking | Per-Treasure locks and TTL-protected business locks               |
+| 🧹 Auto-cleanup | Swamps and memory vanish when no longer needed                    |
+| 🌐 Horizontal scaling | Stateless by default, no orchestrator required                    |
+| 💾 SSD-friendly design | Chunked binary storage with delta writes                          |
+| 🧬 Fully typed | Store structs, slices, maps – native to your language             |
+
+> You never define schemas. You never worry about cleanup. You just build.
 ---
 
 ### 💼 For CEOs – Why Your Company Needs HydrAIDE
@@ -69,23 +82,6 @@ Just **instant data flow**, **zero waste**, and **developer-native architecture*
 
 ---
 
-## 🔥 Why Developers Choose HydrAIDE
-
-| Feature | What It Means |
-|--------|---------------|
-| ⚡ Instant Swamp access | O(1) folder-mapped resolution, no indexing required |
-| 🧠 On-the-fly indexing | Built in RAM only when needed – disappears after use |
-| 🔄 Subscriptions | Real-time streams of change, built into every write/update/delete |
-| 🔐 Zero-deadlock locking | Per-Treasure locks and TTL-protected business locks |
-| 🧹 Auto-cleanup | Swamps and memory vanish when no longer needed |
-| 🌐 Horizontal scaling | Stateless by default, no orchestrator required |
-| 💾 SSD-friendly design | Chunked binary storage with delta writes |
-| 🧬 Fully typed | Store structs, slices, maps – native to your language |
-
-> You never define schemas. You never worry about cleanup. You just build.
-
----
-
 ## 🌀 Who HydrAIDE is For
 
 HydrAIDE is ideal for:
@@ -100,7 +96,7 @@ And especially for developers who:
 - Need **real-time data flow without middleware**
 - Hate daemons, cron jobs, and config bloat
 
-> HydrAIDE is **developer-native**. You don’t configure it. You *declare intent* — and it responds.
+> HydrAIDE is **developer-native**. You don’t configure it. You *declare intent*, and it responds.
 
 ## 📊 Comparisons – HydrAIDE vs Other Systems
 

@@ -47,7 +47,7 @@ If you’re contributing:
 Check the issues labeled [`good first issue`](https://github.com/hydraide/hydraide/issues?q=label%3A%22good+first+issue%22)
 
 Not sure where to start?  
-Browse the [Project Board](https://github.com/hydraide/hydraide/projects) or ask in an issue – we’ll help match you to something meaningful.
+Browse the [Project Board](https://github.com/hydraide/hydraide/projects) or ask in an issue. We’ll help match you to something meaningful.
 
 Or open a new one with your proposal!
 

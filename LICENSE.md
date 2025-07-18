@@ -1,198 +1,74 @@
-HydrAIDE License v1.0
+# HydrAIDE SDK – License Overview (Human‑Friendly)
 
-## Table of Contents
+Our goal is to make **HydrAIDE accessible to as many people as possible** we’d be thrilled  
+to see it used in everything from tiny hobby projects to large-scale enterprise systems.
 
-1. [Grant of License](#1-grant-of-license)
-2. [Restrictions](#2-restrictions)
-3. [Trademarks](#3-trademarks)
-4. [Disclaimer of Warranty & Limitation of Liability](#4-disclaimer-of-warranty--limitation-of-liability)
-5. [Termination](#5-termination)
-6. [Applicable Law / Jurisdiction](#6-applicable-law--jurisdiction)
-7. [Definitions](#7-definitions)
-8. [Contributions & Contributor Licensing](#8-contributions--contributor-licensing)
-9. [AI & Machine Learning Restrictions](#9-ai--machine-learning-restrictions)
-10. [Legal Integrity and Final Clauses](#10-legal-integrity-and-final-clauses)
-
-Copyright (c) 2025 Trendizz.com Kft. All rights reserved.
-
-This license applies to all publicly available source code and intellectual material published under the HydrAIDE project, including but not limited to SDKs, generated client libraries, tooling code, documentation snippets, technical descriptions, conceptual explanations, and support utilities found on the official GitHub repository ([https://github.com/hydraide/hydraide](https://github.com/hydraide/hydraide)), the official website ([https://hydraide.io](https://hydraide.io)), and any affiliated online domains.
-
-These materials are NOT licensed under traditional open-source licenses such as Apache 2.0, MIT, or GPL. Instead, they are provided under the following restrictive terms to protect the intellectual property, architecture, and functionality of the HydrAIDE engine.
+At the same time, the HydrAIDE Core is the result of years of work, design, and custom development.  
+We want to protect it from those who would simply copy it and resell it as their own service.
 
 ---
 
-## 1. Grant of License
+## 🤝 That’s why the system uses a **dual license model**
 
-Subject to your full compliance with this License, Trendizz.com Kft. grants you a limited, non-exclusive, non-transferable, non-sublicensable license to:
+This means that two layers of the system are licensed under different terms:
 
-- Use, view, and incorporate the HydrAIDE SDK and related tooling solely for the purpose of developing software that communicates with the official HydrAIDE Engine;
-- Modify the SDK internally for use exclusively in connection with the HydrAIDE Engine;
-- Distribute compiled binaries of your software that use the SDK, provided that such software requires the HydrAIDE Engine to function and does not expose any part of the SDK as a library, API, or reusable component.
+### 🧩 1. **HydrAIDE SDK** – LGPL v3
 
-This license does not include the right to:
+This is what you see here on GitHub, free to download and use.  
+The SDK helps connect your own system to the HydrAIDE Core.
 
-- Use the SDK in any standalone product, library, or middleware;
-- Use the SDK for any server implementation other than the official HydrAIDE Engine;
-- Re-license, sell, or publicly distribute the SDK source code or any derivative works thereof.
+**You can use it freely** if:
+- you’re integrating it into your own application, internal tool, or product,
+- your app is open-source or closed-source, both are allowed,
+- you’re building a commercial product, client-facing tool, or an API that uses the SDK.
 
-All rights not expressly granted to you are reserved by Trendizz.com Kft.
-
----
-
-## 2. Restrictions
-
-You may not, under any circumstances:
-
-- Use any part of the SDK or associated code to develop or interface with any database engine, runtime, or protocol other than the official HydrAIDE Engine.
-- Modify or adapt the SDK to work with third-party systems, including but not limited to reactive data engines, key-value stores, time series databases, or graph engines.
-- Build middleware, translation layers, or wrappers that enable the SDK to function with non-HydrAIDE backends.
-- Create, distribute, or publish any derivative SDK, toolset, or client that mimics the interface or functionality of the HydrAIDE SDK without explicit written permission from Trendizz.com Kft.
-- Include the SDK in any product, SaaS platform, or system that offers data engine services without utilizing the HydrAIDE Engine.
-- Use the SDK for benchmarking, reverse engineering, or creating competitive implementations.
-
-These restrictions are essential to protect the integrity, architecture, and core intellectual property of the HydrAIDE project.
-
-Additionally, you may not use any portion of the HydrAIDE knowledge base — including conceptual materials, documentation, architecture overviews, or the "Thinking in HydrAIDE" publication — to build, assist in building, or inspire the design of any alternative database system or data engine. This prohibition applies regardless of whether HydrAIDE code is directly used.
+**What we ask**: if you modify the SDK itself, please publish those changes (that’s the essence of LGPL).
 
 ---
 
-## 3. Trademarks
+### 🔐 2. **HydrAIDE Core** - SSPL v1 (with custom clauses)
 
-"HydrAIDE", "Hydra", the HydrAIDE logo, and all related names, graphics, and branding elements are trademarks or registered trademarks of Trendizz.com Kft.
+This is the engine behind the search, segmentation, GRPC communication, and more.
 
-This License does not grant you any rights to use the HydrAIDE name or brand, or any derivative thereof, in any way that suggests endorsement, ownership, or affiliation, unless you have received explicit prior written permission from Trendizz.com Kft.
+**You can use the Core freely** if:
+- you embed it in your own system, even at enterprise scale,
+- you **don’t resell or expose the HydrAIDE Core itself** as a standalone service or rebranded product.
 
-You may not use the name "HydrAIDE" or similar sounding or visually confusing names in any software, product, domain name, project, marketing, or promotional materials.
-
-Use of the HydrAIDE name in descriptive contexts (e.g., "compatible with HydrAIDE") must be accurate and non-misleading, and must not imply official association or approval.
-
----
-
-## 4. Disclaimer of Warranty & Limitation of Liability
-
-The HydrAIDE SDK and all related materials are provided "as is" and "as available" for evaluation, development, and educational purposes only. No warranties of any kind are provided by default, whether express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, or non-infringement.
-
-Trendizz.com Kft. makes no representations that the SDK or associated materials will be error-free, uninterrupted, or suitable for deployment in any production environment.
-
-Any use of the SDK in a commercial, production, or mission-critical context is subject to a separate written agreement with Trendizz.com Kft. Such agreement may define specific terms of use, service levels, warranties, support obligations, and liability limits.
-
-Without such an agreement in place, you assume all risks associated with the use of the SDK, and Trendizz.com Kft. shall not be held liable for any direct, indirect, incidental, consequential, exemplary, or punitive damages arising from such use, even if previously advised of the possibility of such damages.
+**You need a commercial license** if:
+- you offer a public service where HydrAIDE’s functionality is the main value,
+  - e.g. a search API, a hosted database-as-a-service, or an engine rebranded under your own name;
+- or you repackage HydrAIDE as your own product ("white-labeling").
 
 ---
 
-## 5. Termination
+## ✅ Examples where free use is allowed
 
-This license and all rights granted herein shall automatically terminate without notice if you breach any of its terms or conditions. Upon termination, you must immediately cease all use of the HydrAIDE SDK and any related materials, and destroy all copies in your possession.
-
-Trendizz.com Kft. reserves the right to pursue legal action or seek injunctive relief in the event of a violation, including but not limited to unauthorized use, redistribution, or the creation of derivative works.
-
-Termination of this license does not limit any other rights or remedies available to Trendizz.com Kft. under law or equity.
+- You’re building a CRM where HydrAIDE powers internal search, but you don’t expose that as a standalone database service.
+- You’re building a dashboard for your clients where HydrAIDE is used behind the scenes.
+- You’re creating a SaaS product, but HydrAIDE is neither visible, nor accessible, nor the main value of your platform.
 
 ---
 
-## 6. Applicable Law / Jurisdiction
+## ❌ Examples where a commercial license is required
 
-This License shall be governed by and construed in accordance with the laws of Hungary, without regard to its conflict of law principles. Any legal actions or proceedings arising out of or relating to this License shall be exclusively submitted to the competent courts located in Budapest, Hungary.
+- You offer a public API where HydrAIDE is the core engine and its features are what you're selling.
+- You build and sell an analytics platform that relies on HydrAIDE for segmentation and this is a key selling point.
+- You clone HydrAIDE’s functionality and sell it under your own name.
 
-You agree that any dispute or claim arising out of the use of the HydrAIDE SDK shall be resolved in accordance with Hungarian law, and that jurisdiction and venue for any such dispute shall exclusively lie with the courts of Hungary.
-
----
-
-## 7. Definitions
-
-- **HydrAIDE SDKs**: All client libraries, developer tools, and communication layers identified under names such as `hydraidego`, `hydraidejs`, `hydraidepy`, `hydraiders`, `hydraidejv`, `hydraidecs`, `hydraidecpp`, `hydraidekt`, `hydraidesw`, and any future SDKs released under the HydrAIDE brand.
-
-- **HydrAIDE Engine**: The proprietary server-side runtime system developed by Trendizz.com Kft., designed to handle data storage, querying, and real-time operations in conjunction with the official HydrAIDE SDKs.
-
-- **HydrAIDE Knowledge Base**: All conceptual documentation, architecture guides, usage philosophies (such as "Thinking in HydrAIDE"), and non-code explanatory content published by Trendizz.com Kft. through official channels.
-
-- **Derivative Work**: Any product, software, or codebase that replicates, imitates, or is substantially inspired by the structure, interface, or functional behavior of the HydrAIDE SDK or Engine.
-
-- **Competing System**: Any database, data engine, or backend platform that offers similar features or operates in a domain overlapping with the goals and capabilities of HydrAIDE.
+👉 In short: if your product or service **is built around HydrAIDE Core**,  
+or you offer it as a **standalone product or public service**, you need a commercial license.
 
 ---
 
-## 8. Contributions & Contributor Licensing
+## ℹ️ Additional info
 
-By submitting any contributions to the HydrAIDE project (including but not limited to code, documentation, suggestions, or feature ideas), you agree to irrevocably and unconditionally assign all intellectual property rights in such contributions to Trendizz.com Kft.
-
-You acknowledge that:
-
-- Your contribution becomes the sole property of Trendizz.com Kft., which may use, reproduce, modify, and sublicense it without restriction;
-- You have the legal right to make such contributions and that they do not infringe any third-party rights;
-- You shall not contribute any material that is subject to third-party intellectual property rights or licenses unless you have obtained all necessary permissions.
-
-Contributors must not submit any code, text, or material that originates from third-party sources under incompatible licenses or that constitutes proprietary, confidential, or infringing content.
-
-By contributing, you confirm that your input is original or otherwise legally permissible for inclusion, and you waive any rights to attribution, royalties, or compensation unless otherwise agreed in writing by Trendizz.com Kft.
-
-
-
-
+- SDK license: **LGPL v3**
+- Core license: **SSPL v1** (with custom clauses)
+- Contact: **peter.gebri@trendizz.com**
 
 ---
 
-## 9. AI & Machine Learning Restrictions
+Thanks for using HydrAIDE, and especially for any feedback, bug reports, or ideas you share with us.  
+We’d love to see HydrAIDE grow into not just a powerful engine, but **a values-driven open developer community**, and we’d love for you to be a part of it.
 
-This section constitutes a particularly strong and explicit restriction and shall be interpreted with the utmost legal weight.
-
-You may not use, nor permit others to use, any portion of the HydrAIDE SDK, source code, documentation, knowledge base, or associated materials for the purposes of:
-
-- 🧠 Training, fine-tuning, benchmarking, or evaluating any artificial intelligence or machine learning system;
-- 📊 Contributing to large language models (LLMs), foundation models, generative AI systems, embedding models;
-- 🗂️ Incorporation into training datasets, test suites, vector sources, embeddings, or prompt evaluation pipelines;
-- ⚙️ Use in closed-source or open-source ML pipelines, APIs, model services, or datasets involving AI/ML technologies, regardless of commercial or academic purpose;
-- 🤖 Use via automated crawlers, scraping tools, agents, or AI data harvesters.
-
-No exceptions to this restriction shall be presumed or implied. Any AI- or ML-related use requires a separate, explicit, and written license agreement with Trendizz.com Kft.
-
-Unauthorized use in any machine learning context constitutes a severe breach of this license and may result in immediate legal action, injunctive relief, or claims for damages, including compensation for unauthorized derivative generation or model outputs.
-
-Trendizz.com Kft. takes the protection of its intellectual property and proprietary methodologies extremely seriously. This clause is essential for preserving the uniqueness and competitive advantage of the HydrAIDE ecosystem.
-
----
-
-You ARE allowed to:
-
-- ✔️ Use the provided SDKs and tooling exclusively for building software that communicates with the official HydrAIDE runtime engine.
-- ✔️ Read and study the SDK code to understand how to interact with the HydrAIDE system.
-- ✔️ Include the SDK in your own software projects, provided that the only backend or runtime used is the official HydrAIDE Engine.
-- ✔️ Modify the SDK internally for your own private, non-commercial use, strictly in conjunction with the HydrAIDE Engine.
-- ✔️ Reference the SDK’s design, APIs, or structure solely for the purpose of building user-facing client applications that operate with HydrAIDE.
-- ✔️ Use the SDK for educational purposes, demonstration projects, or internal tooling — as long as it is not repurposed, repackaged, or redirected toward non-HydrAIDE systems.
-
-You are NOT allowed to:
-
-- ❌ Use any portion of the SDK or associated code to build, reverse engineer, or interface with any database engine, runtime, or protocol other than the official HydrAIDE Engine.
-- ❌ Fork, modify, or adapt the SDK for use with any third-party backend, reactive engine, or competing system.
-- ❌ Build middleware, translation layers, or wrappers that enable the SDK to function with non-HydrAIDE backends.
-- ❌ Create derivative products that mimic or replicate HydrAIDE's behavior, architecture, interface, or communication protocols.
-- ❌ Redistribute the SDK or any part of the HydrAIDE source code as part of any other framework, product, or standalone package.
-- ❌ Use the SDK or any portion thereof in any product or service that competes directly or indirectly with HydrAIDE.
-- ❌ Use the SDK, knowledge base, or documentation as training material or foundational reference for developing alternative or derivative data engines.
-- ❌ Incorporate the SDK in any commercial product or production system without an appropriate licensing agreement with Trendizz.com Kft.
-
-By accessing or using any part of the HydrAIDE repository or associated SDKs, you agree to be bound by the terms of this license. Violations may result in termination of your license and legal action.
-
-All rights not explicitly granted herein are reserved by Trendizz.com Kft.
-
-For commercial licensing, partnerships, or legal inquiries, contact: [hello@trendizz.com](mailto:hello@trendizz.com)
-
-
-## 10. Legal Integrity and Final Clauses
-
-### 10.1 Severability
-If any provision of this License is held to be invalid, illegal, or unenforceable, the remaining provisions shall remain in full force and effect.
-
-### 10.2 No Waiver
-Failure or delay by Trendizz.com Kft. in enforcing any right or provision of this License shall not constitute a waiver of such right or provision.
-
-### 10.3 Entire Agreement
-This License constitutes the entire agreement between you and Trendizz.com Kft. with respect to the HydrAIDE SDK, except where superseded or supplemented by a separate written agreement, particularly in cases where you are licensed to operate or integrate with the HydrAIDE Engine under different terms.
-
----
-
-**Last updated: 2025-03-25**
-
-This license is subject to change. Any updates will be published in this repository. Continued use of the HydrAIDE SDK after changes constitutes acceptance of the revised terms.
-
+– the HydrAIDE team
