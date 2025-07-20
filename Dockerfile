@@ -10,9 +10,12 @@ RUN --mount=type=secret,id=git_token \
     git config --global url."https://${git_token}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
 
 WORKDIR /app
+
 COPY . .
+
 RUN go mod tidy
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o hydraide .
+
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o hydraide ./app/server
 
 FROM alpine:latest
 
@@ -21,9 +24,6 @@ RUN apk --no-cache add ca-certificates curl
 WORKDIR /hydraide/
 
 COPY --from=builder /app/hydraide .
-
-COPY certificate/server.crt /hydraide/certificate/server.crt
-COPY certificate/server.key /hydraide/certificate/server.key
 
 RUN apk --no-cache add ca-certificates
 

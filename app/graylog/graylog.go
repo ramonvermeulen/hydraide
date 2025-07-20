@@ -11,11 +11,6 @@
 //
 // Usage:
 //
-// Installation:
-// To use this package, first install it via `go get`:
-//
-//	go get github.com/hydraide/graylog
-//
 // Initialization:
 // To initialize the Graylog logging in your application, create a new instance of the Graylog logger and set the desired log level.
 //
@@ -69,7 +64,7 @@
 //	package main
 //
 //	import (
-//	  "github.com/hydraide/graylog"
+//	  "github.com/hydraide/hydraide/app/graylog"
 //	  log "github.com/sirupsen/logrus"
 //	)
 //
