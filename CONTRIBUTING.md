@@ -2,12 +2,12 @@
 
 Welcome, builder! 🧠
 
-Whether you’re here to squash a bug, suggest a feature, or shape a new SDK — you’re in the right place.
+Whether you’re here to squash a bug, suggest a feature, or shape a new SDK, you’re in the right place.
 
 HydrAIDE is not just code. It’s a mindset.  
 And we’re thrilled you’re thinking with us.
 
-Your voice matters here. Whether it's your first PR or your 100th — you're helping shape the future of data systems.
+Your voice matters here. Whether it's your first PR or your 100th, you're helping shape the future of data systems.
 
 ---
 
@@ -27,7 +27,7 @@ Each SDK lives in its own folder under `/docs/sdk/<language>`:
 - `go` → actively developed
 - `nodejs`, `python`, `rust`, etc. → in design or planning
 
-> **Important:** SDK documentation must be 100% AI-readable.  
+> **Important:** SDK documentation must be 100% AI-readable.
 > Each file should be fully parseable by ChatGPT/Copilot — including clear function usage, struct layouts, and examples.
 
 If you’re contributing to an SDK:
@@ -47,7 +47,8 @@ If you’re contributing:
 Check the issues labeled [`good first issue`](https://github.com/hydraide/hydraide/issues?q=label%3A%22good+first+issue%22)
 
 Not sure where to start?  
-Browse the [Project Board](https://github.com/hydraide/hydraide/projects) or ask in an issue. We’ll help match you to something meaningful.
+Browse the [Project Board](https://github.com/hydraide/hydraide/projects) or ask in an issue. 
+We’ll help match you to something meaningful.
 
 Or open a new one with your proposal!
 

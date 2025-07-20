@@ -58,17 +58,3 @@ Try to assign these labels when:
 - A PR is submitted or merged
 
 It makes the whole contributor experience more magical ✨
-
----
-
-🧠 Let the labels guide the flow.  
-Every color tells a story.
-
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)

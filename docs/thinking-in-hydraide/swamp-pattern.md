@@ -131,40 +131,6 @@ Welcome to the Swamp Pattern. 🐊
 
 ---
 
-## 🔗 SDK Integration Resources (Coming Soon)
-
-We recommend that you explore HydrAIDE’s SDKs **only after** you understand the core philosophy and design principles.
-This ensures that when you start writing code, it’s not just syntax – it’s intention.
-
-Below is an overview of planned SDKs. Each will include dedicated documentation for the Swamp Pattern configuration:
-
-| 💻 SDK | 🧪 Code Name | 🛠️ Status | 📘 Swamp Pattern Docs |
-|--------|-------------|------------|-----------------------|
-| 🟢 Go | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md) | ✅ Actively developed | Coming soon – Core SDK, battle-tested |
-| 🟡 Node.js | `hydraidejs` | 🧪 In planning | Coming soon – Great for backend APIs |
-| 🐍 Python | `hydraidepy` | 🧠 In design | Coming soon – Ideal for scripting/ML |
-| 🦀 Rust | `hydraiders` | 🧠 In design | Coming soon – Performance critical apps |
-| ☕ Java | `hydraidejv` | 🧠 In design | Coming soon – Enterprise integration |
-| 🎯 C# / .NET | `hydraidecs` | 🧠 In design | Coming soon – Unity, backend services |
-| 🧠 C++ | `hydraidecpp` | 🧠 In design | Coming soon – Low-level, native control |
-| 🌀 Kotlin | `hydraidekt` | 🧠 In design | Coming soon – Android/backend devs |
-| 🍎 Swift | `hydraidesw` | 🧠 In design | Coming soon – iOS/macOS native apps |
-
-All SDKs will reflect the same core logic you just learned here – so once you understand the pattern, the implementation is just icing on the cake. 🍰
-
-> 💬 **Not sure what kind of Swamp you need?**  
-> Don’t worry – in future docs, we’ll walk you through common Swamp use cases *(real-time, archival, pub-sub, caching, etc.)* so you’ll know how to design your first HydrAIDE system like a pro.
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
----
-
 ## 🧭 Navigation
 
 ← [Back to Naming Convention](./naming-convention.md) | [Next: 💎 Treasures](./treasures.md)  

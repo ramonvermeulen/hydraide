@@ -1,9 +1,7 @@
 # 🤝 HydrAIDE Contributors – Help Build the Engine of a New Era
 
-> *You're not joining a project. You're joining the early days of a new category.*
-
 HydrAIDE isn't just another database.
-It's an **Adaptive Intelligent Data Engine (AIDE)** — something that blends search, memory, and messaging into a real-time, ephemeral, and surprisingly elegant system.
+It's an **Adaptive Intelligent Data Engine (AIDE)**, something that blends search, memory, and messaging into a real-time, ephemeral, and surprisingly elegant system.
 
 And now, we're looking for the kind of people who get excited about building the weird stuff that ends up changing everything.
 
@@ -26,7 +24,7 @@ The engine is ready. Now we’re building SDKs.
 We’re not looking for rockstars. We’re looking for **curious**, **intentional** devs who want to build something that actually matters.
 
 > 🙋‍♀️ **New to SDKs?**
-> That’s fine. If you’ve built APIs, CLIs, or just like clean, expressive code — you’ll be right at home. We’ll guide you through.
+> That’s fine. If you’ve built APIs, CLIs, or just like clean, expressive code, you’ll be right at home. We’ll guide you through.
 
 ---
 
@@ -96,7 +94,7 @@ What you might work on:
 ## 👶 Still Learning?
 
 Good. That means you're growing.
-This could be your first open source contribution — or even your first SDK. That’s not a bug. That’s a superpower.
+This could be your first open source contribution, or even your first SDK. That’s not a bug. That’s a superpower.
 
 We welcome:
 
@@ -116,7 +114,7 @@ Here’s how joining looks:
 2. We say hey back, and check your intro
 3. You get access to the repo
 4. We send you the onboarding kit
-5. You pick an issue — or suggest one
+5. You pick an issue, or suggest one
 6. You send a PR. We celebrate. 🎉
 
 It’s async-friendly. No timezones to fight.
@@ -151,8 +149,6 @@ This is your chance to:
 * Shape the dev experience from the ground up
 * Influence thousands of future engineers
 * Set the bar for how data engines integrate
-
-> This isn’t a side gig. This is a legacy moment.
 
 Join us.
 Build different.

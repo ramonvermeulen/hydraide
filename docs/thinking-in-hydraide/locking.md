@@ -188,41 +188,6 @@ Just smile and say:
 
 ---
 
-## 🔗 SDK Integration Resources (Coming Soon)
-
-Locking in HydrAIDE is already live at the engine level.
-Our upcoming SDKs will let you:
-
-- Perform per-Treasure writes with automatic locking.
-- Use custom lock IDs for business-level protection.
-- Define TTLs for all manual locks.
-- Monitor lock queues and debug timing conflicts.
-
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Locking Docs                        |
-| ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Built-in lock support    |
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Async-safe execution     |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Context-aware locks      |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – No-cost thread safety    |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Enterprise sync layers   |
-| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – Service-level lock flow  |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – High-performance access  |
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Android-ready patterns   |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – Lock-safe mobile apps    |
-
-> 💬 Want to protect your logic from conflicts? Stay tuned.
-> The SDKs will make it feel like second nature – but you already understand the philosophy.
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
----
-
 ## 🧭 Navigation
 
 ← [Back to 🔄 Subscriptions](./subscriptions.md) | [Next: 🧹 Clean System](./clean-system.md) 

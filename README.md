@@ -1,12 +1,14 @@
 ![HydrAIDE](images/hydraide-banner.jpg)
 
-# 🧠 HydrAIDE 2.0 – The Adaptive, Intelligent Data Engine
+# HydrAIDE - The Adaptive, Intelligent Data Engine
 
-![Go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go)
-![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue?style=for-the-badge)](http://www.apache.org/licenses/LICENSE-2.0)
 ![Version](https://img.shields.io/badge/version-2.0-informational?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-Production%20Ready-brightgreen?style=for-the-badge)
 ![Speed](https://img.shields.io/badge/Access-O(1)%20Always-ff69b4?style=for-the-badge)
-![License: Dual](https://img.shields.io/badge/license-LGPL--3.0%20%2F%20SSPL--1.0-red?style=for-the-badge)
+![Go](https://img.shields.io/badge/built%20with-Go-00ADD8?style=for-the-badge&logo=go)
+[![Join Discord](https://img.shields.io/discord/1355863821125681193?label=Join%20us%20on%20Discord&logo=discord&style=for-the-badge)](https://discord.gg/tYjgwFaZ)
+
 
 > **HydrAIDE is a zero-waste, real-time data engine. Like a database, but built for reactive systems**
 
@@ -65,20 +67,6 @@ To truly understand HydrAIDE, start with its **core philosophy and architecture*
 | 🧬 Fully typed | Store structs, slices, maps – native to your language             |
 
 > You never define schemas. You never worry about cleanup. You just build.
----
-
-### 💼 For CEOs – Why Your Company Needs HydrAIDE
-
-> **You’re building fast. Scaling faster. But your data engine is slowing you down.**
-
-HydrAIDE was built for founders and leaders who believe their teams deserve better.  
-No background daemons. No stale indexes. No technical debt.
-
-Just **instant data flow**, **zero waste**, and **developer-native architecture** that lets your team move at light speed.
-
-🌟 **See how HydrAIDE can transform your product velocity and reduce infra costs.**
-
-👉 [Read the CEO Guide →](/docs/for-ceos.md)
 
 ---
 
@@ -103,46 +91,29 @@ And especially for developers who:
 Want to see how HydrAIDE compares to the most popular databases and engines?  
 We’re building a full series of deep comparisons — mindset-first, not config-first.
 
-| 🔍 Comparison                | 📄 Status           | Link                                                                             |
-|-----------------------------|---------------------|----------------------------------------------------------------------------------|
+| 🔍 Comparison                | 📄 Status           | Link                                                                            |
+|-----------------------------|---------------------|---------------------------------------------------------------------------------|
 | HydrAIDE vs MongoDB            | ✅ Complete         | [Read HydrAIDE vs MongoDB Comparison](/docs/comparisons/hydraide-vs-mongodb.md) |
 | HydrAIDE vs Redis              | ✅ Complete         | [Read HydrAIDE vs Redis Comparison](/docs/comparisons/hydraide-vs-redis.md)     |
-| HydrAIDE vs PostgreSQL         | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs MySQL              | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs SQLite             | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs Elasticsearch      | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs Firebase / Firestore | 🔜 In progress      | *coming soon*                                                                  |
-| HydrAIDE vs DynamoDB           | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs Cassandra          | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs InfluxDB           | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs ClickHouse         | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs Neo4j              | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs TimescaleDB        | 🔜 In progress      | *coming soon*                                                                    |
-| HydrAIDE vs Apache Kafka       | 🔜 In progress      | *coming soon* (stream vs native pub-sub)                                         |
+| HydrAIDE vs PostgreSQL         | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs MySQL              | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs SQLite             | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs Elasticsearch      | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs Firebase / Firestore | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs DynamoDB           | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs Cassandra          | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs InfluxDB           | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs ClickHouse         | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs Neo4j              | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs TimescaleDB        | 🔜 In progress      | *coming soon*                                                                   |
+| HydrAIDE vs Apache Kafka       | 🔜 In progress      | *coming soon* (stream vs native pub-sub)                                        |
 
 
 ---
 
 ## 🚀 Install & Run in Minutes
 
-HydrAIDE is container-first. Just use Docker Compose:
-
-```yaml
-services:
-  hydraide-server:
-    image: ghcr.io/hydraide/hydraserver:VERSION
-    ports:
-      - "4900:4444"
-    volumes:
-      - /path/to/data:/hydraide/data
-      - /path/to/settings:/hydraide/settings
-      - /path/to/certs:/hydraide/certificate
-    environment:
-      - GRPC_SERVER_ERROR_LOGGING=true
-    stop_grace_period: 10m
-```
-
-➡ Full install guide: [Install & Update HydrAIDE →](/docs/thinking-in-hydraide/how-to-install-update-hydraide.md)
+The HydrAIDE codebase is already available for contributors, and the easily deployable Docker container will be available soon as well. In the meantime, we kindly ask for your patience!
 
 ---
 
@@ -175,22 +146,12 @@ Once you're ready, open your first issue or pull request — we’ll be waiting!
 
 ## 📩 Contact & Enterprise
 
-HydrAIDE is used in production at [Trendizz.com](https://trendizz.com). Interested in enterprise licensing, SDK development, or embedding HydrAIDE in your own platform?
+HydrAIDE is used in production at [Trendizz.com](https://trendizz.com). Interested in enterprise licensing, 
+SDK development, or embedding HydrAIDE in your own platform?
 
-📧 **Peter Gebri** – [hello@trendizz.com](mailto:hello@trendizz.com)
+📧 **Peter Gebri** – [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com)
 (Founder of HydrAIDE & Trendizz)
 🌐 **Website** – [https://HydrAIDE.io ](https://hydraide.io) Currently in progress and directly linked to GitHub.
-
----
-
-📍 See the full [HydrAIDE Roadmap](/ROADMAP.md) → What we’re building and dreaming next
-
---- 
-
-## License
-
-This repository is released under a custom restrictive license that applies to all its content, including SDKs, documentation, code samples, and knowledge materials.
-See [LICENSE.md](/LICENSE.md) for full legal terms.
 
 ---
 

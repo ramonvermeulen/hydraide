@@ -151,14 +151,6 @@ Mic drop. 🎤
 
 ---
 
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
----
-
 ## 🧭 Navigation
 
 ← [Back to 🔐 Locking](./locking.md) | [Next 🌐 Distributed Architecture](./distributed-architecture.md)

@@ -86,9 +86,7 @@ It **replaces the need for Redis** by embedding reactivity, structure, locking, 
 8. [**Developer Experience**](#-developer-experience)
 9. [**Real-World Impact**](#-real-world-impact)
 10. [**When to Use What**](#-when-to-use-what)
-11. [**Learn More**](#-learn-more)
-12. [**SDKs & Contributors Welcome**](#-sdks--contributors-welcome)
-13. [**Final Words**](#-final-words)
+11. [**Final Words**](#-final-words)
 
 ---
 
@@ -840,49 +838,6 @@ Not every system needs HydrAIDE. But if you’re building something **real-time,
 
 ---
 
-## 📚 Learn More
-
-HydrAIDE isn’t just a system — it’s a mindset. If this document got your attention, here’s where to go deeper:
-
-### 🧭 HydrAIDE Thinking Series
-
-A 9-step journey to fully rewire how you model data, think about structure, and approach reactivity.
-
-| Step | Section                                                                        | What You'll Learn                              |
-| ---- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| 1️⃣  | [📛 Naming Convention](/docs/thinking-in-HydrAIDE/naming-convention.md)               | How structure begins with naming – not schemas |
-| 2️⃣  | [🌿 Swamp Pattern](/docs/thinking-in-HydrAIDE/swamp-pattern.md)                       | Configure memory, TTL, and persistence in code |
-| 3️⃣  | [💎 Treasures](/docs/thinking-in-HydrAIDE/treasures.md)                               | HydrAIDE’s data units: fast, typed, and reactive  |
-| 4️⃣  | [🧩 Indexing](/docs/thinking-in-HydrAIDE/indexing.md)                                 | Instant in-memory indexing, no B-trees         |
-| 5️⃣  | [🔄 Subscriptions](/docs/thinking-in-HydrAIDE/subscriptions.md)                       | Native real-time events, no brokers            |
-| 6️⃣  | [🔐 Locking](/docs/thinking-in-HydrAIDE/locking.md)                                   | Per-record locks, business-safe operations     |
-| 7️⃣  | [🧹 Clean System](/docs/thinking-in-HydrAIDE/clean-system.md)                         | Zero-waste design, no background jobs          |
-| 8️⃣  | [🌐 Distributed Architecture](/docs/thinking-in-HydrAIDE/distributed-architecture.md) | Stateless scaling without orchestration        |
-| 9️⃣  | [🚀 Install & Update](/docs/thinking-in-HydrAIDE/how-to-install-update-hydraide.md)      | From Docker to production in minutes           |
-
----
-
-## 👷 SDKs & Contributors Welcome
-
-HydrAIDE SDKs are actively being developed for multiple languages. Want to help build the future of real-time infrastructure?
-We’re looking for contributors and early adopters to help shape these tools.
-
-| 💻 Language | SDK Code Name | Status         | Contribution Welcome? |
-| ----------- | ------------- | -------------- | --------------------- |
-| Go          | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)    | ✅ Active       | ✅ Yes                 |
-| Node.js     | `hydraidejs`    | 🧪 In planning | ✅ Yes                 |
-| Python      | `hydraidepy`    | 🧠 In design   | ✅ Yes                 |
-| Rust        | `hydraiders`    | 🧠 In design   | ✅ Yes                 |
-| Java        | `hydraidejv`    | 🧠 In design   | ✅ Yes                 |
-| C# / .NET   | `hydraidecs`    | 🧠 In design   | ✅ Yes                 |
-| C++         | `hydraidecpp`   | 🧠 In design   | ✅ Yes                 |
-| Kotlin      | `hydraidekt`    | 🧠 In design   | ✅ Yes                 |
-| Swift       | `hydraidesw`    | 🧠 In design   | ✅ Yes                 |
-
-> 💬 Want to contribute? Head over to the [HydrAIDE GitHub repo](https://github.com/hydraide/hydraide) and check out the [`CONTRIBUTING.md`](/CONTRIBUTING.md) guide. Let’s build it together.
-
----
-
 ## 🧭 Final Words
 
 Redis is a great cache.
@@ -892,12 +847,3 @@ But HydrAIDE wasn’t built just to cache. HydrAIDE was built to **think**, **ad
 > Developer-native. AI-powered. Intent-first. Reactive by default.
 
 If your app deserves structure, clarity, and real-time logic — then your app deserves **HydrAIDE**.
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-

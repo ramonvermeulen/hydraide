@@ -1,81 +1,17 @@
-# Summary (non-binding):
-# LGPL v3 allows free use (including in commercial applications),
-# as long as this SDK remains open-source and any modifications are published.
-# This license does NOT include access to the proprietary HydrAIDE Core.
-# The Core is licensed separately under SSPL with additional commercial restrictions.
+Apache License
+Version 2.0, January 2004
+http://www.apache.org/licenses/
 
-HydrAIDE SDK – LGPL-3.0 License
-===============================
+Copyright 2025 Trendizz.com Kft. and Gebri Péter
 
-Copyright (C) 2025 Gebri Péter & Trendizz Kft.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-This library is free software; you may redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 3 of the License, or (at your option) any later version.
+    http://www.apache.org/licenses/LICENSE-2.0
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, see <https://www.gnu.org/licenses/>.
-
----
-
-## Additional Terms and Conditions
-
-This HydrAIDE repository and SDK are part of the **HydrAIDE ecosystem**, developed and maintained by
-**Gebri Péter** and **Trendizz Systems**. It is designed to enable integration
-with the HydrAIDE Core (search, segment, and data infrastructure), under the following terms:
-
-### 1. Permitted Usage
-
-You may freely use this SDK in commercial or non-commercial projects,
-as long as such usage complies with the LGPL v3 license.
-
-### 2. Derivative Works
-
-Any modifications, forks, or derivative works:
-- must be clearly documented and attributed,
-- and must remain licensed under LGPL v3.
-
-### 3. HydrAIDE Core Access
-
-This SDK does **not** include or grant access to the **HydrAIDE Core engine**,
-which is a separate component licensed under the **SSPL v1** with additional
-custom terms.
-
-You may use the Core in internal, embedded, or private backend systems — even for
-large-scale or commercial applications — **as long as the Core itself is not offered
-as a standalone service** (e.g. database-as-a-service, public API, or a rebranded engine sold under
-another name /white-label product/).
-
-Offering the Core or its core functionality directly to third parties **as a service**
-requires a commercial license.
-
-For licensing inquiries, please contact:
-📧 peter.gebri@trendizz.com
-
-### 4. License Integrity
-
-To preserve the integrity of the HydrAIDE ecosystem, users must comply with
-the terms of this license and avoid any actions that:
-
-- misrepresent the origin or authorship of the SDK,
-- attempt to relicense or rebrand it as a different product,
-- or intentionally circumvent the intended license boundaries.
-
-Violation of these terms may void your rights under this license.
-
----
-
-## Authors
-
-Gebri Péter
-Trendizz Systems
-📧 peter.gebri@trendizz.com
-🔗 https://hydraide.io
-
-📅 Date: 2025-07-18
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

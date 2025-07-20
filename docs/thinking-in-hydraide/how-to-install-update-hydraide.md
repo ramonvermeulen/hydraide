@@ -279,34 +279,6 @@ Welcome to the future of data.
 
 ---
 
-## 📦 SDK Integration (Coming Soon)
-
-Below is a preview of the HydrAIDE SDKs that will soon be available, enabling fast, type-safe, and real-time integration with your HydrAIDE servers.
-
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 SDK Docs               |
-| ------------ | ------------ | -------------------- | ------------------------- |
-| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon               |
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon               |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon               |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon               |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon               |
-| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon               |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon               |
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon               |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon               |
-
-Stay tuned – once these SDKs are released, building with HydrAIDE will be as elegant as running it.
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
----
-
 ## 🧭 Navigation
 
 ← [Back to 🌐 Distributed Architecture](./distributed-architecture.md)

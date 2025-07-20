@@ -322,42 +322,6 @@ It just makes good architecture feel magical.
 
 ---
 
-## 🚀 SDK Integration (Coming Soon)
-
-The SDKs will make it effortless to:
-
-- Instantiate multiple HydrAIDE clients
-- Route requests based on folder numbers
-- Configure client maps dynamically
-- Scale horizontally without touching infrastructure
-
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Distributed Docs                   |
-| ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Multi-client auto-routing|
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Server-split awareness   |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Smart shard discovery    |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Zero-overhead scaling    |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Cluster mapping support  |
-| 🌯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – Auto-balancing logic     |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – Direct drive mapping     |
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Android SDK extensions   |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – Distributed on mobile    |
-
-> 💬 Want to scale your app across 100 servers?
-> You’ll do it with one map, one name function, and one smile. 😎
-
-
----
-
-## 📄 **License Notice**  
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
-
----
-
 ## 🗭 Navigation
 
 ← [Back to: 🧹 Clean System](./clean-system.md) | [Next 🚀 Install & Update](./how-to-install-update-hydraide.md)

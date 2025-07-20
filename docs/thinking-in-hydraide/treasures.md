@@ -274,43 +274,6 @@ HydrAIDE handles this all server-side, with no need to fetch-check-write manuall
 **Conditional logic is native. Scalable. And powerful.**
 
 ---
-
-## 🔗 SDK Integration Resources (Coming Soon)
-
-Once you understand how Treasures work, using them in your application becomes effortless.
-
-Every HydrAIDE SDK will let you:
-
-- Insert or fetch Treasures with full type safety
-- Use native language structs and slices as values
-- Subscribe to real-time Treasure changes
-- Handle expiration and reverse indexing natively
-
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Treasures Docs                       |
-| ------------ | ------------ | -------------------- | --------------------------------------- |
-| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Core SDK, type-rich       |
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Async/stream ready        |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Great for ML pipelines    |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Systems-level precision   |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Enterprise backends       |
-| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – App servers and Unity     |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – Performance critical apps |
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Android/backend devs      |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – iOS/macOS native apps     |
-
-> 💬 **Reminder:** SDKs are powerful – but they build upon the mindset you’re learning here.
-> Stick to the philosophy first. Then bring it to life in code.
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
----
-
 ## 🧭 Navigation
 
 ← [Back to 🌿 Swamp Pattern](./swamp-pattern.md)  | [Next: 🧽 Indexing](./indexing.md)  

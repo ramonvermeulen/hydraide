@@ -242,41 +242,6 @@ Even if it’s closed.
 
 ---
 
-## 🔗 SDK Integration Resources (Coming Soon)
-
-All HydrAIDE SDKs will support real-time subscriptions natively.
-You’ll be able to:
-
-- Open persistent listeners on any Swamp
-- React to full Treasure payloads
-- Handle lifecycle (`created`, `updated`, `deleted`)
-- Stream directly into WebSockets or frontends
-
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Subscription Docs                   |
-| ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Full gRPC stream model   |
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Reactive web bindings    |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – Async + event loops      |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Low-latency listeners    |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Message bus interface    |
-| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – Signal-style integration |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – System-level stream      |
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Android-ready push       |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – Native iOS observables   |
-
-> 💬 Want to push updates to users, services, or UI in real-time? Stay tuned.
-> SDKs will make it effortless – but now, you understand **the magic underneath**.
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
----
-
 ## 🧭 Navigation
 
 ← [Back to 🧽 Indexing](./indexing.md)  | [Next: 🔐 Locking](./locking.md)

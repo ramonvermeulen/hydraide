@@ -1,61 +1,59 @@
-/*
-Package hydrex
-
-Hydrex is a modular indexing and data-management layer built on top of the hydraidego interface.
-It provides domain-based structured storage, efficient indexing, and fast querying capabilities for B2B applications or internal data workflows.
-
-## Purpose
-
-Hydrex allows you to:
-- Store structured data entries per domain (any unique identifier, not just DNS-based).
-- Automatically maintain index references for fast reverse lookup.
-- Safely update entries by syncing additions and deletions between the index and the core data.
-- Retrieve all key-value pairs associated with a domain (core data).
-- Query index entries to find all domains that match a specific key.
-- Cleanly destroy all domain-related entries from both core storage and all relevant indices.
-
-## Key Concepts
-
-- **Core Data**: Represents the actual values associated with a domain (e.g., metadata, tags, analysis results).
-- **Index**: Reverse-mapping layer for looking up domains by key (e.g., find all domains with the tag "SEO").
-- **Domain**: A logical identifier for any entity (e.g., website, customer ID, etc.)—does not need to be a DNS domain.
-
-## Main Operations
-
-- `Save`: Adds/updates core data and manages index consistency. Old keys not present in the update will be removed.
-- `GetCoreData`: Returns the core data values for a specific domain.
-- `GetIndexData`: Retrieves all domains associated with a given key.
-- `Destroy`: Fully removes all data related to a domain from both core and index layers.
-
-## Example Use Case
-
-1. Initialize Hydrex:
-
-```go
-
-	hydraide := hydraidego.New()
-	hx := hydrex.New(hydraide)
-
-	// Save data under a domain:
-
-	hx.Save(ctx, "product_tags", "mydomain.com", map[string]*hydrex.CoreData{
-	  "category": {Key: "category", Value: "software", CreatedAt: time.Now()},
-	  "feature": {Key: "feature", Value: "AI", CreatedAt: time.Now()},
-	})
-
-	// Get core data for domain:
-	core := hx.GetCoreData(ctx, "product_tags", "mydomain.com")
-
-	// Get index data for a key:
-	hits := hx.GetIndexData(ctx, "product_tags", "feature")
-
-	// Remove all data for a domain:
-	hx.Destroy(ctx, "product_tags", "mydomain.com")
-
-```
-
-Hydrex is ideal for systems that need searchable tagging, metadata enrichment, or content annotation based on dynamic, domain-scoped entities.
-*/
+// Package hydrex
+//
+// Hydrex is a modular indexing and data-management layer built on top of the hydraidego interface.
+// It provides domain-based structured storage, efficient indexing, and fast querying capabilities for B2B applications or internal data workflows.
+//
+// ## Purpose
+//
+// Hydrex allows you to:
+// - Store structured data entries per domain (any unique identifier, not just DNS-based).
+// - Automatically maintain index references for fast reverse lookup.
+// - Safely update entries by syncing additions and deletions between the index and the core data.
+// - Retrieve all key-value pairs associated with a domain (core data).
+// - Query index entries to find all domains that match a specific key.
+// - Cleanly destroy all domain-related entries from both core storage and all relevant indices.
+//
+// ## Key Concepts
+//
+// - **Core Data**: Represents the actual values associated with a domain (e.g., metadata, tags, analysis results).
+// - **Index**: Reverse-mapping layer for looking up domains by key (e.g., find all domains with the tag "SEO").
+// - **Domain**: A logical identifier for any entity (e.g., website, customer ID, etc.)—does not need to be a DNS domain.
+//
+// ## Main Operations
+//
+// - `Save`: Adds/updates core data and manages index consistency. Old keys not present in the update will be removed.
+// - `GetCoreData`: Returns the core data values for a specific domain.
+// - `GetIndexData`: Retrieves all domains associated with a given key.
+// - `Destroy`: Fully removes all data related to a domain from both core and index layers.
+//
+// ## Example Use Case
+//
+// 1. Initialize Hydrex:
+//
+// ```go
+//
+//	hydraide := hydraidego.New()
+//	hx := hydrex.New(hydraide)
+//
+//	// Save data under a domain:
+//
+//	hx.Save(ctx, "product_tags", "mydomain.com", map[string]*hydrex.CoreData{
+//	  "category": {Key: "category", Value: "software", CreatedAt: time.Now()},
+//	  "feature": {Key: "feature", Value: "AI", CreatedAt: time.Now()},
+//	})
+//
+//	// Get core data for domain:
+//	core := hx.GetCoreData(ctx, "product_tags", "mydomain.com")
+//
+//	// Get index data for a key:
+//	hits := hx.GetIndexData(ctx, "product_tags", "feature")
+//
+//	// Remove all data for a domain:
+//	hx.Destroy(ctx, "product_tags", "mydomain.com")
+//
+// ```
+//
+// Hydrex is ideal for systems that need searchable tagging, metadata enrichment, or content annotation based on dynamic, domain-scoped entities.
 package hydrex
 
 import (
@@ -157,7 +155,7 @@ func (h *hydrex) Save(ctx context.Context, indexName string, domain string, item
 	saveManyToManyReq := make([]*hydraidego.CatalogManyToManyRequest, 0)
 
 	// iterating through the existing core data
-	for key, _ := range existingCoreData {
+	for key := range existingCoreData {
 		if _, ok := items[key]; !ok {
 			itemsForDelete = append(itemsForDelete, key)
 			// töröljük a domaint-t az indexekből, ahol már nem létezik az adat

@@ -230,36 +230,6 @@ You can smile and say:
 
 > *It doesn’t. Until it does. Then it’s faster than you can imagine.*
 
----
-
-## 🔗 SDK Integration Resources (Coming Soon)
-
-Once you master the indexing philosophy, using it in code becomes effortless.
-
-Each HydrAIDE SDK will support value-based indexing with lazy evaluation and adaptive performance – just like the philosophy you’ve learned here.
-
-| 💻 SDK       | 🧪 Code Name | 🛠️ Status           | 📘 Indexing Docs                       |
-| ------------ | ------------ | -------------------- | -------------------------------------- |
-| 🟢 Go        | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)   | ✅ Actively developed | Coming soon – Realtime, blazing fast   |
-| 🟡 Node.js   | `hydraidejs`   | 🧪 In planning       | Coming soon – Event-friendly queries   |
-| 🐍 Python    | `hydraidepy`   | 🧠 In design         | Coming soon – ML-ready sorting         |
-| 🦀 Rust      | `hydraiders`   | 🧠 In design         | Coming soon – Zero-cost abstractions   |
-| ☕ Java       | `hydraidejv`   | 🧠 In design         | Coming soon – Scalable enterprise use  |
-| 🎯 C# / .NET | `hydraidecs`   | 🧠 In design         | Coming soon – Streamlined for services |
-| 🧠 C++       | `hydraidecpp`  | 🧠 In design         | Coming soon – High-performance indexing|
-| 🌀 Kotlin    | `hydraidekt`   | 🧠 In design         | Coming soon – Elegant & Android-ready  |
-| 🍎 Swift     | `hydraidesw`   | 🧠 In design         | Coming soon – Index-aware mobile apps  |
-
-> 💬 Still wondering how this works in code? Stay tuned.
-> The SDKs will bring this philosophy to life – but **you already understand the magic behind it.**
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
 
 ---
 

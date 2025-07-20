@@ -33,7 +33,7 @@
 
 ## 🧠 Philosophy – What HydrAIDE Does Differently
 
-📘 See: [Thinking in HydrAIDE](/docs/thinking-in-HydrAIDE/thinking-in-HydrAIDE)
+📘 See: [Thinking in HydrAIDE](/docs/thinking-in-hydraide/thinking-in-hydraide.md)
 
 MongoDB is a general-purpose document store. HydrAIDE is a **real-time adaptive engine**, optimized for speed, subscriptions, and logic-first workflows.
 
@@ -50,7 +50,7 @@ HydrAIDE stores data the way you think — not how the database wants it.
 
 ## 🔍 Core Differences Explained
 
-📘 See also: [📏 Naming Convention](/docs/thinking-in-HydrAIDE/naming-convention.md)
+📘 See also: [📏 Naming Convention](/docs/thinking-in-hydraide/naming-convention.md)
 
 ## 🧠 Querying – The HydrAIDE Way
 
@@ -84,7 +84,7 @@ This means:
 
 ### 🧩 Data Modeling
 
-📘 Related: [💎 Treasures](/docs/thinking-in-HydrAIDE/treasures.md)
+📘 Related: [💎 Treasures](/docs/thinking-in-hydraide/treasures.md)
 
 **HydrAIDE:**
 
@@ -104,7 +104,7 @@ This means:
 
 ### 🔄 Reactivity
 
-📘 Related: [🔄 Subscriptions](/docs/thinking-in-HydrAIDE/subscriptions.md)
+📘 Related: [🔄 Subscriptions](/docs/thinking-in-hydraide/subscriptions.md)
 
 **HydrAIDE:**
 
@@ -122,7 +122,7 @@ This means:
 
 ### ⚙️ Indexing
 
-📘 Related: [🧩 Indexing](/docs/thinking-in-HydrAIDE/indexing.md)
+📘 Related: [🧩 Indexing](/docs/thinking-in-hydraide/indexing.md)
 
 **HydrAIDE:**
 
@@ -140,7 +140,7 @@ This means:
 
 ### 🔐 Locking & Concurrency
 
-📘 Related: [🔐 Locking](/docs/thinking-in-HydrAIDE/locking.md)
+📘 Related: [🔐 Locking](/docs/thinking-in-hydraide/locking.md)
 
 **HydrAIDE:**
 
@@ -158,7 +158,7 @@ This means:
 
 ### 🌐 Scaling & Distribution
 
-📘 Related: [🌐 Distributed Architecture](/docs/thinking-in-HydrAIDE/distributed-architecture.md)
+📘 Related: [🌐 Distributed Architecture](/docs/thinking-in-hydraide/distributed-architecture.md)
 
 **HydrAIDE:**
 
@@ -179,7 +179,7 @@ This means:
 
 ### 🛡️ Data Storage & Security
 
-📘 Related: [💎 Treasures](/docs/thinking-in-HydrAIDE/treasures.md)
+📘 Related: [💎 Treasures](/docs/thinking-in-hydraide/treasures.md)
 
 **HydrAIDE:**
 
@@ -204,7 +204,7 @@ This means:
 
 ## 🧹 Cleanup
 
-📘 Related: [🧹 Clean System](/docs/thinking-in-HydrAIDE/clean-system.md)
+📘 Related: [🧹 Clean System](/docs/thinking-in-hydraide/clean-system.md)
 
 **HydrAIDE:**
 
@@ -408,7 +408,7 @@ HydrAIDE: **one struct = one Swamp = total control**
 
 ## 🐳 Install Simplicity
 
-📘 Related: [🚀 Install & Update](/docs/thinking-in-HydrAIDE/how-to-install-update-hydraide.md)
+📘 Related: [🚀 Install & Update](/docs/thinking-in-hydraide/how-to-install-update-hydraide.md)
 
 **HydrAIDE:**
 
@@ -452,7 +452,7 @@ HydrAIDE makes migration effortless:
 - Just use `rsync`, `scp`, or any file-level sync tool
 - No export/import scripts, no special format
 
-You can also move only part of your Swamps (e.g., folder ranges) to scale across servers — see [Thinking in HydrAIDE – Distributed Architecture](/docs/thinking-in-HydrAIDE/distributed-architecture.md) for details.
+You can also move only part of your Swamps (e.g., folder ranges) to scale across servers — see [Thinking in HydrAIDE – Distributed Architecture](/docs/thinking-in-hydraide/distributed-architecture.md) for details.
 
 > Moving HydrAIDE data is as simple as moving folders.
 
@@ -480,46 +480,6 @@ Add or remove fields in your structs anytime. HydrAIDE just stores what’s ther
 
 ---
 
-## 📚 Learn More
-
-Want to understand how HydrAIDE thinks under the hood?
-Start your journey with the **Thinking in HydrAIDE** series — a 9-step guide to mastering the HydrAIDE mindset:
-
-| Step | Section                                                                        | What You'll Learn                              |
-| ---- | ------------------------------------------------------------------------------ | ---------------------------------------------- |
-| 1️⃣  | [📛 Naming Convention](/docs/thinking-in-HydrAIDE/naming-convention.md)               | How structure begins with naming – not schemas |
-| 2️⃣  | [🌿 Swamp Pattern](/docs/thinking-in-HydrAIDE/swamp-pattern.md)                       | Configure memory, TTL, and persistence in code |
-| 3️⃣  | [💎 Treasures](/docs/thinking-in-HydrAIDE/treasures.md)                               | HydrAIDE’s data units: fast, typed, and reactive  |
-| 4️⃣  | [🧩 Indexing](/docs/thinking-in-HydrAIDE/indexing.md)                                 | Instant in-memory indexing, no B-trees         |
-| 5️⃣  | [🔄 Subscriptions](/docs/thinking-in-HydrAIDE/subscriptions.md)                       | Native real-time events, no brokers            |
-| 6️⃣  | [🔐 Locking](/docs/thinking-in-HydrAIDE/locking.md)                                   | Per-record locks, business-safe operations     |
-| 7️⃣  | [🧹 Clean System](/docs/thinking-in-HydrAIDE/clean-system.md)                         | Zero-waste design, no background jobs          |
-| 8️⃣  | [🌐 Distributed Architecture](/docs/thinking-in-HydrAIDE/distributed-architecture.md) | Stateless scaling without orchestration        |
-| 9️⃣  | [🚀 Install & Update](/docs/thinking-in-HydrAIDE/how-to-install-update-hydraide.md)      | From Docker to production in minutes           |
-
----
-
-## 👷 SDKs & Contributors Welcome
-
-HydrAIDE SDKs are actively being developed for multiple languages. Want to help build the future of real-time infrastructure?
-We’re looking for contributors and early adopters to help shape these tools.
-
-| 💻 Language | SDK Code Name | Status         | Contribution Welcome? |
-| ----------- | ------------- | -------------- | --------------------- |
-| Go          | [`hydraidego`](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/README.md)    | ✅ Active       | ✅ Yes                 |
-| Node.js     | `hydraidejs`    | 🧪 In planning | ✅ Yes                 |
-| Python      | `hydraidepy`    | 🧠 In design   | ✅ Yes                 |
-| Rust        | `hydraiders`    | 🧠 In design   | ✅ Yes                 |
-| Java        | `hydraidejv`    | 🧠 In design   | ✅ Yes                 |
-| C# / .NET   | `hydraidecs`    | 🧠 In design   | ✅ Yes                 |
-| C++         | `hydraidecpp`   | 🧠 In design   | ✅ Yes                 |
-| Kotlin      | `hydraidekt`    | 🧠 In design   | ✅ Yes                 |
-| Swift       | `hydraidesw`    | 🧠 In design   | ✅ Yes                 |
-
-> 💬 Want to contribute? Head over to the [HydrAIDE GitHub repo](https://github.com/hydraide/hydraide) and check out the [`CONTRIBUTING.md`](/CONTRIBUTING.md) guide. Let’s build it together.
-
----
-
 ## 🧭 Final Words
 
 MongoDB is a good document database.
@@ -529,15 +489,4 @@ But HydrAIDE isn’t just different — it’s built for a different world.
 > Developer-native. AI-powered. Intent-first. Reactive by default.
 
 If your app deserves clarity, performance, and real-time logic — then your app deserves **HydrAIDE**.
-
-
----
-
-## 📄 **License Notice**
-
-This document is part of the HydrAIDE knowledge base and is licensed under a **custom restrictive license**.  
-You may not use its contents to build or assist in building alternative engines, architectures, or competing systems.  
-See the full legal terms here: [LICENSE.md](/LICENSE.md)
-
-
 

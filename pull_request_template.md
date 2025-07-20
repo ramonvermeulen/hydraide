@@ -1,4 +1,4 @@
-# 🚀 Pull Request – HydrAIDE Style
+# 🚀 Pull Request – HydrAIDE style
 
 Thanks for contributing to HydrAIDE!  
 Please fill in the details below so we can review and merge your PR efficiently.
@@ -7,7 +7,7 @@ Please fill in the details below so we can review and merge your PR efficiently.
 
 ## 📋 What does this PR do?
 
-_Describe the main change or fix – keep it clear and concise._
+_Describe the main change or fix. Keep it clear and concise._
 
 > Example:  
 > Adds `IncrementFloat64()` to the Node.js SDK  
@@ -37,8 +37,3 @@ Fixes #456
 ## 💬 Additional Notes
 
 _Anything you'd like the reviewers to know? Edge cases, known limitations, etc._
-
----
-
-🧠 HydrAIDE is a reactive system – and now, so are you._  
-Thanks again for helping shape its future! 💜
