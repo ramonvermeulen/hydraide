@@ -86,5 +86,3 @@ echo "Next steps:"
 echo "📤 Copy '$CA_CERT' → into your client application (used for verifying the server)."
 echo "📥 Copy '$SERVER_KEY' and '$SERVER_CERT' → into your HydrAIDE server certificate folder (e.g. /mounted-docker-folder/certificate/)"
 echo ""
-
-

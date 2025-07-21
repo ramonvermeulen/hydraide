@@ -379,4 +379,3 @@ func (m *ModelCompanyProfile) createName(domain string) name.Name {
 ---
 
 > **Read more about the SDK** in the [Go SDK documentation](/docs/sdk/go/go-sdk.md).
-
