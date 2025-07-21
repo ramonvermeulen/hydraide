@@ -209,7 +209,10 @@ func (c *client) Connect(connectionLog bool) error {
 			if certErr != nil {
 
 				log.WithFields(log.Fields{
-					"error": certErr,
+					"error":      certErr,
+					"server":     server.Host,
+					"fromIsland": server.FromIsland,
+					"toIsland":   server.ToIsland,
 				}).Error("error while loading TLS credentials")
 
 				errorMessages = append(errorMessages, certErr)
@@ -242,6 +245,8 @@ func (c *client) Connect(connectionLog bool) error {
 
 				log.WithFields(log.Fields{
 					"serverAddress": server.Host,
+					"fromIsland":    server.FromIsland,
+					"toIsland":      server.ToIsland,
 					"error":         err,
 				}).Error("error while connecting to the server")
 
@@ -260,7 +265,12 @@ func (c *client) Connect(connectionLog bool) error {
 			if err != nil || pong.Pong != "beat" {
 
 				log.WithFields(log.Fields{
-					"error": err,
+					"error":         err,
+					"serverAddress": server.Host,
+					"fromIsland":    server.FromIsland,
+					"toIsland":      server.ToIsland,
+					"pongMessage":   pong.Pong,
+					"errorMessages": errorMessages,
 				}).Error("error while sending heartbeat request")
 
 				errorMessages = append(errorMessages, err)
