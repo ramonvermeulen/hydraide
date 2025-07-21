@@ -32,7 +32,10 @@ For production:
 * Optionally RAID-1 or RAID-Z2 for fault tolerance
 * **SSD storage is strongly recommended**. HydrAIDE performs best on high-speed SSDs due to its frequent small-file access patterns. While it can technically run on spinning disks (HDD), this is discouraged in production because of significant I/O penalties and potential latency spikes.
 * **Memory sizing**: provision your server RAM based on your largest expected Swamp. As a rule of thumb, allocate memory capacity to hold **at least 10× the size** of your largest Swamp. This allows multiple Swamps to be hydrated in memory simultaneously. You'll quickly observe optimal sizing needs during real-world usage.
-* **Linux OS is recommended**, especially distributions like Ubuntu, Debian, or Rocky Linux. HydrAIDE uses folder-based disk structures and real-time file hydration. These patterns rely on efficient inode handling, predictable I/O scheduling, and native support for filesystems like **ZFS**, **ext4**, or **xfs** – all of which are well-optimized in Linux environments.
+* **Linux OS is recommended** for running HydrAIDE in production environments. 
+  Popular distributions like Ubuntu, Debian, or Rocky Linux are particularly well-suited. 
+  HydrAIDE uses folder-based disk structures and real-time file hydration, which rely on efficient inode handling and predictable I/O scheduling. 
+  Native support for filesystems such as **ZFS**, **ext4**, or **xfs** in Linux ensures optimal performance.
   > ⚠️ While HydrAIDE may run on Windows via Docker Desktop or WSL2, this is not recommended for production due to inconsistent file lock behavior and volume mount latency.
 
 #### File System Recommendation
