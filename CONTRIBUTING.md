@@ -56,7 +56,7 @@ Or open a new one with your proposal!
 
 ## ✅ Commit Style
 
-Use clear commit messages like:
+Use clear commit messages, ideally following the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
 - `fix: crash on empty Swamp hydration`
 - `feat: add IncrementFloat64 to Node SDK`
@@ -75,6 +75,44 @@ If you’re adding a new SDK function, include a simple usage test (e.g. call + 
 Docs-only PRs don’t require tests.
 
 ---
+
+## 🔧 Configuring pre-commit
+Before committing changes to github or raising a pull request, please run pre-commit hooks to ensure consistent code style and formatting.
+Installing pre-commit is best done via [uv](https://docs.astral.sh/uv/getting-started/installation/) (recommended) or [pipx](https://github.com/pypa/pipx).
+
+```bash
+uv tool install pre-commit
+```
+
+or
+
+```bash
+pipx install pre-commit
+```
+
+Then use the following command to install the hooks:
+
+```bash
+pre-commit install
+```
+
+To manually run the pre-commit hooks on all files, use:
+
+```bash
+pre-commit run --all-files
+```
+
+Or on a specific file:
+
+```bash
+pre-commit run --files <file_name>
+```
+
+Or a specific hook on a specific file:
+
+```bash
+pre-commit run <hook_id> --files <file_name>
+```
 
 ## 🤲 Community Values
 
@@ -107,4 +145,3 @@ Together we build something legendary.
 
 With gratitude,  
 **– The HydrAIDE Team**
-

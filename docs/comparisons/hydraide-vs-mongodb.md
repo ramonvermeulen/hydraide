@@ -489,4 +489,3 @@ But HydrAIDE isn’t just different — it’s built for a different world.
 > Developer-native. AI-powered. Intent-first. Reactive by default.
 
 If your app deserves clarity, performance, and real-time logic — then your app deserves **HydrAIDE**.
-

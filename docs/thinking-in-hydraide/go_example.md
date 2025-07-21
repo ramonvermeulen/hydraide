@@ -2,14 +2,14 @@
 
 I know you're probably curious about how this works in practice, so let’s start right there.
 
+Since I’m a Go developer, I’ll show you a Go-based example to make it concrete.
+
 --- 
 
 ## 🧱 What’s a Swamp?
 
 HydrAIDE stores all data in structures called **Swamps**.
 A Swamp is basically a **storage unit** (or container), and each one lives in its own folder with its own file structure.
-
-> **Learn more about Swamps** in the [Thinking in HydrAIDE](/docs/thinking-in-hydraide/swamp-pattern.md) section.
 
 There are two types of Swamps:
 
@@ -18,8 +18,7 @@ There are two types of Swamps:
 
 Why does this matter?
 
-> Because if you don’t separate your data correctly into Swamps, then **every call will load ALL data into memory**,
-> which is a huge waste.
+> Because if you don’t separate your data correctly into Swamps, then **every call will load ALL data into memory** – which is a huge waste.
 
 ---
 
@@ -27,13 +26,12 @@ Why does this matter?
 
 In HydrAIDE, we primarily work with **two types of data models**:
 
-* **Catalog** - Think of this like a database table where you store *key–value pairs*. A lot of them. Really, a lot.
-* **Profile** - This is a **complex structured model**, for example all the data about a user: name, email, permissions, etc.
+* **Catalog** – Think of this like a database table where you store *key–value pairs*. A lot of them. Really, a lot.
+* **Profile** – This is a **complex structured model**, for example all the data about a user: name, email, permissions, etc.
 
 Here’s the key difference from traditional databases:
 
-> In HydrAIDE, each `Profile` is stored in a **separate container**, almost like each user 
-> (or company) has their own database or table.
+> In HydrAIDE, each `Profile` is stored in a **separate container** – almost like each user (or company) has their own database or table.
 
 ---
 
@@ -61,7 +59,7 @@ We’ll use a `Catalog` to keep track of:
 * when they registered
 * and what permissions they have
 
-In this example, we’re only storing the **company ID** and their **permissions**, nothing more.
+In this example, we’re only storing the **company ID** and their **permissions** — nothing more.
 The goal is to **quickly check which companies are in the system and what they’re allowed to do**.
 
 ---
@@ -99,8 +97,10 @@ Notice how we decorate the fields in the Go struct with tags. This is how HydrAI
 ### 🚀 Let’s Build: A Company Catalog Swamp
 
 Now we’re ready to create our first real `Catalog` Swamp. One that stores company registrations.
-In the methods, we’ll be using SDK calls like `CatalogRead` and others with the `Catalog` prefix to signal what kind 
-of storage we’re dealing with.
+
+In the methods, we’ll be using SDK calls like `CatalogRead` and others with the `Catalog` prefix to signal what kind of storage we’re dealing with.
+
+
 
 ```go
 package example
@@ -209,8 +209,8 @@ func (m *ModelCatalogCompany) createModelCatalogName() name.Name {
 ```
 
 Once you've created the model, working with it in Go is incredibly simple.
-Need to load a single record? It’s this easy!
 
+Need to load a single record? It’s this easy!
 It feels a bit like using an ORM, but it’s **much faster**, **more efficient**, and **more flexible**.
 It doesn’t tie your hands, but lets you move quickly and freely.
 
@@ -236,11 +236,12 @@ if err != nil {
 
 ---
 
-## Want to save data?
+## Want to save data? 
 
 This works even if the record already exists — meaning it can also overwrite existing data.
 
 ```go
+@SuppressLint
 // ...
 companyCatalog := &ModelCatalogCompany{
     CompanyID: "trendizz.com",
@@ -277,17 +278,17 @@ if err != nil {
 
 ## What if you need to work with a Profile instead?
 
-In a Profile, we don’t store many entities in one swamp, instead, we store just one, but in very detailed form.
+In a Profile, we don’t store many entities in one swamp — instead, we store just one, but in very detailed form.
 
 The following code snippet is a real-world example of how we manage data:
-In this case, we’re storing a Company Profile, which includes details like the domain, 
-founded date, number of employees, and more.
+In this case, we’re storing AI-generated data for a single domain.
 
 ```go
-package company
+package dizzletcompanyprofile
 
 import (
 	"time"
+
 	"github.com/hydraide/hydraide/sdk/go/hydraidego"
 	"github.com/hydraide/hydraide/sdk/go/hydraidego/name"
 	"github.com/yourproject/internal/hydraidehelper"
@@ -375,7 +376,3 @@ func (m *ModelCompanyProfile) createName(domain string) name.Name {
 }
 
 ```
-
----
-
-> **Read more about the SDK** in the [Go SDK documentation](/docs/sdk/go/go-sdk.md).

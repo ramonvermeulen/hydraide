@@ -277,4 +277,3 @@ HydrAIDE handles this all server-side, with no need to fetch-check-write manuall
 ## 🧭 Navigation
 
 ← [Back to 🌿 Swamp Pattern](./swamp-pattern.md)  | [Next: 🧽 Indexing](./indexing.md)  
-

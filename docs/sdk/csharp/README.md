@@ -23,4 +23,3 @@ If you'd like to help build the official SDKs and developer tools around the Hyd
 You'll find everything from perks, expectations, SDK plans, and how to get started.
 
 > Join HydrAIDE. Be legendary.
-

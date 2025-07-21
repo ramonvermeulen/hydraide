@@ -245,5 +245,3 @@ Even if it’s closed.
 ## 🧭 Navigation
 
 ← [Back to 🧽 Indexing](./indexing.md)  | [Next: 🔐 Locking](./locking.md)
-
-
