@@ -42,13 +42,13 @@ name := New().
   Realm("RealmA").
   Swamp("SwampX")
 
-path := name.GetFullHashPath("/hydra/data", totalServers, depth, maxFoldersPerLevel)
+path := name.GetFullHashPath("/hydraide/data", totalServers, depth, maxFoldersPerLevel)
 ```
 
 You get output like:
 
 ```
-/hydra/data/600/ba22/703a
+/hydraide/data/600/ba22/703a
 ```
 
 This tells you:

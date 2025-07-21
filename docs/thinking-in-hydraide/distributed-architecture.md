@@ -144,7 +144,7 @@ That’s why it works.
 
 ---
 
-## 🤁 Logical Distribution: The Power of Intention
+## 🧩 Logical Distribution: The Power of Intention
 
 Physical distribution is just one side of the coin.
 HydrAIDE also supports **logical distribution** by **naming convention**.
@@ -324,5 +324,5 @@ It just makes good architecture feel magical.
 
 ## 🗭 Navigation
 
-← [Back to: 🧹 Clean System](./clean-system.md) | [Next 🚀 Install & Update](./how-to-install-update-hydraide.md)
+← [Back to: 🧹 Clean System](./clean-system.md) | [Next 🚀 Install & Update](/installation/README.md)
 

@@ -35,8 +35,8 @@ type Settings interface {
 }
 
 const (
-	hydraDataFolderPath     = "/hydra/data"
-	hydraSettingsFolderPath = "/hydra/settings"
+	hydraDataFolderPath     = "/hydraide/data"
+	hydraSettingsFolderPath = "/hydraide/settings"
 	fileName                = "settings.json"
 	writetestFile           = "writetest"
 )

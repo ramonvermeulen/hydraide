@@ -15,8 +15,43 @@
 # Need help? → https://grpc.io/docs/
 #
 # =============================================================================
+.PHONY: build push build-push clean build-go proto-go proto-python proto-node proto-rust proto-java proto-csharp help
 
-.PHONY: clean build-go proto-go proto-python proto-node proto-rust proto-java proto-csharp help
+# Build and push docker image
+# =============================================================================
+IMAGE_NAME=ghcr.io/hydraide/hydraide
+IMAGE_TAG=$(IMAGE_TAG)
+
+# load the .env file to get the GitHub username and token
+include .env
+export $(shell sed 's/=.*//' .env)
+
+# Docker build args
+BUILD_ARGS=--build-arg GIT_USERNAME=$(GITHUB_USERNAME) \
+           --build-arg GIT_EMAIL=$(GITHUB_EMAIL) \
+
+DOCKER_BUILDKIT=1
+
+# Build the Docker image with the specified tag
+build:
+	echo $(GITHUB_TOKEN) > .git_token_file
+	docker build --secret id=git_token,src=.git_token_file $(BUILD_ARGS) -f Dockerfile -t $(IMAGE_NAME):$(IMAGE_TAG) .
+	rm .git_token_file
+
+# Push the Docker image to GitHub Container Registry
+push:
+	echo $(GITHUB_CONTAINER_TOKEN) | docker login ghcr.io -u $(GITHUB_USERNAME) --password-stdin
+	docker tag $(IMAGE_NAME):$(IMAGE_TAG) $(IMAGE_NAME):latest
+	docker push $(IMAGE_NAME):$(IMAGE_TAG)
+	docker push $(IMAGE_NAME):latest
+
+# Build the Docker image with both versioned tag and latest tag
+build-push: build push
+
+
+
+# Build from proto files
+# =============================================================================
 
 # -----------------------------------------------------------------------------
 # 🧪 build – Regenerate Go code + tidy dependencies
@@ -112,6 +147,9 @@ proto-csharp:
 help:
 	@echo "📦 HydrAIDE Proto Makefile – Available commands:"
 	@echo ""
+	@echo "🔧 build       	– build Docker image with latest Server code"
+	@echo "📤 push        	– Push Docker image to GitHub Container Registry"
+	@echo "🔄 build-push  	– Build and push Docker image to GitHub Container Registry"
 	@echo "🔨 build-go       	– Compile proto to Go and tidy dependencies"
 	@echo "🧠 proto-go       	– Only generate Go bindings"
 	@echo "🐍 proto-python   	– Generate Python gRPC code (if tools exist)"
