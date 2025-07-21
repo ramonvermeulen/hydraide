@@ -7,6 +7,7 @@ on:
       - main
   workflow_dispatch:
 
+# TODO(peter): could potentially be replaced by https://pre-commit.ci/ which is free for OS projects, I cannot configure this without being repo owner
 jobs:
   build:
     name: CI
