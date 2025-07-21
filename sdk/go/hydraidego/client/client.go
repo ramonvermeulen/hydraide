@@ -262,14 +262,14 @@ func (c *client) Connect(connectionLog bool) error {
 			defer cancel()
 
 			pong, err := serviceClient.Heartbeat(ctx, &hydraidepbgo.HeartbeatRequest{Ping: "beat"})
-			if err != nil || pong.Pong != "beat" {
+			if err != nil || pong == nil || pong.Pong != "beat" {
 
 				log.WithFields(log.Fields{
 					"error":         err,
 					"serverAddress": server.Host,
 					"fromIsland":    server.FromIsland,
 					"toIsland":      server.ToIsland,
-					"pongMessage":   pong.Pong,
+					"pongMessage":   pong,
 					"errorMessages": errorMessages,
 				}).Error("error while sending heartbeat request")
 
