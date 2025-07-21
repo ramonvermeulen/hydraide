@@ -18,8 +18,8 @@ import (
 var serverInterface server.Server
 
 const (
-	serverCrtPath   = "/hydra/certificate/server.crt"
-	serverKeyPath   = "/hydra/certificate/server.key"
+	serverCrtPath   = "/hydraide/certificate/server.crt"
+	serverKeyPath   = "/hydraide/certificate/server.key"
 	hydraServerPort = 4444
 	healthCheckPort = 4445
 )

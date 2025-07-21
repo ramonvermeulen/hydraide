@@ -9,7 +9,7 @@ import (
 func TestGetFullHashPath(t *testing.T) {
 
 	// Parameters for the test
-	rootPath := "/hydra/data"
+	rootPath := "/hydraide/data"
 	depth := 2
 	maxFoldersPerLevel := 10000
 
@@ -138,7 +138,7 @@ func BenchmarkName_GetFullHashPath(b *testing.B) {
 
 	n := New().Sanctuary(sanctuary).Realm(realm).Swamp(swamp)
 
-	rootPath := "/hydra/data"
+	rootPath := "/hydraide/data"
 	depth := 3
 	maxFoldersPerLevel := 5000
 
