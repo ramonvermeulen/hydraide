@@ -134,4 +134,3 @@ Welcome to the Swamp Pattern. 🐊
 ## 🧭 Navigation
 
 ← [Back to Naming Convention](./naming-convention.md) | [Next: 💎 Treasures](./treasures.md)  
-

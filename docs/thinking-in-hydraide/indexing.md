@@ -236,4 +236,3 @@ You can smile and say:
 ## 🧭 Navigation
 
 ← [Back to 💎 Treasures](./treasures.md)   | [Next: 🔄 Subscriptions](./subscriptions.md) 
-

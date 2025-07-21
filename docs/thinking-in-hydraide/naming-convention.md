@@ -121,5 +121,3 @@ Start there! And the rest will follow naturally.
 ## 🧭 Navigation
 
 ← [Back to Thinking in HydrAIDE](./thinking-in-hydraide.md) | [Next: 🌿 Swamp Pattern](./swamp-pattern.md)
-
-

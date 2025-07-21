@@ -1,25 +1,10 @@
-# 🚀 HydrAIDE SDK – Python version coming soon
+# HydrAIDE Python SDK
 
-Thanks for your interest in the **HydrAIDE Python SDK**!
+> [!CAUTION]
+> This SDK is currently still under active development and is not yet ready for production use.
 
-This SDK is not yet available, but we’re actively working on it.  
-If you’d like to use HydrAIDE in your Python-based project, let us know!
+# Overview
+t.b.d.
 
-📩 Contact: [peter.gebri@trendizz.com](mailto:peter.gebri@trendizz.com) - Founder of HydrAIDE & Trendizz      
-📬 Or open an [issue](https://github.com/hydraide/hydraide/issues) to show your interest.
-
-We appreciate your patience and enthusiasm! 🙏
-
-Stay tuned! Something awesome is coming!
-
----
-
-## 🤝 Contribute to HydrAIDE
-
-If you'd like to help build the official SDKs and developer tools around the HydrAIDE core engine, check out our contributor program:
-
-👉 [View the full Contributor Guide →](/CONTRIBUTORS.md)
-
-You'll find everything from perks, expectations, SDK plans, and how to get started.
-
-> Join HydrAIDE. Be legendary.
+# Development guide
+t.b.d.
