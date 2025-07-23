@@ -34,7 +34,7 @@ HYDRA_CERT=/path/to/ca.crt
 ## 📁 Project Structure
 
 ```text
-queue-demo/
+app-queue/
 ├── main.go
 ├── appserver/
 │   └── ...
