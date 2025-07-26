@@ -88,11 +88,11 @@ clean:
 # -----------------------------------------------------------------------------
 # Output: ./generated/python
 proto-python:
-	@echo "🐍 Syncing python dependencies via uv..."
-	@command cd sdk/python/hydraidepy && \
+	@echo "🐍 Syncing python dependencies via uv...\n"
+	cd sdk/python/hydraidepy && \
 	    uv sync
-	@echo "🐍 Generating Python gRPC files..."
-	@command source sdk/python/hydraidepy/.venv/bin/activate && \
+	@echo "🐍 Generating Python gRPC files...\n"
+	source sdk/python/hydraidepy/.venv/bin/activate && \
 		python -m grpc_tools.protoc -I proto \
 		--python_out=sdk/python/hydraidepy/src/hydraidepy/generated \
 		--grpc_python_out=sdk/python/hydraidepy/src/hydraidepy/generated \
