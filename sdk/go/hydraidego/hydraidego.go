@@ -88,18 +88,59 @@ type Hydraidego interface {
 	Uint32SliceIsValueExist(ctx context.Context, swampName name.Name, key string, value uint32) (bool, error)
 }
 
+// Index defines the configuration for index-based queries in HydrAIDE.
+//
+// Indexes allow you to read data from a Swamp in a specific order,
+// with optional filtering and pagination.
+//
+// ✅ Use with `CatalogReadMany()` to read a stream of records
+// based on keys, values, or metadata fields like creation time.
+//
+// Fields:
+//   - IndexType:     what field to index on (key, value, createdAt, etc.)
+//   - IndexOrder:    ascending or descending result order
+//   - From:          offset for pagination (0 = from start)
+//   - Limit:         max number of results to return (0 = no limit)
+//
+// Example:
+//
+//	Read the latest 10 entries by creation time:
+//
+//	&Index{
+//	    IndexType:  IndexCreationTime,
+//	    IndexOrder: IndexOrderDesc,
+//	    From:       0,
+//	    Limit:      10,
+//	}
 type Index struct {
-	IndexType
-	IndexOrder
-	From  int32 // ha 0 az from, akkor az összes elemet visszaadja
-	Limit int32 // ha 0 a limit, akkor az összes elemet visszaadja
+	IndexType        // What field to use for sorting/filtering
+	IndexOrder       // Ascending or Descending order
+	From       int32 // Offset: how many records to skip (0 = start from first)
+	Limit      int32 // Max results to return (0 = return all)
 }
 
+// IndexType specifies which field to use as the index during a read.
+//
+// This controls what HydrAIDE engine uses to sort and filter the Treasures.
+//
+// Supported types:
+//
+//   - IndexKey            → Use the Treasure key (string)
+//   - IndexValueString    → Use the value, if it's a string
+//   - IndexValueUintX     → Use unsigned int value (8/16/32/64)
+//   - IndexValueIntX      → Use signed int value (8/16/32/64)
+//   - IndexValueFloatX    → Use float values (32/64)
+//   - IndexExpirationTime → Use `expireAt` metadata
+//   - IndexCreationTime   → Use `createdAt` metadata
+//   - IndexUpdateTime     → Use `updatedAt` metadata
+//
+// 💡 The index type must match the actual data type of the stored value.
+// For example, if the value is `float64`, use `IndexValueFloat64`.
 type IndexType int
 
 const (
-	IndexKey IndexType = iota + 1
-	IndexValueString
+	IndexKey         IndexType = iota + 1 // Sort by the Treasure key (string)
+	IndexValueString                      // Sort by the value if it's a string
 	IndexValueUint8
 	IndexValueUint16
 	IndexValueUint32
@@ -110,16 +151,20 @@ const (
 	IndexValueInt64
 	IndexValueFloat32
 	IndexValueFloat64
-	IndexExpirationTime
-	IndexCreationTime
-	IndexUpdateTime
+	IndexExpirationTime // Use the metadata field `expireAt`
+	IndexCreationTime   // Use the metadata field `createdAt`
+	IndexUpdateTime     // Use the metadata field `updatedAt`
 )
 
+// IndexOrder defines the direction of sorting when reading data by index.
+//
+// Use IndexOrderAsc for oldest → newest, or lowest → highest.
+// Use IndexOrderDesc for newest → oldest, or highest → lowest.
 type IndexOrder int
 
 const (
-	IndexOrderAsc IndexOrder = iota + 1
-	IndexOrderDesc
+	IndexOrderAsc  IndexOrder = iota + 1 // Ascending (A → Z, 0 → 9, oldest → newest)
+	IndexOrderDesc                       // Descending (Z → A, 9 → 0, newest → oldest)
 )
 
 type EventStatus int
@@ -387,40 +432,40 @@ func (h *hydraidego) RegisterSwamp(ctx context.Context, request *RegisterSwampRe
 // - Nil if deregistration completes successfully across all relevant servers
 func (h *hydraidego) DeRegisterSwamp(ctx context.Context, swampName name.Name) []error {
 
-	// Container to collect any errors during deregistration.
+	// Container to collect any errors during the deregistration process.
 	allErrors := make([]error, 0)
 
-	// Validate that SwampPattern is provided.
+	// Validate that a SwampPattern (name) is provided.
 	if swampName == nil {
 		allErrors = append(allErrors, fmt.Errorf("SwampPattern is required"))
 		return allErrors
 	}
 
-	// List of servers where the Swamp pattern will be registered.
+	// Determine the list of servers from which the Swamp pattern should be deregistered.
 	selectedServers := make([]hydraidepbgo.HydraideServiceClient, 0)
 
-	// Wildcard patterns must be registered on all servers,
-	// because we don’t know in advance which server will handle each resolved Swamp.
+	// If the pattern includes wildcards, deregistration must be broadcast to all known servers,
+	// since the Swamp may have been registered on any of them.
 	if swampName.IsWildcardPattern() {
 		selectedServers = h.client.GetUniqueServiceClients()
 	} else {
-		// For non-wildcard patterns, we determine the responsible server
-		// using HydrAIDE’s name-based routing logic.
+		// If the pattern is fully qualified (non-wildcard),
+		// we resolve it to a specific server based on HydrAIDE's name hashing logic.
 		selectedServers = append(selectedServers, h.client.GetServiceClient(swampName))
 	}
 
-	// Iterate through the selected servers and register the Swamp on each.
+	// Perform the actual deregistration request on each selected server.
 	for _, serviceClient := range selectedServers {
 
-		// Construct the RegisterSwampRequest payload for the gRPC call.
+		// Build the DeregisterSwampRequest payload for the gRPC call.
 		rsr := &hydraidepbgo.DeRegisterSwampRequest{
 			SwampPattern: swampName.Get(),
 		}
 
-		// Attempt to Deregister the Swamp pattern on the current server.
+		// Send the deregistration request to the server.
 		_, err := serviceClient.DeRegisterSwamp(ctx, rsr)
 
-		// Handle any errors returned from the gRPC call.
+		// Handle any errors returned by the gRPC layer and convert them to SDK error codes.
 		if err != nil {
 			if s, ok := status.FromError(err); ok {
 				switch s.Code() {
@@ -443,14 +488,13 @@ func (h *hydraidego) DeRegisterSwamp(ctx context.Context, swampName name.Name) [
 		}
 	}
 
-	// If any server failed, return the list of errors.
+	// Return any collected errors if deregistration failed on one or more servers.
 	if len(allErrors) > 0 {
 		return allErrors
 	}
 
-	// All servers responded successfully – registration complete.
+	// Deregistration completed successfully on all target servers.
 	return nil
-
 }
 
 // Lock acquires a distributed business-level lock for a specific domain/key.
@@ -819,7 +863,7 @@ func (h *hydraidego) CatalogCreate(ctx context.Context, swampName name.Name, mod
 		}
 	}
 
-	// ha a kulcs már létezik...
+	// if the key already exists, the status will be NOTHIN_CHANGED
 	for _, swamp := range setResponse.GetSwamps() {
 		for _, kv := range swamp.GetKeysAndStatuses() {
 			if kv.GetStatus() == hydraidepbgo.Status_NOTHING_CHANGED {
