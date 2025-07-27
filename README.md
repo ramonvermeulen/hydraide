@@ -59,7 +59,7 @@ All demo apps are located in the [example-applications/go](https://github.com/hy
 
 * **Queue** – A simple task queue system that manages scheduled jobs with future `expireAt` timestamps.
 
-👉 [View Queue Demo Application](https://github.com/hydraide/hydraide/tree/main/example-applications/go/app-queue)
+👉 [View Queue Demo Application](https://github.com/hydraide/hydraide/tree/main/docs/sdk/go/examples/applications/app-queue)
 
 These examples are a great starting point to learn how to:
 
@@ -122,17 +122,35 @@ To get started:
 
 ```bash
 docker-compose up -d
-````
+```
 
-👉 [Full Installation Guide →](installation/README.md)
+📘 See full setup instructions in the [Installation Guide](installation/README.md)
+
+> ⚠️ While the Docker installation is a quick and easy way to get started, we are actively working on a **native CLI tool called `hydraidectl`** that will make installation and instance management even simpler.
+
+### 🧠 Coming Soon: `hydraidectl` – Native, Docker-Free Server Control
+
+We are building `hydraidectl`, a command-line tool that will:
+
+* Install the HydrAIDE server with **a single command**
+* Start and stop instances easily
+* Support multiple instances in parallel
+* Run without Docker or containers
+* Auto-generate TLS certificates per instance
+* Manage instance folders (`settings`, `data`, `cert`) locally
+* Be usable on edge devices and constrained environments
+
+The goal: make HydrAIDE the **fastest-to-deploy** and **easiest-to-manage** real-time engine — ideal even for **IoT nodes, developer laptops, or production clusters**.
+
+So while Docker is a great first step, the future is:
+
+> **No containers. No overhead. Just `hydraidectl`.**
 
 ---
 
 ## 💻 SDKs - Native Integration in Your Language
 
 HydrAIDE communicates over **gRPC**, and all SDKs share a common `.proto` contract, ensuring cross-language consistency.
-
-
 
 ---
 
