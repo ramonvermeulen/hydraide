@@ -92,8 +92,7 @@ proto-python:
 	cd sdk/python/hydraidepy && \
 	    uv sync
 	@echo "🐍 Generating Python gRPC files...\n"
-	. sdk/python/hydraidepy/.venv/bin/activate && \
-		python -m grpc_tools.protoc -I proto \
+		sdk/python/hydraidepy/.venv/bin/python -m grpc_tools.protoc -I proto \
 		--python_out=sdk/python/hydraidepy/src/hydraidepy/generated \
 		--grpc_python_out=sdk/python/hydraidepy/src/hydraidepy/generated \
 		proto/hydraide.proto
