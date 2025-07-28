@@ -54,12 +54,12 @@ The Go SDK offers a simple yet powerful way to manage data through two fundament
 Each user has their own dedicated Profile Swamp, which can store all of their relevant information such as name, avatar, registration date, last login time, and more.
 A profile can hold any amount of data — but always belongs to exactly one entity (like one user).
 
-📄 [`model_profile_example.go`](examples/model_profile_example.go)
+📄 [`model_profile_example.go`](examples/models/model_profile_example.go)
 
 **Catalogs**, on the other hand, are key–value Swamps where you can store many unique keys — each mapped to its own custom value.
 This is ideal for scenarios like tracking all registered user IDs, counting how many users exist in total, or displaying a list of users in an admin dashboard.
 
-📄 [`model_catalog_example.go`](examples/model_catalog_example.go)
+📄 [`model_catalog_example.go`](examples/models/model_catalog_example.go)
 
 In both cases, data is defined using regular Go `struct`s decorated with HydrAIDE field tags.
 You work with the data through model-bound methods that make saving, querying, or subscribing extremely simple and intuitive.
