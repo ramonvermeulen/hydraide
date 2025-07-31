@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 
@@ -304,8 +303,14 @@ var initCmd = &cobra.Command{
 				continue
 			}
 
+			if validPort == envCfg.HydraidePort {
+				fmt.Println("❌ Health check port cannot be the same as the main port. Please choose a different port.")
+				continue
+			}
+
 			envCfg.HealthCheckPort = validPort
 			break
+
 		}
 
 		// ======================
@@ -388,11 +393,20 @@ var initCmd = &cobra.Command{
 
 		fmt.Println("📂 Copying TLS certificates to the certificate directory...")
 		fmt.Printf("  • Client CRT: From %s  to  %s \n", clientCRT, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(clientCRT)))
-		utils.MoveFile(clientCRT, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(clientCRT)))
+		if err := utils.MoveFile(clientCRT, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(clientCRT))); err != nil {
+			fmt.Println("❌ Error copying client certificate:", err)
+			return
+		}
 		fmt.Printf("  • Server CRT: From %s  to  %s \n", serverCRT, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(serverCRT)))
-		utils.MoveFile(serverCRT, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(serverCRT)))
+		if err := utils.MoveFile(serverCRT, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(serverCRT))); err != nil {
+			fmt.Println("❌ Error copying server certificate:", err)
+			return
+		}
 		fmt.Printf("  • Server KEY: From %s  to  %s \n", serverKEY, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(serverKEY)))
-		utils.MoveFile(serverKEY, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(serverKEY)))
+		if err := utils.MoveFile(serverKEY, filepath.Join(envCfg.HydraideBasePath, "certificate", filepath.Base(serverKEY))); err != nil {
+			fmt.Println("❌ Error copying server key:", err)
+			return
+		}
 
 		fmt.Println("✅ TLS certificates copied successfully.")
 
@@ -441,7 +455,13 @@ var initCmd = &cobra.Command{
 			fmt.Println("❌ Error creating .env file:", err)
 			return
 		}
-		defer envFile.Close()
+		defer func() {
+			if err := envFile.Close(); err != nil {
+				fmt.Println("❌ Error closing .env file:", err)
+			} else {
+				fmt.Println("✅ .env file closed successfully.")
+			}
+		}()
 
 		// Write all environment variables
 		writer := bufio.NewWriter(envFile)
@@ -487,16 +507,4 @@ var initCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(initCmd)
-}
-
-func defaultInstallPath() string {
-	home, _ := os.UserHomeDir()
-	switch runtime.GOOS {
-	case "windows":
-		return filepath.Join(os.Getenv("APPDATA"), "HydrAIDE", "bin")
-	case "darwin":
-		return filepath.Join(home, "Library", "Application Support", "HydrAIDE", "bin")
-	default:
-		return filepath.Join(home, ".hydraide", "bin")
-	}
 }
