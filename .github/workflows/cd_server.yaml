@@ -139,6 +139,8 @@ jobs:
       - name: Copy entrypoint script
         run: cp entrypoint.sh docker-context/scripts/
 
+      - name: Copy Dockerfile
+        run: cp Dockerfile docker-context/
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
