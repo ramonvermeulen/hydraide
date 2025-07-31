@@ -61,10 +61,13 @@ jobs:
         run: |
           go build -a -installsuffix cgo -o ${{ matrix.binary_name }} ./app/server
 
+      - name: Check build output
+        run: ls -lah
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.asset_name }}
+          name: hydraide-${{ matrix.goos }}-${{ matrix.goarch }}
           path: ${{ matrix.binary_name }}
 
   create_release:
@@ -127,7 +130,7 @@ jobs:
       - name: Download built binary for Docker image
         uses: actions/download-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
+          name: hydraide-${{ matrix.goos }}-${{ matrix.goarch }}
           path: docker-context/
 
       - name: Copy entrypoint script
