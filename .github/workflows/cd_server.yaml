@@ -136,6 +136,9 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: docker-context/
 
+      - name: Rename downloaded binary to 'hydraide'
+        run: mv docker-context/${{ matrix.artifact_name }} docker-context/hydraide
+
       - name: Copy entrypoint script
         run: cp entrypoint.sh docker-context/scripts/
 
