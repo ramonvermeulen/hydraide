@@ -104,10 +104,12 @@ jobs:
       matrix:
         arch: [ amd64, arm64 ]
         include:
-          - arch: amd64
+          - goos: linux
+            goarch: amd64
             artifact_name: hydraide-linux-amd64
             platform: linux/amd64
-          - arch: arm64
+          - goos: linux
+            goarch: arm64
             artifact_name: hydraide-linux-arm64
             platform: linux/arm64
     permissions:
@@ -119,6 +121,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Show artifact_name
+        run: |
+          echo "artifact_name: ${{ matrix.artifact_name }}"
+
       # Prepare Docker build context based on architecture
       - name: Ensure docker-context directory exists
         run: |
@@ -127,7 +133,7 @@ jobs:
       - name: Download built binary for Docker image
         uses: actions/download-artifact@v4
         with:
-          name: hydraide-${{ matrix.goos }}-${{ matrix.goarch }}
+          name: ${{ matrix.artifact_name }}
           path: docker-context/
 
       - name: Copy entrypoint script
