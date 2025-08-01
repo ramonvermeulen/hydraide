@@ -13,27 +13,28 @@ env:
 
 jobs:
   release:
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
         include:
           - os: ubuntu-latest
             goos: linux
             goarch: amd64
             binary_name: hydraide-linux-amd64
             asset_name: hydraide-linux-amd64
+
           - os: ubuntu-latest
             goos: linux
             goarch: arm64
             binary_name: hydraide-linux-arm64
             asset_name: hydraide-linux-arm64
+
           - os: windows-latest
             goos: windows
             goarch: amd64
             binary_name: hydraide-windows-amd64.exe
             asset_name: hydraide-windows-amd64.exe
-
-    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -43,7 +44,6 @@ jobs:
         id: extract_version
         shell: bash
         run: |
-          # Extract version from git tag ref
           VERSION=${GITHUB_REF#refs/tags/}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Extracted version: $VERSION"
