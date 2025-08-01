@@ -4,6 +4,7 @@ import time
 from collections import defaultdict
 from typing import Dict
 
+import pytest
 from hydraidepy.name import Name
 
 
@@ -281,6 +282,7 @@ class TestNamePerformance:
 
         assert avg_time_ns < 40
 
+    @pytest.mark.skip(reason="Meant for manual performance comparison")
     def test_performance_comparison_summary(self) -> None:
         print("\n" + "=" * 60)
         print("PERFORMANCE COMPARISON: Python vs Go SDK")
