@@ -13,6 +13,21 @@ and the full path can be retrieved using get(). Additionally,
 get_island_id(all_folders) maps the current name to a consistent
 server index (1-based), using a fast and collision-resistant hash.
 
+🛑 Constraints:
+
+  - All three components — sanctuary, realm, and swamp — are **required**.
+  - Each part must be at least **1 character long**.
+  - The `/` character is **not allowed** in any part of the name.
+    It is reserved as a structural delimiter and must not be used within values.
+  - The use of **alphanumeric characters** (a–z, A–Z, 0–9) is strongly recommended
+    to ensure compatibility and predictable routing across all environments.
+
+⚠️ Note: This package does **not** perform runtime validation of these constraints.
+To keep the `name` package as fast as possible (ns-level execution),
+no checks or sanitization are performed internally.
+It is the responsibility of the caller to ensure valid input.
+Adding validation would significantly degrade performance (10–20x).
+
 Example usage:
     name = Name().sanctuary("users").realm("profiles").swamp("alice123")
     print(name.get())  # "users/profiles/alice123"
@@ -31,7 +46,7 @@ https://github.com/hydraide/hydraide/blob/main/docs/sdk/python/README.md
 ----------------------------------------
 """
 
-from xxhash import xxh64_hexdigest
+from xxhash import xxh64_intdigest
 
 
 class Name:
@@ -57,6 +72,14 @@ class Name:
 
     See also: load(path) to reconstruct a Name from a path.
     """
+
+    __slots__ = (
+        "path",
+        "sanctuary_id",
+        "realm_name",
+        "swamp_name",
+        "island_number",
+    )
 
     def __init__(self) -> None:
         """
@@ -126,12 +149,8 @@ class Name:
 
         :return: True if the name contains a wildcard, False otherwise.
         """
-        return any(
-            (
-                self.sanctuary_id == "*",
-                self.realm_name == "*",
-                self.swamp_name == "*",
-            )
+        return (
+            self.swamp_name == "*" or self.realm_name == "*" or self.sanctuary_id == "*"
         )
 
     def get_island_id(self, all_islands: int) -> int:
@@ -179,10 +198,9 @@ class Name:
         if self.island_number != 0:
             return self.island_number
 
-        _hash = xxh64_hexdigest(
-            f"{self.sanctuary_id}{self.realm_name}{self.swamp_name}"
-        )
-        self.island_number = int(_hash, 16) % all_islands + 1
+        hash_input = self.sanctuary_id + self.realm_name + self.swamp_name
+        _hash = xxh64_intdigest(hash_input)
+        self.island_number = _hash % all_islands + 1
         return self.island_number
 
     @staticmethod
@@ -203,9 +221,7 @@ class Name:
         :return: A new Name instance.
         :raises ValueError: If the path is not in the expected format.
         """
-        parts = path.split("/")
-        if len(parts) < 1:
-            raise ValueError("Path must contain at least the sanctuary ID")
+        parts = path.split("/", 2)
 
         name = Name().sanctuary(sanctuary_id=parts[0])
 

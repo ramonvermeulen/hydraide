@@ -31,3 +31,7 @@ exclude = ["generated"]
 warn_return_any = true
 warn_unused_configs = true
 exclude = ["generated"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/unit/hydraidepy"]
+pythonpath = ["src/hydraidepy"]

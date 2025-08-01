@@ -41,3 +41,12 @@ repos:
         pass_filenames: false
         args: [sdk/python/hydraidepy/., --strict, --ignore-missing-imports, --config-file, sdk/python/hydraidepy/pyproject.toml]
         files: ^sdk/python/hydraidepy
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^sdk/python/hydraidepy
