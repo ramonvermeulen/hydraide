@@ -85,17 +85,26 @@ jobs:
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Move downloaded binaries to root for release
+        run: |
+          mv ./artifacts/hydraide-linux-amd64/hydraide-linux-amd64 .
+          mv ./artifacts/hydraide-linux-arm64/hydraide-linux-arm64 .
+          mv ./artifacts/hydraide-windows-amd64/hydraide-windows-amd64.exe .
 
       - name: Create GitHub release with assets
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.extract_version.outputs.version }}
           name: Release ${{ steps.extract_version.outputs.version }}
-          artifacts: "hydraide-linux-amd64/hydraide-linux-amd64,hydraide-linux-arm64/hydraide-linux-arm64,hydraide-windows-amd64.exe/hydraide-windows-amd64.exe"
+          artifacts: "hydraide-linux-amd64,hydraide-linux-arm64,hydraide-windows-amd64.exe"
           generateReleaseNotes: true
           draft: false
           prerelease: false
           token: ${{ secrets.GITHUB_TOKEN }}
+
 
   docker-publish:
     needs: release
